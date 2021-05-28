@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"            
+      lang="en">
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />            
+        </f:facet>
+        <title><ui:insert name="title">Hệ thống kho dữ liệu đo đếm dùng chung EVN</ui:insert></title>
+        <h:outputScript name="js/layout.js" library="rain-layout" />
+        <h:outputScript name="sections.js" library="demo" />
+        <ui:insert name="head"/>
+
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+    </h:head>
+    <h:body styleClass="#{templateGNDN.inputStyleClass}">
+        <div class="layout-wrapper layout-topbar-#{templateGNDN.topbarTheme} layout-menu-#{templateGNDN.menuTheme} #{templateGNDN.menuMode}">
+            <ui:include src="./topbar_GNDN.xhtml"></ui:include>  
+            <ui:include src="./menu_GNDN.xhtml"></ui:include>
+            <ui:include src="./rightpanel_GNDN.xhtml"></ui:include>  
+            <div class="layout-main">                 
+                <div class="layout-content">
+                    <ui:insert name="content"></ui:insert>
+                </div>
+                <ui:include src="./footer.xhtml"></ui:include>
+            </div>                        
+        </div>
+        <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+        <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+    </h:body>
+
+</html>

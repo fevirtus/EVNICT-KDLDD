@@ -1,0 +1,201 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package dulieuthuthap.web.bean;
+
+import dulieuthuthap.remote.IDuLieuThuThapRemote;
+import main.web.common.bean.BasePageCommon;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import main.ContextResources.EjbContext;
+import main.entity.shared.system.S_Assets;
+import main.web.common.bean.WorkingContext;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.AxesGridLines;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.optionconfig.legend.Legend;
+import org.primefaces.model.charts.optionconfig.legend.LegendLabel;
+import org.primefaces.model.charts.optionconfig.title.Title;
+
+/**
+ *
+ * @author Admin
+ */
+@ManagedBean
+@ViewScoped
+public class DuLieuThuThapBean extends BasePageCommon implements Serializable {
+
+    private IDuLieuThuThapRemote iDuLieuThuThapRemote;
+    private BarChartModel barModel;
+    private String userId;
+    private Integer monthLoad = 0;
+    private Integer yearLoad = 0;
+    private List<S_Assets> listOrgByUserId = new ArrayList<>();
+    private List<String> listLabelBarModel = new ArrayList<>();
+
+    /**
+     * Creates a new instance of DuLieuThuThapBean
+     */
+    public DuLieuThuThapBean() {
+
+        userId = WorkingContext.getUserName();
+        listOrgByUserId = getiDuLieuThuThapRemote().getAllOrgByUserId(userId);
+        createBarModel();
+    }
+
+    public void onLoadData() {
+        try {
+            if (monthLoad == null || yearLoad == null) {
+                
+            } else {
+               
+                //Load data for diemdo had been config datatable
+               
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public int getTongDiemDo(List<S_Assets> listOrgByUserId){
+        int tong = 0;
+        return tong;
+    }
+
+    public void createBarModel() {
+        barModel = new BarChartModel();
+        ChartData data = new ChartData();
+
+        BarChartDataSet barDataSet = new BarChartDataSet();
+        barDataSet.getLabel();
+
+        
+        List<Number> values = new ArrayList<>();
+        values.add(65);
+        values.add(59);
+        values.add(80);
+        values.add(81);
+        values.add(56);
+        values.add(55);
+        values.add(40);
+        values.add(40);
+        values.add(40);
+        values.add(40);
+        values.add(40);
+        values.add(40);
+        values.add(40);
+        values.add(40);
+        barDataSet.setData(values);
+
+        List<String> bgColor = new ArrayList<>();
+        bgColor.add("rgba(86, 167, 245,0.2)");
+        barDataSet.setBackgroundColor(bgColor);
+
+        List<String> borderColor = new ArrayList<>();
+        borderColor.add("rgb(86, 167, 245)");
+        barDataSet.setBorderColor(borderColor);
+        barDataSet.setBorderWidth(1);
+
+        data.addChartDataSet(barDataSet);
+
+        //set list label for chart
+        for (S_Assets item : listOrgByUserId) {
+            listLabelBarModel.add(item.getOrgcode());
+        }
+        data.setLabels(listLabelBarModel);
+        barModel.setData(data);
+
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        AxesGridLines gridLines = new AxesGridLines();
+        gridLines.setColor("rgba(126, 146, 185, .3)");
+        linearAxes.setGridLines(gridLines);
+        linearAxes.setOffset(true);
+        CartesianLinearTicks ticks = new CartesianLinearTicks();
+        linearAxes.setTicks(ticks);
+        cScales.addYAxesData(linearAxes);
+
+        CartesianLinearAxes xaxes = new CartesianLinearAxes();
+        xaxes.setGridLines(gridLines);
+        cScales.addXAxesData(xaxes);
+        options.setScales(cScales);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Tỷ lệ thu thập số liệu");
+        options.setTitle(title);
+
+        Legend legend = new Legend();
+        legend.setDisplay(true);
+        legend.setPosition("top");
+        LegendLabel legendLabels = new LegendLabel();
+        legendLabels.setFontStyle("bold");
+        legendLabels.setFontColor("#7e92b9");
+        legend.setLabels(legendLabels);
+        options.setLegend(legend);
+
+        barModel.setOptions(options);
+    }
+
+    public IDuLieuThuThapRemote getiDuLieuThuThapRemote() {
+        try {
+            if (iDuLieuThuThapRemote == null) {
+                iDuLieuThuThapRemote = (IDuLieuThuThapRemote) EjbContext.getLocalEJBRemote(IDuLieuThuThapRemote.class.getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iDuLieuThuThapRemote;
+    }
+
+    public List<S_Assets> getListOrgByUserId() {
+        return listOrgByUserId;
+    }
+
+    public void setListOrgByUserId(List<S_Assets> listOrgByUserId) {
+        this.listOrgByUserId = listOrgByUserId;
+    }
+
+    public BarChartModel getBarModel() {
+        return barModel;
+    }
+
+    public void setBarModel(BarChartModel barModel) {
+        this.barModel = barModel;
+    }
+
+    public Integer getMonthLoad() {
+        return monthLoad;
+    }
+
+    public void setMonthLoad(Integer monthLoad) {
+        this.monthLoad = monthLoad;
+    }
+
+    public Integer getYearLoad() {
+        return yearLoad;
+    }
+
+    public void setYearLoad(Integer yearLoad) {
+        this.yearLoad = yearLoad;
+    }
+
+}

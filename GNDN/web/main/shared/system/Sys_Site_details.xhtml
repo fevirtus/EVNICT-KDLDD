@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+            #{sys_SiteBean.assertFuncRight('02.0101')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{sys_SiteBean.renderedFuncEdit('02.0101')}">
+                        <p:commandButton id="btnNew" disabled="#{sys_Site_Details.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" ajax="false" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         actionListener="#{sys_Site_Details.onAddNewSite}" />
+                        <p:commandButton id="btnUpdate" disabled="#{sys_Site_Details.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Site_Details.onSaveSite}" />
+                        <p:commandButton id="btnDel" disabled="#{sys_Site_Details.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete" ajax="false" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDeleteSiteDetail}');"
+                                         actionListener="#{sys_Site_Details.onDeleteSite}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                                 disabled="#{sys_Site_Details.m_bFirst}" update="tbrHeader msgInfo pnlContent"
+                                                 actionListener="#{sys_Site_Details.onNavigatorFirst}"/>
+                                <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{sys_Site_Details.m_bPrevious}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{sys_Site_Details.onNavigatorPrevious}"/>
+                                <p:commandButton id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{sys_Site_Details.m_bNext}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                                 actionListener="#{sys_Site_Details.onNavigatorNext}"/>
+                                <p:commandButton id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{sys_Site_Details.m_bLast}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                                 actionListener="#{sys_Site_Details.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlContent">
+                        <p:focus for="txtSiteID"/>
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="#{msgs.detail_LblSite_site}*"
+                                          styleClass="#{sys_Site_Details.style_TxtCMID}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtSiteID" style="width: 180px;"
+                                         readonly="#{sys_Site_Details.txtCMIDReadOnly}"
+                                         value="#{sys_Site_Details.site.siteid}"/>
+                            </td>
+                            <td/>
+                            <td >
+                            <h:inputText id="txtSiteDesc" style="width: 350px;"
+                                         value="#{sys_Site_Details.site.sitedesc}"/>
+                            </td>
+                            <td align="right" valign="middle">
+                            <h:outputText value="#{msgs.main_grd_active_site} " style="color: blue;"/>
+                            <h:selectBooleanCheckbox id="chbActive" value="#{sys_Site_Details.site.active}"/>
+                            </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputText value="#{msgs.detail_LblOrg_site}*"
+                                          styleClass="#{sys_Site_Details.style_TxtORGID}"/>
+                            </td>                                
+                            <td>
+                            <h:inputText id="txtOrgID" style="width: 180px;"                                                 
+                                         value="#{sys_Site_Details.site.orgid}" onkeydown="return KeyEnterSelectOrg(event,this);"/>
+                            </td>
+                            <td>
+<!--                            <p:commandButton styleClass="btnHeight"
+                                             icon="ui-icon ui-icon-search" onclick="OpenOrgDialog()">
+                            </p:commandButton>-->
+                            <a href="javascript:void(0)"><h:graphicImage title="#{commonMessages.btnOpen}" url="/images/find.gif" onclick="OpenOrgDialog()"/></a>
+                            </td>
+                            <td>
+                            <h:inputText id="txtOrgDesc" style="width: 350px;" readonly="true"
+                                         value="#{sys_Site_Details.orgDesc}"/>
+                            </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputText value="#{msgs.main_grd_siteid_parent_site}" styleClass="#{sys_Site_Details.style_TxtMeterID}"/>
+                            </td>
+                            <td>
+                            <h:inputText id="txtSiteParentID" style="width: 180px;"
+                                         value="#{sys_Site_Details.site.siteidParent}"
+                                         onkeydown="return KeyEnterSelectSite(event,this);"/>
+                            </td>
+                            <td>
+<!--                            <p:commandButton styleClass="btnHeight"
+                                             icon="ui-icon ui-icon-search" onclick="OpenSiteDialog()">
+                            </p:commandButton>-->
+                            <a href="javascript:void(0)"><h:graphicImage title="#{commonMessages.btnOpen}" url="/images/find.gif" onclick="OpenSiteDialog()"/></a>
+                            </td>
+                            <td>
+                            <h:inputText id="txtSiteParentDesc" style="width: 350px;" readonly="true"
+                                         value="#{sys_Site_Details.siteDesc}"/>
+                            </td>
+                            </tr> 
+                        </table>
+
+                    </p:outputPanel>                    
+
+                    <script type="text/javascript">
+                        function OpenSiteDialog() {
+                            var f = document.getElementById('browserContent2');
+                            f.src = "./../../shared/dialog/dlgSite.jsf?display=one";
+                            PF('dlgOpenSiteDialog').show();
+                        }
+                        function KeyEnterSelectAsset(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == ":formDlg:txtAssetID_Org"){
+                                    OpenSelectAsset(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function OpenOrgDialog() {
+                            var f = document.getElementById('browserContent1');
+                            f.src = "./../../shared/dialog/dlgOrganization.jsf?display=one";
+                            PF('dlgOpenOrgDialog').show();
+                        }
+                        function KeyEnterSelectOrg(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == ":formDlg:txtOrgID"){
+                                    OpenSelectOrg(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function OpenSelectOrg(filterValue) {
+                            var f = document.getElementById('browserContent1');
+                            if(f){
+                                var url = "./../../shared/dialog/dlgOrganization.jsf";
+                                var temp = "?";
+                                url = url + temp + "display=one";
+                                temp = '&amp;' ;
+                                if(filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgOpenOrgDialog').show();
+                            }
+                            return false
+                        }
+                        function KeyEnterSelectSite(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == ":formDlg:txtSiteParentID"){
+                                    OpenSelectSite(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function OpenSelectSite(filterValue) {
+                            var f = document.getElementById('browserContent2');
+                            if(f){
+                                var url = "./../../shared/dialog/dlgSite.jsf";
+                                var temp = "?";
+                                url = url + temp + "display=one";
+                                temp = '&amp;' ;
+                                if(filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgOpenSiteDialog').show();
+                            }
+                            return false
+                        }
+                    </script>
+                </div>
+
+                <!-- Dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenSiteDialog" widgetVar="dlgOpenSiteDialog"
+                          width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" closable="true"
+                          resizable="true" modal="true" header="Chọn vùng/địa điểm">
+                    <iframe id="browserContent2" scrolling="auto"
+                            frameborder="true"
+                            width="100%" height="#{settingsProp.L3DlgHeight-50}"
+                            style="border: none">
+                    </iframe>
+                    <div style="padding-top: 10px">
+                        <p:commandButton icon="accept" value="Đồng ý" actionListener="#{sys_Site_Details.onAcceptSiteClick}" 
+                                         oncomplete="PF('dlgOpenSiteDialog').hide();" update="txtSiteParentID txtSiteParentDesc"/>
+                        <p:commandButton icon="cancel" value="Hủy bỏ" onclick="PF('dlgOpenSiteDialog').hide();" />
+                    </div>
+                </p:dialog>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenOrgDialog" widgetVar="dlgOpenOrgDialog"
+                          width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" closable="true"
+                          resizable="true" modal="true" header="Chọn đơn vị">
+                    <iframe id="browserContent1" scrolling="auto"
+                            frameborder="true"
+                            width="100%" height="#{settingsProp.L3DlgHeight-50}"
+                            style="border: none">
+                    </iframe>
+                    <div style="padding-top: 10px">
+                        <p:commandButton icon="accept" value="Đồng ý" actionListener="#{sys_Site_Details.onAcceptOrganizationClick}" 
+                                         oncomplete="PF('dlgOpenOrgDialog').hide();" update="txtOrgID txtOrgDesc"/>
+                        <p:commandButton icon="cancel" value="Hủy bỏ" onclick="PF('dlgOpenOrgDialog').hide();" />
+                    </div>
+                </p:dialog>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

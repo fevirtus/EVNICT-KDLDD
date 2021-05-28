@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{sys_CompBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+                #{sys_CompBean.assertFuncRight('02.15')}
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{msgs.title_comp}" />
+                </h:panelGroup>
+                <p:toolbar style="margin-bottom: 5px;">
+                    <p:toolbarGroup align="left" rendered="#{sys_CompBean.renderedFuncEdit('02.15')}">
+                        <p:commandButton id="btnNew" styleClass="btnHeight" icon="addnew" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         onclick="OpenCompanyDetail('');"/>
+                        <p:commandButton id="btnUpdate" styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate} #{commonMessages.hkUpdate}"
+                                         actionListener="#{sys_CompBean.onEditCompany}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         update="msgInfo dlgConfirmDelContent" actionListener="#{sys_CompBean.onDeleteCompanyStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"/>                       
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left">
+                        <p:separator/>
+                        <p:commandButton icon="shortcut" title="#{commonMessages.btnAddShortcut}" styleClass="btnHeight"
+                                         onclick="showDlgAddShortcut('04','02.13')"/>
+                    </p:toolbarGroup>
+                </p:toolbar>    
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>  
+                </p:outputPanel>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{sys_CompBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="confirmDel').hide(); reApplyFilterGrd();"
+                                     actionListener="#{sys_CompBean.onDeleteCompanyEnd}" update="dtCompany msgInfo" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtCompany" paginator="true" rows="10"
+                             value="#{sys_CompBean.s_CompanyDataModel}"
+                             selection="#{sys_CompBean.arrSelectCompany}"
+                             scrollHeight="455"
+                             scrollable="true"
+                             paginatorPosition="bottom"
+                             widgetVar="dtCompany" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,300,400,500">
+                    <p:column selectionMode="multiple" style="text-align: center;"/>
+                    <p:column style="text-align: center; width: 30px">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                         actionListener="#{sys_CompBean.onOpenCompCmdClick}" oncomplete="OpenCompanyDetail('#{s.compid}');"/>
+                    </p:column>
+                    <p:column style="width: 100px" id="cmid" headerText="#{msgs.main_grd_id_comp}"
+                              filterBy="#{s.compid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.compid}"/>
+                    </p:column>
+                    <p:column style="padding-left: #{s.paddingLeft}px; width:300px"
+                              headerText="#{msgs.main_grd_desc_comp}"
+                              filterBy="#{s.compdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.compdesc}"/>
+                    </p:column>
+                    <p:column style="width: 300px" headerText="#{msgs.main_grd_address_comp}"
+                              filterBy="#{s.address}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.address}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.main_grd_orgid_comp}" style="width:200px"
+                              filterBy="#{s.sOrganization.orgdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.sOrganization.orgdesc}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.main_grd_compid_parent}" style="width:200px"
+                              filterBy="#{s.sCompidParent.compdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.sCompidParent.compdesc}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <ui:include src="../../shared/incShortcut.xhtml"/>
+                <!-- Vùng dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenCompanyDetail" widgetVar="dlgOpenCompanyDetail" header="#{msgs.detail_Header_comp}"
+                          width="#{settingsProp.MainDlgWidth}" height="525"
+                          onHide="document.getElementById('frCompanyDetail').src=''"
+                          closable="true" modal="true" resizable="false">
+                    <p:ajax event="close" listener="#{sys_CompBean.onCloseCompanyDetail}" oncomplete="reApplyFilterGrd();" update="dtCompany"/>
+                    <iframe id="frCompanyDetail" scrolling="no"
+                            frameborder="0" width="100%" height="95%">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'Edit':
+                                    OpenCompanyDetail(args.compid);
+                                    break;
+                                case 'Delete':
+                                      PF('confirmDel').show();
+                                    break;                                
+                            }
+                        }
+                    }
+                    function OpenCompanyDetail(compid) {
+                        var f = document.getElementById('frCompanyDetail');
+                        if(compid)
+                            f.src = "../system/Sys_Company_details.jsf?COMPID=" + compid;
+                        else
+                            f.src = "../system/Sys_Company_details.jsf";
+                        PF('dlgOpenCompanyDetail').show();
+                    }
+                        
+                    function reApplyFilterGrd()
+                    {
+                        if (!#{settingsProp.FilterWhenCloseDlg})
+                        return;
+                        dtCompany.filter();
+                    }
+                </script>
+                <style type="text/css">
+                    .hasDatepicker {
+                        width: 100px;
+                    }
+                </style>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

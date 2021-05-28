@@ -1,0 +1,189 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogProp"
+                              var="dlgProp" />
+                <p:dataTable emptyMessage="Không có dữ liệu" var="dept" id="dtDept" value="#{deptDialog.dsS_DeptForGrid}"
+                              paginator="true" rows="100"
+                              scrollHeight="236"
+                              scrollable="true"
+                              paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,250,500" widgetVar="dtDept" rowIndexVar="0" >
+                    <p:column headerText="Chọn" style="text-align: center;" width="45">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{deptDialog.bCheckAll}" rendered="#{deptDialog.m_visibleChkAll}" >
+                                <p:ajax listener="#{deptDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{dept.bChecked}" id="chk">
+                            <p:ajax listener="#{deptDialog.updateDept}" />
+                            <!--                          <f:param name="deptid" value="{dept.deptid}"/>-->
+                            <!--                            <p:ajax event="valueChange" listener="{deptDialog.updateDept}" update=":formDlg:dtDept"/>
+                                                        <f:param name="deptid" value="{dept.deptid}"/>-->
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="deptid" headerText="Mã đối tượng" width="150" 
+                              filterBy="#{dept.deptid}" filterMatchMode="contains" 
+                              filterStyle="width:90%">                        
+                        <h:outputText value="#{dept.deptid}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="#{dlgProp.desc}" 
+                              filterBy="#{dept.deptdesc}" 
+                              filterMatchMode="contains" filterStyle="width:90%">                        
+                        <h:outputText value="#{dept.deptdesc}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+       
+       function  init()
+       {
+           if(!#{deptDialog.isPostBack}){
+               if ("#{deptDialog.initFilter}" != ""){
+                   if("#{deptDialog.initFilter}" != "MNT"){
+                        var oFilter;
+                       oFilter=document.getElementById('formDlg:dtDept:deptid_filter');
+                       var oTest;
+                       oTest=document.getElementById('formDlg:dtDept:test');
+                       if (oFilter){
+                           oFilter.value= '#{deptDialog.initFilter}';
+                           oTest.value= '#{deptDialog.initFilter}';
+                           dtDept.filter();
+                       }
+                   }
+                   else{
+                     var oFilter;
+                       oFilter=document.getElementById('formDlg:dtDept:depttype_filter');
+                       var oTest;
+                       oTest=document.getElementById('formDlg:dtDept:test3');
+                       if (oFilter){
+                           oFilter.value= '#{deptDialog.initFilter}';
+                           oTest.value= '#{deptDialog.initFilter}';
+                           dtDept.filter();
+                       }
+                   }
+                  
+//                   oFilter.onkeyup = null;
+//                   oFilter.onkeydown = function(event) {return EnterFilter(event); };
+//                   oDesc.onkeyup = null;
+//                   oDesc.onkeydown = function(event) {return EnterFilter(event); };
+//                   oParent.onkeyup = null;
+//                   oParent.onkeydown = function(event) {return EnterFilter(event); };
+               }
+           }
+       }
+       function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDept:deptid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDept:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDept.update = "chk rowIndexVar";
+                dtDept.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oParent;
+                   oParent=document.getElementById('formDlg:dtDept:parentid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDept:test2');
+                oParent.value=oTest.value;
+                //alert(oFilter.value);
+                dtDept.update = "chk rowIndexVar";
+                dtDept.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oDesc;
+                oDesc=document.getElementById('formDlg:dtDept:desc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDept:test1');
+                oDesc.value=oTest.value;
+                //alert(oFilter.value);
+                dtDept.update = "chk rowIndexVar";
+                dtDept.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+         function press3(e){
+            if(e.keyCode==13){
+                var oDesc;
+                oDesc=document.getElementById('formDlg:dtDept:depttype_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDept:test3');
+                oDesc.value=oTest.value;
+                //alert(oFilter.value);
+                dtDept.update = "chk rowIndexVar";
+                dtDept.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+       function EnterFilter(event){
+             if (event.keyCode == 13){
+                 dtDept.filter();
+                 dtDept.update = "chk";
+                 return false;
+             }
+             return true;
+       }
+      function removeFilter(){
+                var oFilter;
+               oFilter=document.getElementById('formDlg:dtDept:deptid_filter');
+               if (oFilter){
+                   oFilter.value= "";
+                   dtDept.filter();
+               }
+      }
+       function filterByEnter(e){
+            var unicode=e.keyCode? e.keyCode : e.charCode
+            if (unicode==13)
+            {
+                dtData.filter();
+            }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtDept:deptid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+          init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

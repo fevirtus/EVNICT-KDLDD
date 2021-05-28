@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html" renderKitId="PRIMEFACES_MOBILE">
+        <h:head>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/defaultM.css" />
+        </h:head>
+        <h:body>
+            <h:form id="formDlg">                    
+                <p:growl id="msgInfo" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                                                    
+                <p:selectManyCheckbox id="grdPlt" converter="#{sSm_PortletConverter}"
+                                      value="#{SM_HomepageBean.m_anLstPortletChoose}" >                    
+                    <f:selectItems value="#{SM_HomepageBean.anDsPortlet}" var="items" itemLabel="#{items.pltdesc}">
+
+                    </f:selectItems>
+                </p:selectManyCheckbox>                            
+                <p:commandButton icon="save" value="#{commonMessages.btnSave}" actionListener="#{SM_HomepageBean.onAnBtnSaveMobile}" update="@form" oncomplete="parent.hideDlgHomepagePltAddNew();"/>
+            </h:form>            
+        </h:body>
+    </f:view>
+</html>
+

@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Shortcut Detail</title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+    </h:head>
+    <h:body>
+        <h:form onsubmit="return false" id="formDlg">
+        <p:outputPanel id="msgInfo">
+            <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+            <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+        </p:outputPanel>
+            <table cellpadding="0" cellspacing="0" width="98%">
+            <tr>
+                <td>
+                    <h:outputText value="#{propSM_BB.SMDTName}"/>
+                </td>
+                <td>
+                    <table cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td width="30%">
+                                <h:inputText id="shortcutid" value="#{PltShortcutMng.dlgShortcut.shortcutid}" disabled="true" style="width:100%"/>
+                                <p:watermark value="#{commonMessages.lblAuto}" for="shortcutid"/>
+                            </td>
+                            <td style="padding-left: 5px">
+                                <h:inputText id="shortcutdesc" value="#{PltShortcutMng.dlgShortcut.shortcutdesc}" required="true"
+                                     requiredMessage="#{propSM_BB.SMDTName_Required}" style="width:100%"/>
+                                <p:focus id="focus" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputText value="#{propSM_BB.SMDTGroup}"/>
+                </td>
+                <td>
+                    <p:selectOneMenu value="#{PltShortcutMng.dlgShortcut.shortcutgrpid}" >
+                        <f:selectItems value="#{PltShortcutMng.dsShortcutGroup}"/>
+                    </p:selectOneMenu>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputText value="#{propSM_BB.SMDTFunc}"/>
+                </td>
+                <td>
+                    <p:selectOneMenu id="cbFuncId" value="#{PltShortcutMng.dlgShortcut.functionid}" >
+                        <f:selectItems value="#{PltShortcutMng.dsFunc}"/>
+                        <p:ajax event="valueChange" listener="#{PltShortcutMng.onFuncChangeAjax}" update=":formDlg:shortcutdesc :formDlg:url" />
+                    </p:selectOneMenu>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputText value="#{propSM_BB.SMDTURL}"/>
+                </td>
+                <td>
+                    <h:inputText id="url" value="#{PltShortcutMng.dlgShortcut.url}" style="width:100%" disabled="#{PltShortcutMng.dlgShortcut.functionid==null?false:true}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputText value="#{propSM_BB.SMLblSTT}" />
+                </td>
+                <td>
+                    <h:panelGroup>
+                        <h:inputText id="SMLblSTT" value="#{PltShortcutMng.dlgShortcut.urlord}" size="7" converterMessage="#{propSM_BB.SMValidate_STT}">
+                            <f:convertNumber integerOnly="true" />
+                        </h:inputText>
+                        <p:selectBooleanCheckbox value="#{PltShortcutMng.dlgShortcut.onnewwindow}" />
+                        <h:outputText value="#{propSM_BB.SMDTNewWin}"/>
+                    </h:panelGroup>
+                </td>
+            </tr>
+        </table>
+        <table style="margin-top: 5px">
+            <tr>
+                <td>
+                    <p:commandButton value="#{commonMessages.btnSave}" icon="save" actionListener="#{PltShortcutMng.onDlgSave}"
+                                     update="@form"/>&nbsp;<!--formDlg:shortcutid @([id$=msgInfo]) :formDlg:SMLblSTT cbFuncId-->
+                    <p:commandButton value="#{commonMessages.btnResetNew}" icon="addnew" actionListener="#{PltShortcutMng.onResetNewShortcut}"
+                                     update="@form" oncomplete="document.getElementById('formDlg:shortcutdesc').focus();"/>&nbsp;
+                    <p:commandButton value="#{commonMessages.btnClose}" icon="cancel" onclick="parent.closeDlgShortcutDt();"/>&nbsp;
+                </td>
+            </tr>
+            <tr><td>
+                    <h:outputText value="#{commonMessages.lblUser}: "/>
+                    <h:outputText value="#{PltShortcutMng.m_UserID}"/>
+                </td>
+            </tr>
+        </table>
+        </h:form>        
+    </h:body>
+</html>
+

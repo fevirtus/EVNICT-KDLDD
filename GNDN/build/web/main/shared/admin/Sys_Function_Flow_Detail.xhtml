@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.Func/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.Func/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            <f:loadBundle var="msgs" basename="main.web.shared.admin.prop.FunctionProp"/>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formFD">
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>                
+                <p:toolbar id="tbrHeader" style="background: #ffffff;">
+                    <p:toolbarGroup align="left">                        
+                        <p:commandButton ajax="true" id="btnEditFlow" widgetVar="btnEditFlow" styleClass="btnHeight"
+                                         icon="save" title="Sửa luồng công việc" actionListener="#{sysFunctionFlowDetailBean.btnSaveFlow}" update=":#{p:component('msgInfo')}"/>                        
+                    </p:toolbarGroup>
+                </p:toolbar>  
+                <p:panel id="ctFlow">
+                    <table width="100%">
+                        <tr>
+                            <td style="display: none;">
+                                <h:inputHidden value="#{sysFunctionFlowDetailBean.flowidd}"/>
+                                <h:inputHidden value="#{sysFunctionFlowDetailBean.functionidd}"/>
+                                <h:inputHidden value="#{sysFunctionFlowDetailBean.flagg}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50px">Name</td>
+                            <td width="250px"><p:inputText value="#{sysFunctionFlowDetailBean.wflowDesc}" style="width: 95%;"/></td>                           
+                            <td width="50px"><h:outputLabel value="System" rendered="#{sysFunctionFlowDetailBean.isRoot}"/></td>
+                            <td><p:selectBooleanCheckbox value="#{sysFunctionFlowDetailBean.ssys}" rendered="#{sysFunctionFlowDetailBean.isRoot}"/></td>
+                        </tr>
+                        <tr>
+                            <td>Code</td>
+                            <td><p:inputText value="#{sysFunctionFlowDetailBean.wflowCode}"/></td>
+                            <td width="50px"><h:outputLabel value="Enable"/></td>
+                            <td><p:selectBooleanCheckbox value="#{sysFunctionFlowDetailBean.senable}" style="width: 95%;"/></td>
+                        </tr>
+                        <tr>
+                            <td>Note</td>
+                            <td colspan="3">
+                        <p:inputTextarea value="#{sysFunctionFlowDetailBean.note}" rows="22" autoResize="false" style="width: 95%;"/>
+                            </td>
+                        </tr>
+                    </table>
+                </p:panel>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

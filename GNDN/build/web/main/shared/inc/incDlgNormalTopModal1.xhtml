@@ -1,0 +1,57 @@
+<!--
+Xử lý hiện cửa sổ modal trùm lên các cửa sổ khác mà không bị giới hạn iframe của cửa sổ gọi
+Kích cỡ cửa sổ này cỡ thứ 2
+Cách dùng:
+1. Trong chức năng chính, khai báo (ví dụ: eam\eamHome.xhtml)
+    <ui:include src="../shared/inc/incDlgNormalTopModal1.xhtml"/>
+2. Trong cửa sổ cấp 1 được gọi từ chức năng chính: khai báo hàm JavaScript (ví dụ: shared\portletmng\dlgBBMng.xhtml)
+        <script type="text/javascript">
+            function showdlgNormalTopModal1(url) {
+                parent.showdlgNormalTopModal1(url)
+            }
+
+            function dlgNormalTopModal1_closed()
+            {
+                return parent.dlgNormalTopModal1_closed();
+            }
+        </script>
+3. Trong cửa sổ tiếp theo: nếu muốn hiện cửa sổ trùm lên tất cả cửa sổ hiện tại thì gọi hàm JS (ví dụ: shared\portletmng\dlgBBMngDT.xhtml)
+    parent.showdlgNormalTopModal1(url);
+   Với url cần điền đủ thông tin để xử lý.
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgNormalTopModal1" widgetVar="dlgNormalTopModal1" 
+              width="#{settingsProp.NormalDlgWidth}" 
+              height="#{settingsProp.NormalDlgHeight}" modal="true"
+              onHide="document.getElementById('ifrdlgNormalTopModal1').src='';dlgNormalTopModal1_isclosed=true;">
+        <iframe id="ifrdlgNormalTopModal1" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none">
+        </iframe>
+    </p:dialog>
+
+    <script type="text/javascript">
+        var dlgNormalTopModal1_isclosed=true;
+        function showdlgNormalTopModal1(url) {
+            var f = document.getElementById('ifrdlgNormalTopModal1');
+            f.src = url;
+            dlgNormalTopModal1_isclosed=false;
+            PF('dlgNormalTopModal1').show();
+        }
+
+        function dlgNormalTopModal1_closed()
+        {
+            return dlgNormalTopModal1_isclosed;
+        }
+
+        function closedlgNormalTopModal1()
+        {
+            PF('dlgNormalTopModal1').hide();
+        }
+     </script>
+</ui:composition>

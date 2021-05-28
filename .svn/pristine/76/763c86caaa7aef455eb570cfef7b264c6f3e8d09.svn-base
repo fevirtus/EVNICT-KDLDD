@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+            <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+        </h:head>               
+
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #FFFFFF">
+            <h:form onsubmit="return false" id="CreateNhomForm">
+
+                <p:growl id="messages" showDetail="true" />  
+                <p:outputPanel id="manage-content" class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel value="Kiểu" for="typeid"/>
+                        <p:selectOneMenu id="typeid" value="#{dialog_nhomBean.diemDoNhom.typeid}" 
+                                         filterMatchMode="contains" filter="true">
+                            <f:selectItems value="#{dialog_nhomBean.listType}"
+                                           var="a" itemLabel="#{a.typedesc}" itemValue="#{a.typeid}"/>
+                        </p:selectOneMenu>  
+                    </div>
+
+                    <div class="p-field">
+                        <p:outputLabel value="Loại" for="categoryid"/>
+                        <p:autoComplete id="categoryid" dropdown="true" value="#{dialog_nhomBean.diemDoNhom.categoryid}"
+                                        completeMethod="#{dialog_nhomBean.completeTextCategory}" scrollHeight="250"
+                                        itemLabel="categoryid" itemValue="categoryid"/>
+                    </div>
+
+                    <div class="p-field">
+                        <p:outputLabel for="maNhomDd">Mã</p:outputLabel>
+                        <p:inputText id="maNhomDd" readonly="#{!dialog_nhomBean.isAdd}"
+                                     value="#{dialog_nhomBean.diemDoNhom.maNhomDd}" required="true" />
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="tenNhomDd">Tên</p:outputLabel>
+                        <p:inputText id="tenNhomDd" required="true"
+                                     value="#{dialog_nhomBean.diemDoNhom.tenNhomDd}"/>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="stt">Số thứ tự</p:outputLabel>
+                        <p:inputText id="stt" value="#{dialog_nhomBean.diemDoNhom.stt}"/>
+                    </div>
+                    <div class="p-field">
+                        <p:outputLabel for="ulevelid">Sử dụng</p:outputLabel>
+                        <p:inputText id="ulevelid" value="#{dialog_nhomBean.diemDoNhom.ulevelid}"/>
+                    </div>
+                </p:outputPanel>
+
+                <div>
+                    <p:toolbar id="tlBar" style="background: #ffffff; color: #4B576F; border: none; padding-right: 0;">
+                        <f:facet name="right">
+                            <p:commandButton value="Lưu" icon="pi pi-check"
+                                             actionListener ="#{dialog_nhomBean.onSaveNhom()}"/>
+                        </f:facet>                        
+                    </p:toolbar>
+                </div>
+            </h:form>
+            <style type="text/css">
+                .p-field {
+                    background: #ffffff;
+                    color: #4B576F;
+                    font-weight: 700;
+                }
+
+            </style>
+        </h:body>
+    </f:view>
+</html>

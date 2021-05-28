@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        </h:head>
+        <h:body>
+            <h:form>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>  
+                </p:outputPanel>
+                <table style="margin-top: 10px;">
+                    <tr style="height: 25px">
+                        <td width="200px" align="right">
+                            <h:outputText value="#{userProp.lblUserID}"/>
+                        </td>
+                        <td >
+                            <h:inputText style="width: 200px;"
+                                         readonly="true" value="#{changePassBean.m_User}"/>
+                        </td>
+                    </tr>
+                    <tr style="height: 25px">
+                        <td width="110px" align="right">
+                            <h:outputText value="#{userProp.lblPassOld}"/>
+                        </td>
+                        <td >
+                            <h:inputSecret style="width: 200px;" redisplay="true" value="#{changePassBean.m_PassOld}"/>
+                        </td>
+                    </tr>
+                    <tr style="height: 25px">
+                        <td width="110px" align="right">
+                            <h:outputText value="#{userProp.lblPassNew}"/>
+                        </td>
+                        <td >
+                            <h:inputSecret style="width: 200px;" redisplay="true" value="#{changePassBean.m_PassNew}"/>
+                        </td>
+                    </tr>
+                    <tr style="height: 25px">
+                        <td width="110px" align="right">
+                            <h:outputText value="#{userProp.lblPassNewConfirm}"/>
+                        </td>
+                        <td >
+                            <h:inputSecret style="width: 200px;" redisplay="true" value="#{changePassBean.m_PassNewConfirm}"/>
+                        </td>
+                    </tr>
+                    <tr style="height: 50px">
+                        <td colspan="2">
+                            <center>
+                                <p:commandButton styleClass="btnHeight" value="#{userProp.btnAccept}" 
+                                                 actionListener="#{changePassBean.onBtnSaveChangePasswordClick}" update="msgInfo"/>
+                                <p:commandButton styleClass="btnHeight" value="#{userProp.btnExit}" onclick="parent.PF('dlgChangePass').hide();"/>
+                            </center>
+
+                        </td>
+
+                    </tr>
+                </table>                
+                <script type="text/javascript">
+                    function CloseChangePass() {
+                        window.location.href = "#{settingsBean.webRootPath}/eam/eamHome.jsf";
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>    
+</html>

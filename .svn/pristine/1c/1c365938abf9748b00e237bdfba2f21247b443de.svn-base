@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Object Grant </title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+        <f:loadBundle var="this" basename="main.web.shared.admin.prop.ObjGrantProp"/>
+        #{objGrantBean.assertObjRight()}
+    </h:head>
+    <h:body>
+    <h:form onsubmit="return false" id="formDlg">
+        <p:outputPanel id="msgInfo">
+            <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+            <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+        </p:outputPanel>
+        <!--
+        <div style="height: #{settingsProp.NormalDlgHeight - 100}px;overflow:auto; margin-top: 5px;margin-bottom: 5px">
+        -->
+            <h:panelGrid columns="3" cellpadding="5">
+                <h:outputText value="#{objGrantBean.m_objTypeName}"/>
+                <h:inputText readonly="true" value="#{objGrantBean.m_objID}" style="width: 150px"/>
+                <h:inputText readonly="true" value="#{objGrantBean.m_objDesc}" style="width: 500px"/>
+            </h:panelGrid>
+            <p:tabView id="tvGrantObj">
+                <p:tab title="#{objGrantBean.titleTabUser}">
+                    <p:dataTable emptyMessage="Không có dữ liệu" id="dtGrantUser" var="dt" value="#{objGrantBean.dsPqUserDataModel}" selection="#{objGrantBean.m_selArrUser}"
+                                 paginatorTemplate="{CurrebbLogDsReadUserntPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="5,10,15,20"
+                                 >
+                        <p:column selectionMode="multiple" />
+                        <p:column headerText="#{this.tuColID}">
+                            <h:outputText value="#{dt.id.userid}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tuColName}">
+                            <h:outputText value="#{dt.q_user.username}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColDesc}">
+                            <h:outputText value="#{dt.q_user.descript}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColRFull}">
+                            <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllFullUser}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllFull('User')}" update="dtGrantUser">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                <h:outputText value="#{this.tColRFull}" />
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_full}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColREdit}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllEditUser}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllEdit('User')}" update="dtGrantUser">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColREdit}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_edit}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColRDel}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllDeleteUser}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllDelete('User')}" update="dtGrantUser">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColRDel}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_delete}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton icon="addnew" value="#{this.btnAddUser}"
+                                     actionListener="#{objGrantBean.onAddObjRcv('User')}" update=":#{p:component('msgInfo')}" oncomplete="handleCmdAddObjRcvComplete(xhr, status, args)"/>
+                    <p:commandButton icon="delete" value="#{this.btnRemoveUser}"
+                                     actionListener="#{objGrantBean.onRemoveObjRcv('User')}" update=":#{p:component('msgInfo')} dtGrantUser"/>
+                </p:tab>
+                <p:tab title="#{objGrantBean.titleTabRole}">
+                    <p:dataTable emptyMessage="Không có dữ liệu" id="dtGrantRole" var="dt" value="#{objGrantBean.dsPqRoleDataModel}" selection="#{objGrantBean.m_selArrRole}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="5,10,15,20"
+                                 >
+                        <p:column selectionMode="multiple" />
+                        <p:column headerText="#{this.trColID}">
+                            <h:outputText value="#{dt.id.roleid}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColDesc}">
+                            <h:outputText value="#{dt.q_role.roledesc}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColRFull}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllFullRole}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllFull('Role')}" update="dtGrantRole">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColRFull}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_full}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColREdit}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllEditRole}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllEdit('Role')}" update="dtGrantRole">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColREdit}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_edit}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColRDel}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllDeleteRole}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllDelete('Role')}" update="dtGrantRole">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColRDel}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_delete}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton icon="addnew" value="#{this.btnAddRole}"
+                                     actionListener="#{objGrantBean.onAddObjRcv('Role')}" update=":#{p:component('msgInfo')}" oncomplete="handleCmdAddObjRcvComplete(xhr, status, args)"/>
+                    <p:commandButton icon="delete" value="#{this.btnRemoveRole}"
+                                     actionListener="#{objGrantBean.onRemoveObjRcv('Role')}" update=":#{p:component('msgInfo')} dtGrantRole"/>
+                </p:tab>
+                <p:tab title="#{objGrantBean.titleTabDept}">
+                    <p:dataTable emptyMessage="Không có dữ liệu" id="dtGrantDept" var="dt" value="#{objGrantBean.dsPqDeptDataModel}" selection="#{objGrantBean.m_selArrDept}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="5,10,15,20"
+                                 >
+                        <p:column selectionMode="multiple" />
+                        <p:column headerText="#{this.tdColID}">
+                            <h:outputText value="#{dt.id.deptid}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColDesc}">
+                            <h:outputText value="#{dt.s_dept.deptdesc}"/>
+                        </p:column>
+                        <p:column headerText="#{commonTMSProp.ColOrgID}">
+                            <h:outputText value="#{dt.s_dept.sOrganization.orgid}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColRFull}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllFullDept}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllFull('Dept')}" update="dtGrantDept">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColRFull}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_full}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColREdit}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllEditDept}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllEdit('Dept')}" update="dtGrantDept">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColREdit}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_edit}"/>
+                        </p:column>
+                        <p:column headerText="#{this.tColRDel}">
+                             <f:facet name="header">
+                                 <p:selectBooleanCheckbox value="#{objGrantBean.m_bAllDeleteDept}">
+                                     <p:ajax event="valueChange" listener="#{objGrantBean.onCheckAllDelete('Dept')}" update="dtGrantDept">
+                                     </p:ajax>
+                                 </p:selectBooleanCheckbox>
+                                 <h:outputText value="#{this.tColRDel}"/>
+                             </f:facet>
+                            <p:selectBooleanCheckbox value="#{dt.r_delete}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton icon="addnew" value="#{this.btnAddDept}"
+                                     actionListener="#{objGrantBean.onAddObjRcv('Dept')}" update=":#{p:component('msgInfo')}" oncomplete="handleCmdAddObjRcvComplete(xhr, status, args)"/>
+                    <p:commandButton icon="delete" value="#{this.btnRemoveDept}"
+                                     actionListener="#{objGrantBean.onRemoveObjRcv('Dept')}" update=":#{p:component('msgInfo')} dtGrantDept"/>
+                </p:tab>
+            </p:tabView>
+        <!--
+        </div>
+        -->
+        <br/>
+        <p:commandButton icon="save" value="#{commonMessages.btnSave}"
+                         actionListener="#{objGrantBean.onSaveAll}" update=":#{p:component('msgInfo')}"/>
+        <p:commandButton icon="cancel" onclick="parent.closeDlgAssignObjRight()" value="#{commonMessages.btnClose}"/>
+
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgChooseRightRcvObj" header="#{this.dlgHeaderObjRcvAddNew}" widgetVar="dlgChooseRightRcvObj" width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" modal="true"
+                  onHide="document.getElementById('ifrdlgChooseRightRcvObj').src='';">
+            <p:ajax event="close" listener="#{objGrantBean.onCloseDlgChooseRightRcvObj}" update=":formDlg:tvGrantObj"/>
+            <iframe id="ifrdlgChooseRightRcvObj" scrolling="auto"
+                    frameborder="true"
+                    width="100%" height="#{settingsProp.L3DlgHeight-40}"
+                    style="border: none;margin-bottom: 5px">
+            </iframe>
+            <p:commandButton value="#{commonMessages.btnChoonse}" actionListener="#{objGrantBean.onAcceptDlgRightRcvObj}" icon="accept" oncomplete="PF('dlgChooseRightRcvObj').hide();" />
+            <p:commandButton value="#{commonMessages.btnCancel}" icon="cancel" oncomplete="PF('dlgChooseRightRcvObj').hide();" />
+        </p:dialog>
+    </h:form>
+        
+    <script type="text/javascript">
+       function handleCmdAddObjRcvComplete(xhr, status, args) {
+          // alert(args.Method);
+            switch (args.Method)
+            {
+                case 'User':
+                    var f = document.getElementById('ifrdlgChooseRightRcvObj');
+                    f.src = "../dialog/dlgUser.jsf";
+                    PF('dlgChooseRightRcvObj').show();
+                    break;
+                case 'Role':
+                    var f = document.getElementById('ifrdlgChooseRightRcvObj');
+                    f.src = "../dialog/dlgRole.jsf";
+                    PF('dlgChooseRightRcvObj').show();
+                    break;
+                case 'Dept':
+                    var f = document.getElementById('ifrdlgChooseRightRcvObj');
+                    f.src = "../dialog/dlgDept.jsf";
+                    PF('dlgChooseRightRcvObj').show();
+                    break;
+            }
+        }
+    </script>
+    </h:body>
+</html>
+

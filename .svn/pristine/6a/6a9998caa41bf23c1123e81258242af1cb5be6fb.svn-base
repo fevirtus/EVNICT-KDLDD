@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+            <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+        </h:head>
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #FFFFFF">
+            <h:form onsubmit="return false" id="CreateForm">
+                <p:growl id="messages" showDetail="true" />   
+                <p:outputPanel id="manage-content" class="ui-fluid">
+                    <div class="p-grid">
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="orgidRef">Đơn vị quản lý</p:outputLabel>
+                            <p:inputText id="orgidRef" value="#{dialog_nhomDiemDoBean.diemDo.orgidRef}"/>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="NhomDD">Nhóm</p:outputLabel>
+                            <br/>
+                            <p:selectOneMenu id="NhomDD" value="#{dialog_nhomDiemDoBean.nhomDDSelected.maNhomDd}" 
+                                             style="" filterMatchMode="contains" filter="true">
+                                <f:selectItems value="#{dialog_nhomDiemDoBean.listTenAndMaDD}"
+                                               var="a" itemLabel="#{a.tenNhomDd}" itemValue="#{a.maNhomDd}"/>
+                            </p:selectOneMenu>  
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="maDiemdo">Mã điểm đo</p:outputLabel>
+                            <p:inputText id="maDiemdo" readonly="#{!dialog_nhomDiemDoBean.isAdd}"
+                                         value="#{dialog_nhomDiemDoBean.diemDo.maDiemdo}" required="true"/>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="tenDiemdo">Tên điểm đo</p:outputLabel>
+                            <p:inputText id="tenDiemdo" value="#{dialog_nhomDiemDoBean.diemDo.tenDiemdo}"/>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="maLoaiDd">Loại điểm đo</p:outputLabel>
+                            <br/>
+                            <p:selectOneMenu id="maLoaiDd" value="#{dialog_nhomDiemDoBean.loaiDDSelected.maLoaiDd}" 
+                                             style="" filterMatchMode="contains" filter="true">
+                                <f:selectItems value="#{dialog_nhomDiemDoBean.listLoaiDD}"
+                                               var="b" itemLabel="#{b.tenLoaiDd}" itemValue="#{b.maLoaiDd}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="maTcDd">Tính chất</p:outputLabel>
+                            <br/>
+                            <p:selectOneMenu id="maTcDd" value="#{dialog_nhomDiemDoBean.tcDDSelected.maTcDd}" 
+                                             style="" filterMatchMode="contains" filter="true">
+                                <f:selectItems value="#{dialog_nhomDiemDoBean.listTcDD}"
+                                               var="c" itemLabel="#{c.tenTcDd}" itemValue="#{c.maTcDd}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="ulevelid">Cấp điện áp</p:outputLabel>
+                            <br/>
+                            <p:selectOneMenu id="ulevelid" value="#{dialog_nhomDiemDoBean.ulevelSelected.ulevelid}" 
+                                             style="" filterMatchMode="contains" filter="true">
+                                <f:selectItems value="#{dialog_nhomDiemDoBean.listUlevel}"
+                                               var="d" itemLabel="#{d.ulevelid}" itemValue="#{d.uleveldesc}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="ngayVh">Ngày hiệu lực</p:outputLabel>
+                            <p:calendar id="ngayVh" value="#{dialog_nhomDiemDoBean.diemDo.ngayVh}"
+                                        showOn="button" showButtonPanel="true" required="true"/>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="itVh">Ít vận hành</p:outputLabel>
+                            <p:inputText id="itVh" value="#{dialog_nhomDiemDoBean.diemDo.itVh}"/>
+                        </div>
+                        <div class="p-field p-col-6">
+                            <p:outputLabel for="trangThai">Trạng thái</p:outputLabel>
+                            <p:inputText id="trangThai" value="#{dialog_nhomDiemDoBean.diemDo.trangThai}"/>
+                        </div>
+                    </div>
+                </p:outputPanel>
+                <p:toolbar id="tlBar" style="border: none; padding: 0; background: #ffffff;">
+                    <f:facet name="right">
+                        <p:commandButton value="Lưu" icon="pi pi-check" 
+                                         actionListener ="#{dialog_nhomDiemDoBean.onSaveDiemdo}"/>
+                    </f:facet>
+                </p:toolbar>               
+            </h:form>
+            <style type="text/css">
+                .p-field {
+                    background: #ffffff;
+                    color: #4B576F;
+                    font-weight: 700;
+                    margin-bottom: 0;
+                }
+
+            </style>
+        </h:body>
+    </f:view>
+</html>

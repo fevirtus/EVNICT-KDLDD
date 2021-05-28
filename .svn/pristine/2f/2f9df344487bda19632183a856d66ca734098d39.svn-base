@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            #{reportFormBean.assertFuncRight('04.01.03')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{reportFormBean.renderedFuncEdit('04.01.03')}">
+                        <p:commandButton id="btnNew" disabled="#{reportFormBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{reportFormBean.onAddNewDetail}"
+                                         oncomplete="document.getElementById('formDlg:txtID').focus();"/>
+                        <p:commandButton id="btnUpdate" disabled="#{reportFormBean.disabledSaveData}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{reportFormBean.onSaveDetail}" />
+                        <p:commandButton id="btnDel" disabled="#{reportFormBean.disabledDeleteData}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{assetProp.msgComfirmDeleteMeter}');"
+                                         actionListener="#{reportFormBean.onDeleteDetail}"/>
+
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="5">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                             disabled="#{reportFormBean.m_bFirst}"
+                                             icon="resultset_first" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnFirst}"
+                                             actionListener="#{reportFormBeann.onNavigatorFirst}"/>
+                            <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                             disabled="#{reportFormBean.m_bPrevious}"
+                                             icon="resultset_previous" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnPrevious}"
+                                             actionListener="#{reportFormBean.onNavigatorPrevious}"/>
+                            <p:commandButton id="btnNext" styleClass="btnHeight"
+                                             disabled="#{reportFormBean.m_bNext}"
+                                             icon="resultset_next" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnNext}"
+                                             actionListener="#{reportFormBean.onNavigatorNext}"/>
+                            <p:commandButton id="btnLast" styleClass="btnHeight"
+                                             disabled="#{reportFormBean.m_bLast}"
+                                             icon="resultset_last" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnLast}"
+                                             actionListener="#{reportFormBean.onNavigatorLast}"/>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar> 
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">
+                    <p:focus/>
+                    <table style="margin-top: 10px;">
+                        <tr style="height: 25px">
+                            <td width="110px" align="right">
+                        <h:outputText value="Mẫu báo cáo*"
+                                      styleClass="#{reportFormBean.style_TxtReportID}"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtID" style="width: 180px;" onkeydown="return KeyEnter(event);"
+                                     readonly="true"
+                                     value="#{reportFormBean.m_S_Report_Form.rptformid}"/>
+                        </td>
+                        <td width="110px" align="right">
+                        <h:outputText value="Stt"/>
+                        </td>
+                        <td >
+                        <h:inputText style="width: 50px;" onkeydown="return KeyEnter(event);"
+                                     value="#{reportFormBean.m_S_Report_Form.rptformord}"/>
+                        </td>
+                        <td>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Sử dụng" style="color: blue;"/>
+                        <h:selectBooleanCheckbox id="chbActive" value="#{reportFormBean.m_S_Report_Form.enable}"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td width="110px" align="right">
+                        <h:outputText value="Tên mẫu báo cáo*"
+                                      styleClass="#{reportFormBean.style_TxtReportID}"/>
+                        </td>
+                        <td colspan="3">
+                        <h:inputText style="width: 350px;" onkeydown="return KeyEnter(event);"
+                                     value="#{reportFormBean.m_S_Report_Form.rptformdesc}"/>
+                        </td>
+                        <td>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Mặc định" style="color: blue;"/>
+                        <h:selectBooleanCheckbox id="chbDefault" value="#{reportFormBean.m_S_Report_Form.defaultform}"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td width="110px" align="right">
+                        <h:outputText value="Ghi chú"/>
+                        </td>
+                        <td colspan="3">
+                        <h:inputText style="width: 350px;" onkeydown="return KeyEnter(event);"
+                                     value="#{reportFormBean.m_S_Report_Form.note}"/>
+                        </td>
+
+                        </tr>
+                        <tr style="height: 25px">
+                            <td colspan="5" width="110px" align="middle">
+                                <h:outputText value="Đối với các tham số có [kiểu chọn] để hiện thị tên lên mẫu báo cáo thì tham số truyền vào sẽ là : TENCOT_DESC" />
+                            </td>
+                            
+                        </tr>
+                        <tr style="height: 25px">                           
+                            <td colspan="5" width="110px" align="middle">
+                                <h:outputText value="Ví dụ: lấy tên kiểu thiết bị có Tên cột là TYPEID thì tên hiển thị sẽ là TYPEID_DESC" />
+                            </td>
+                        </tr>
+
+                    </table>
+                    <style type="text/css">
+                        .ui-fileupload
+                        {
+                            width: 300px;
+                            height: 200px;
+                        }
+                        .ui-fileupload-buttonbar
+                        {
+                            width: 554px; 
+                            border:1px solid #A6C9E2 !important;
+                        }
+                        .ui-fileupload-content
+                        {
+                            width: 560px;
+                            margin-top: 0px;
+                            height: 50px;
+                            overflow-y: scroll;
+                        }
+                        .ui-panel
+                        {
+                            border: none !important;
+                        }
+                    </style>
+                    <p:panel>
+                        <table style="margin-top: 10px; width: 100%" >                            
+                            <tr >
+                                <td>
+                            <p:fileUpload  listener="#{reportFormBean.onImageUpload}" mode="advanced" 
+                                          disabled="#{reportFormBean.disabledDeleteData}"
+                                          dragDropSupport="false"
+                                          label="#{commonMessages.btnChooseFile_Unicode}" cancelLabel="#{commonMessages.btnDelete}" uploadLabel="#{commonMessages.btnUpload}"
+                                          update="messages" sizeLimit="1000000" fileLimit="3" allowTypes="/(\.|\/)(xls|xlsx)$/" />
+
+                            <p:growl id="messages" showDetail="true"/>
+                            </td>
+                            </tr>                            
+                        </table>                        
+                    </p:panel>
+
+
+                    <!-- Vùng người thay đổi-->
+                    <p:outputPanel id="pnlUser">
+                        <table width="98%" style="margin-top: 5px;">
+                            <tr>
+                                <td align="left">
+                            <h:graphicImage url="./../../images/user/user_add.png"/>
+                            <h:outputText value=" #{commonMessages.lblUserCreate}: "/>
+                            <h:outputText id="lblUserCreate" value="#{reportFormBean.m_S_Report_Form.userCrId}"/>
+                            <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                            <h:outputText id="lblDateCreate" value="#{reportFormBean.m_S_Report_Form.userCrDtime}">
+                                <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                            </h:outputText>
+                            </td>
+                            <td align="right">
+                            <h:graphicImage url="./../../images/user/user_edit.png"/>
+                            <h:outputText value=" #{commonMessages.lblUserUpdate}: "/>
+                            <h:outputText id="lblUserUpdate" value="#{reportFormBean.m_S_Report_Form.userMdfId}"/>
+                            <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                            <h:outputText id="lblDateUpdate" value="#{reportFormBean.m_S_Report_Form.userMdfDtime}">
+                                <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                            </h:outputText>
+                            </td>
+                            </tr>
+                        </table>
+                    </p:outputPanel>
+                </p:outputPanel>
+
+
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgChonFile" widgetVar="dlgChonFile"
+                          width="800" height="400" closable="true" modal="true"
+                          header="Cập nhật file từ máy trạm" resizable="false">
+                    <p:ajax event="close"/>
+                    <p:panel>
+                        <h:outputText value=""/>
+                        <table>
+                            <tr>
+                                <td>
+                            <p:fileUpload mode="advanced" multiple="true" update="msgInfo"
+                                          label="Chọn file" cancelLabel="Xóa" uploadLabel="Tải lên"
+                                          listener="#{lib_Item_DetailsBean.onImageUpload}"
+                                          widgetVar="fuUpload" />
+
+                            </td>
+                            </tr>
+                        </table>
+                    </p:panel>
+                    <br/><center>
+                        <p:commandButton icon="closebtn" value="#{commonMessages.btnClose}" onclick="PF('dlgChonFile').hide();
+                                return false;"/></center>
+                </p:dialog>
+                <script type="text/javascript">
+
+
+
+                    function KeyEnterSelectReportGroup(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectReportGroup(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    function OpenSelectReportGroup(filterValue) {
+                        var f = document.getElementById('ifrSelectReportGroup');
+                        if (f) {
+                            var url = "./../dialog/dlgReportGroup.jsf";
+                            var temp = '?';
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgSelectReportGroup').show();
+                        }
+                        return false;
+                    }
+
+                    function KeyEnterSelectUom(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectUom(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

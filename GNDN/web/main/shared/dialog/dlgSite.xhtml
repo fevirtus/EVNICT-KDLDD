@@ -1,0 +1,176 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:ajaxStatus style="width:16px;height:16px;">
+                    <f:facet name="start">
+                        <h:graphicImage value="/images/ajaxloading.gif" />
+                    </f:facet>
+
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogProp"
+                              var="dlgProp" />
+                <p:dataTable emptyMessage="Không có dữ liệu" var="site" id="dtSite" value="#{siteDialog.dsS_SiteForGrid}"
+                              paginator="true" rows="10"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" widgetVar="dtSite" rowIndexVar="#{site.siteid}">
+                    <p:column headerText="Chọn" style="text-align: center;">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{siteDialog.bCheckAll}" rendered="#{siteDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{siteDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{site.bChecked}" id="chk">
+                             <p:ajax listener="#{siteDialog.updateSite}" />
+<!--                            <p:ajax event="valueChange" listener="{siteDialog.updateSite}" update=":formDlg:dtSite"/>
+                            <f:param name="siteid" value="{site.siteid}"/>-->
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="siteid" headerText="#{dlgProp.siteid}" filterBy="#{site.siteid}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="#{dlgProp.siteid}"/><br/>
+                            <h:inputText id="test" onkeydown="return press(event);" style="width: 100%"/>
+                        </f:facet>
+                        <h:outputText value="#{site.siteid}"/>
+                    </p:column>
+                    <p:column id="sitedesc" headerText="#{dlgProp.desc}" filterBy="#{site.sitedesc}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="#{dlgProp.desc}"/><br/>
+                            <h:inputText id="test1" onkeydown="return press1(event);" style="width: 100%"/>
+                        </f:facet>
+                        <h:outputText value="#{site.sitedesc}"/>
+                    </p:column>
+                    <p:column id="site_parentid" headerText="#{dlgProp.parentid}" filterBy="#{site.siteidParent}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="#{dlgProp.parentid}"/><br/>
+                            <h:inputText id="test2" onkeydown="return press2(event);" style="width: 100%"/>
+                        </f:facet>
+                        <h:outputText value="#{site.siteidParent}" />
+                    </p:column>
+                    <p:column headerText="#{dlgProp.status}" style="text-align: center">
+                        <p:selectBooleanCheckbox disabled="true" value="#{site.active}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+        function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtSite:siteid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtSite:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtSite.update = "chk rowIndexVar";
+                dtSite.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtSite:site_parentid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtSite:test2');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtSite.update = "chk rowIndexVar";
+                dtSite.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtSite:sitedesc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtSite:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtSite.update = "chk rowIndexVar";
+                dtSite.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+      function  init()
+       {
+           if(!#{siteDialog.isPostBack})
+           {
+               if ("#{siteDialog.initFilter}" != "")
+               {
+                   var oFilter;
+                   oFilter=document.getElementById('formDlg:dtSite:siteid_filter');
+//                   var oDesc;
+//                   oDesc=document.getElementById('formDlg:dtSite:sitedesc_filter');
+//                   var oParent;
+//                   oParent=document.getElementById('formDlg:dtSite:site_parentid_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtSite:test');
+                   if (oFilter){
+                       oFilter.value= '#{siteDialog.initFilter}';
+                       oTest.value= '#{siteDialog.initFilter}';
+                       dtSite.filter();
+                   }
+//                   oFilter.onkeyup = null;
+//                   oFilter.onkeydown = function(event) {return EnterFilter(event); };
+//                   oDesc.onkeyup = null;
+//                   oDesc.onkeydown = function(event) {return EnterFilter(event); };
+//                   oParent.onkeyup = null;
+//                   oParent.onkeydown = function(event) {return EnterFilter(event); };
+               };
+            }
+       }
+       function EnterFilter(event){
+             if (event.keyCode == 13){
+                 dtSite.filter();
+                 return false;
+             }
+             return true;
+       }
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtSite:siteid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

@@ -1,0 +1,184 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package vanhanh.ejb;
+
+import dulieuthuthap.MHistoryChiso;
+import dulieuthuthap.MHistorySanluong;
+import evnit.util.common.VanHanhCommonBL;
+import vanhanh.remote.IDuLieuThuThapRemote;
+import java.awt.Cursor;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
+import main.entity.shared.admin.Q_Org_Grant_User;
+import main.entity.shared.system.S_Assets;
+import javax.ejb.Stateless;
+
+/**
+ *
+ * @author Admin
+ */
+@Stateless
+public class DuLieuThuThapBL extends VanHanhCommonBL implements IDuLieuThuThapRemote {
+
+    //getting primary data
+    @Override
+    public List<Q_Org_Grant_User> getAllOrgGrantUser() {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getAllOrgGrantUser", Q_Org_Grant_User.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+
+            storedProcedure.execute();
+            List<Q_Org_Grant_User> lst = storedProcedure.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<S_Assets> getAllOrganization() {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getAllOrganization", S_Assets.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+
+            storedProcedure.execute();
+            List<S_Assets> lst = storedProcedure.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<MHistoryChiso> getAllHistoryChiSo() {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getAllHistoryChiSo", MHistoryChiso.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+
+            storedProcedure.execute();
+            List<MHistoryChiso> lst = storedProcedure.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<MHistorySanluong> getAllHistorySanLuong() {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getAllHistorySanLuong", MHistorySanluong.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+
+            storedProcedure.execute();
+            List<MHistorySanluong> lst = storedProcedure.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    //end of getting primary data
+
+    @Override
+    public List<S_Assets> getAllOrgByUserId(String userId) {
+        try {
+            List<S_Assets> result = new ArrayList<>();
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getAllOrgByUserId", S_Assets.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+            storedProcedure.registerStoredProcedureParameter("C_USERID", String.class, ParameterMode.IN);
+
+            storedProcedure.setParameter("C_USERID", userId);
+            storedProcedure.execute();
+            List<S_Assets> lst = storedProcedure.getResultList();
+
+            if (lst.stream().anyMatch(item -> item.getOrlevel() == 1)) {
+                for (S_Assets item1 : lst) {
+                    if (item1.getOrlevel() == 2 || item1.getOrlevel() == 1) {
+                        result.add(item1);
+                    }
+                }
+                return result;
+            } else if (lst.stream().anyMatch(item -> item.getOrlevel() == 2)) {
+                for (S_Assets item1 : lst) {
+                    if (item1.getOrlevel() == 2 || item1.getOrlevel() == 3) {
+                        result.add(item1);
+                    }
+                }
+                return result;
+            } else if (lst.stream().anyMatch(item -> item.getOrlevel() == 3)) {
+                return result;
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public int getCountTotalChiSoDD(int thang, int nam, String orgId) {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getCountTotalChiSoDD", MHistoryChiso.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+            storedProcedure.registerStoredProcedureParameter("C_MONTH", Integer.class, ParameterMode.IN);
+            storedProcedure.registerStoredProcedureParameter("C_YEAR", Integer.class, ParameterMode.IN);
+            storedProcedure.registerStoredProcedureParameter("C_ORGID", String.class, ParameterMode.IN);
+
+            storedProcedure.setParameter("C_MONTH", thang);
+            storedProcedure.setParameter("C_YEAR", nam);
+            storedProcedure.setParameter("C_ORGID", orgId);
+            storedProcedure.execute();
+            List<MHistoryChiso> listChiSo = storedProcedure.getResultList();
+            int count = listChiSo.size();
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public int getCountChiSoThuThapDD(int thang, int nam, String orgId) {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.getCountChiSoThuThapDD", MHistoryChiso.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+            storedProcedure.registerStoredProcedureParameter("C_MONTH", Integer.class, ParameterMode.IN);
+            storedProcedure.registerStoredProcedureParameter("C_YEAR", Integer.class, ParameterMode.IN);
+            storedProcedure.registerStoredProcedureParameter("C_ORGID", String.class, ParameterMode.IN);
+
+            storedProcedure.setParameter("C_MONTH", thang);
+            storedProcedure.setParameter("C_YEAR", nam);
+            storedProcedure.setParameter("C_ORGID", orgId);
+            storedProcedure.execute();
+            List<MHistoryChiso> listChiSo = storedProcedure.getResultList();
+            int count = listChiSo.size();
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public List<Object> test() {
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("VANHANH.test", Object.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+
+            storedProcedure.execute();
+            List<Object> lst = storedProcedure.getResultList();
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}

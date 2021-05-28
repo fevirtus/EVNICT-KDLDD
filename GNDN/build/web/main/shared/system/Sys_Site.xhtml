@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{sys_SiteBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+                #{sys_SiteBean.assertFuncRight('02.0101')}
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{msgs.title_site}" />
+                </h:panelGroup>
+                <p:toolbar style="margin-bottom: 5px;">
+                    <p:toolbarGroup align="left" rendered="#{sys_SiteBean.renderedFuncEdit('02.0101')}">
+                        <p:commandButton id="btnNew" styleClass="btnHeight" icon="addnew" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         onclick="OpenSiteDetail('');"/>
+                        <p:commandButton id="btnUpdate" styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate} #{commonMessages.hkUpdate}"
+                                         actionListener="#{sys_SiteBean.onEditSite}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         update="msgInfo dlgConfirmDelContent" actionListener="#{sys_SiteBean.onDeleteSiteStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left">
+                        <p:separator/>
+                        <p:commandButton icon="shortcut" title="#{commonMessages.btnAddShortcut}" styleClass="btnHeight"
+                                         onclick="showDlgAddShortcut('04','02.0101')"/>
+                    </p:toolbarGroup>
+                </p:toolbar>      
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{sys_SiteBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="confirmDel').hide();reApplyFilterGrd();"
+                                     actionListener="#{sys_SiteBean.onDeleteSiteEnd}" update="dtSite msgInfo" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtSite" paginator="true" rows="10"
+                             value="#{sys_SiteBean.s_SiteDataModel}"
+                             selection="#{sys_SiteBean.arrSelectSite}"
+                             widgetVar="dtSite" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="10,20,30,40,50">
+                    <p:column selectionMode="multiple" style="text-align: center;"/>
+                    <p:column style="text-align: center;">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                         actionListener="#{sys_SiteBean.onOpenSiteCmdClick}" oncomplete="OpenSiteDetail('#{s.siteid}');"/>
+                    </p:column>
+                    <p:column id="cmid" style="width:150px"
+                              headerText="#{msgs.main_grd_id_site}"
+                              filterBy="#{s.siteid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.siteid}"/>
+                    </p:column>
+                    <p:column style="padding-left: #{s.paddingLeft}px; width:300px"
+                              headerText="#{msgs.main_grd_desc_site}"
+                              filterBy="#{s.sitedesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.sitedesc}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.main_grd_orgid_site}" style="width:300px"
+                              filterBy="#{s.sOrganization.orgdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.sOrganization.orgdesc}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.main_grd_siteid_parent_site}" 
+                              filterBy="#{s.sSiteidParent.sitedesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.sSiteidParent.siteid}"/>
+                    </p:column>                    
+                    <p:column headerText="#{msgs.main_grd_active_site}" style="text-align: center;"
+                              filterBy="#{s.active}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.active}" disabled="true"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <ui:include src="../../shared/incShortcut.xhtml"/>
+                <!-- Vùng dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenSiteDetail" widgetVar="dlgOpenSiteDetail" header="#{msgs.detail_Header_site}"
+                          width="#{settingsProp.MainDlgWidth}" height="450"
+                          onHide="document.getElementById('frSiteDetail').src=''"
+                          closable="true" modal="true" resizable="false">
+                    <p:ajax event="close" listener="#{sys_SiteBean.onCloseSiteDetail}" oncomplete="reApplyFilterGrd();" update="dtSite"/>
+                    <iframe id="frSiteDetail" scrolling="no"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'Edit':
+                                    OpenSiteDetail(args.siteid);
+                                    break;
+                                case 'Delete':
+                                      PF('confirmDel').show();
+                                    break;                                
+                            }
+                        }
+                    }
+                    function OpenSiteDetail(siteid) {
+                        var f = document.getElementById('frSiteDetail');
+                        if(siteid)
+                            f.src = "../system/Sys_Site_details.jsf?SITEID=" + siteid;
+                        else
+                            f.src = "../system/Sys_Site_details.jsf";
+                        PF('dlgOpenSiteDetail').show();
+                    }
+                        
+                    function reApplyFilterGrd()
+                    {
+                        if (!#{settingsProp.FilterWhenCloseDlg})
+                        return;
+                        dtSite.filter();
+                    }
+                </script>
+                <style type="text/css">
+                    .hasDatepicker {
+                        width: 100px;
+                    }
+                </style>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

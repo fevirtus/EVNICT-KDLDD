@@ -1,0 +1,68 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <style type="text/css">
+                .col1ss {
+                    text-align: right;
+                }
+
+                .col2ss {
+                    text-align: left;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:ajaxStatus style="width:16px;height:16px;">
+                    <f:facet name="start">
+                        <h:graphicImage value="/images/ajaxloading.gif" />
+                    </f:facet>
+
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogCopyUsrHpProp" var="dlgProp" />
+                <p:outputPanel id="msgInfo">
+                    <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    <!--<p:messages id="msgThis" showDetail="true"/>-->
+                </p:outputPanel>
+                <h:panelGrid columns="2" columnClasses="col1ss, col2ss">
+                    <h:outputText value="#{dlgProp.lbHomepage}"/>
+                    <p:selectOneMenu value="#{copyUserHomepageDialog.m_homepageID}">
+                        <f:selectItems value="#{copyUserHomepageDialog.dsHomepage}" var="hp" itemLabel="#{hp.homepagedesc}" itemValue="#{hp.homepageid}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="#{dlgProp.lbUserSource}"/>
+                    <p:selectOneMenu value="#{copyUserHomepageDialog.m_userIDSource}">
+                        <f:selectItems value="#{copyUserHomepageDialog.dsUser}" var="us" itemLabel="#{us.userIDName}" itemValue="#{us.userid}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="#{dlgProp.lbUserDest}"/>
+                    <p:selectOneMenu value="#{copyUserHomepageDialog.m_userIDDest}">
+                        <f:selectItems value="#{copyUserHomepageDialog.dsUserWithCheckAdmin}" var="us" itemLabel="#{us.userIDName}" itemValue="#{us.userid}"/>
+                    </p:selectOneMenu>
+
+                </h:panelGrid>
+                <br/>
+                <h:panelGroup>
+                    <p:commandButton icon="savecopy" value="#{dlgProp.btnCopy}" actionListener="#{copyUserHomepageDialog.onCopy}" update="@([id$=msgInfo])"
+                                     />
+                    <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="parent.hideDlgCopyUsrHomepage();" />
+                </h:panelGroup>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+ 
+    </script>
+</html>

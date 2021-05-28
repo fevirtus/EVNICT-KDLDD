@@ -1,0 +1,326 @@
+/*header footer background: mới test, chưa dùng
+.hfbg {
+    background: url(../images/bg.gif) repeat-x;
+    color: #444444;
+}
+
+/*Sửa lại từ 25 lên 32 cho phiên bản PrimeFace 3.0.M3 để cùng độ cao menu Thao tác khác*/
+.btnHeight {
+    height: 30px;    
+}
+.btnHeightCombo {
+    height: 20px;
+}
+/* Data Editing */
+.home {
+    background-image: url(../images/DataEditing/home.png) !important;    
+}
+.notonoffline {
+    background-image: url(../images/DataEditing/notonoff.png) !important;    
+}
+.offline {
+    background-image: url(../images/DataEditing/offline.png) !important;    
+}
+.online {
+    background-image: url(../images/DataEditing/online.png) !important;    
+}
+.view {
+    background-image: url(../images/DataEditing/view.png) !important;    
+}
+.setting {
+    background-image: url(../images/DataEditing/settings.png) !important;    
+}
+.save {
+    background-image: url(../images/DataEditing/save.gif) !important;    
+}
+.savecopy {
+    background-image: url(../images/DataEditing/savecopy.png) !important;
+}
+.copy {
+    background-image: url(../images/DataEditing/copy.png) !important;
+}
+.addnew {
+    background-image: url(../images/DataEditing/addnew.gif) !important;
+}
+.multifilesadd {
+    background-image: url(../images/DataEditing/multifiles_add.png) !important;
+}
+.edit {
+    background-image: url(../images/DataEditing/edit.gif) !important;
+}
+.delete {
+    background-image: url(../images/DataEditing/delete.gif) !important;
+}
+.accept {
+    background-image: url(../images/DataEditing/check.gif) !important;
+}
+.cancel {
+    background-image: url(../images/DataEditing/cancel.gif) !important;
+}
+.closebtn {
+    background-image: url(../images/DataEditing/cancel.gif) !important;
+}
+.addnewgroup {
+    background-image: url(../images/DataEditing/folder_add.png) !important;
+}
+.editgroup {
+    background-image: url(../images/DataEditing/folder_edit.png) !important;
+}
+.deletegroup {
+    background-image: url(../images/DataEditing/folder_delete.png) !important;
+}
+.add {
+    background-image: url(../images/DataEditing/add.png) !important;
+}
+.remove {
+    background-image: url(../images/DataEditing/remove.png) !important;
+}
+.docyes {
+    background-image: url(../images/DataEditing/docyes.png) !important;
+}
+.docno {
+    background-image: url(../images/DataEditing/docno.png) !important;
+}
+.changestatus {
+    background-image: url(../images/DataEditing/changestatus.png) !important;
+}
+
+.addlastmeterreading {
+    background-image: url(../images/DataEditing/addlastmeterreading.png) !important;
+}
+
+.check {
+    background-image: url(../images/DataEditing/check.GIF) !important;
+}
+
+.uncheck {
+    background-image: url(../images/DataEditing/unchecked.GIF) !important;
+}
+
+.option {
+    background-image: url(../images/DataEditing/option.png) !important;
+}
+
+/*Cat dien*/
+
+.delay {
+    background-image: url(../images/DataEditing/manage.png) !important;
+}
+
+.approval {
+    background-image: url(../images/DataEditing/check.png) !important;
+}
+
+/* resultset change */
+.resultset_next {
+    background-image: url(../images/Arrow/resultset_next.png) !important;
+}
+.resultset_previous {
+    background-image: url(../images/Arrow/resultset_previous.png) !important;
+}
+.resultset_first {
+    background-image: url(../images/Arrow/resultset_first.png) !important;
+}
+.resultset_last {
+    background-image: url(../images/Arrow/resultset_last.png) !important;
+}
+
+/* order move row */
+.moverow_first {
+    background-image: url(../images/Arrow/moverow_first.png) !important;
+}
+.moverow_up {
+    background-image: url(../images/Arrow/moverow_up.png) !important;
+}
+.moverow_down {
+    background-image: url(../images/Arrow/moverow_down.png) !important;
+}
+.moverow_last {
+    background-image: url(../images/Arrow/moverow_last.png) !important;
+}
+
+.moverow_left {
+    background-image: url(../images/Arrow/arrow_left.png) !important;
+}
+.moverow_right {
+    background-image: url(../images/Arrow/arrow_right.png) !important;
+}
+
+/* find */
+.find {
+    background-image: url(../images/find.gif) !important;
+}
+
+.search {
+    background-image: url(../images/search.png) !important;
+}
+.search_advance {
+    background-image: url(../images/search_advance.png) !important;
+}
+.search_prev {
+    background-image: url(../images/search_prev.png) !important;
+}
+
+.zoomadd {
+    background-image: url(../images/zoomadd.png) !important;
+}
+
+/* execute */
+.execute {
+    background-image: url(../images/Arrow/execute.png) !important;
+}
+
+/* file */
+.excel {
+    background-image: url(../images/File/excel.gif) !important;
+}
+
+/* collection */
+.plus {
+    background-image: url(../images/plus.gif) !important;
+}
+.minus {
+    background-image: url(../images/minus.gif) !important;
+}
+
+/* system */
+.copy {
+    background-image: url(../images/system/copy.png) !important;
+}
+.cut {
+    background-image: url(../images/system/cut.png) !important;
+}
+.paste {
+    background-image: url(../images/system/paste.png) !important;
+}
+.open {
+    background-image: url(../images/system/open.png) !important;
+}
+.redo {
+    background-image: url(../images/system/redo.png) !important;
+}
+.undo {
+    background-image: url(../images/system/undo.png) !important;
+}
+.upload {
+    background-image: url(../images/system/fileUpload.gif) !important;
+}
+.download {
+    background-image: url(../images/system/download.png) !important;
+}
+
+/* User */
+.group_key {
+    background-image: url(../images/user/group_key.png) !important;
+}
+
+.group_go {
+    background-image: url(../images/user/group_go.png) !important;
+}
+
+/* other */
+.forecast {
+    background-image: url(../images/Func/forecast.png) !important;
+}
+.table {
+    background-image: url(../images/table.png) !important;
+}
+.treeview {
+    background-image: url(../images/treeview.png) !important;
+}
+
+.org {
+    background-image: url(../images/org.png) !important;
+}
+
+.site {
+    background-image: url(../images/site.png) !important;
+}
+.site_sel {
+    background-image: url(../images/site_sel.png) !important;
+}
+
+.shortcut {
+    background-image: url(../images/Func/shortcut.png) !important;
+}
+
+.reginfo {
+    background-image: url(../images/system/reginfo.png) !important;
+}
+
+.changestatus {
+    background-image: url(../images/DataEditing/changestatus.png) !important;
+}
+
+/*Thêm 2 trạng thái công việc */
+.complete {
+    background-image: url(../images/DataEditing/complete.gif) !important;
+}
+
+.close {
+    background-image: url(../images/DataEditing/close.gif) !important;
+}
+
+.open_tdt {
+    background-image: url(../images/Func/open_tdt.png) !important;
+}
+
+.print {
+    background-image: url(../images/Func/print.png) !important;
+}
+
+.save_template {
+    background-image: url(../images/Func/save_template.png) !important;
+}
+
+.restore {
+    background-image: url(../images/Func/restore.jpg) !important;
+}
+structIcon {
+    background-image: url(../images/DataEditing/folder_add.png) !important;
+    height:16px;
+    width:16px;
+}
+.hangmucIcon {
+    background-image: url(../images/table.png) !important;
+    height:16px;
+    width:16px;
+}
+.ui-icon-star { width: 16px; height: 16px; background-image: url(../images/home.png); }
+.list {
+    background-image: url(../images/Func/list.PNG) !important;
+}
+.detail {
+    background-image: url(../images/Func/detail.PNG) !important;
+}
+.addTDT {
+    background-image: url(../images/Func/addNew.png) !important;
+}
+.deleteTDT {
+    background-image: url(../images/Func/delete.png) !important;
+}
+.nhomTS {
+    background-image: url(../images/Func/dg.png) !important;
+}
+
+.manual {
+    background-image: url(../images/DataEditing/manual.png) !important;
+}
+
+.calcul {
+    background-image: url(../images/DataEditing/calcul.png) !important;
+}
+
+.calendar {
+    background-image: url(../images/DataEditing/calendar.png) !important;
+}
+
+.order {
+    background-image: url(../images/DataEditing/order.png) !important;
+}
+.tram {
+    background-image: url(../images/Tram.png) !important;
+}
+.panelTop .ui-layout-unit-content{
+    background:transparent url(../images/panelTop.jpg) no-repeat top right;    
+}

@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pm="http://primefaces.org/mobile">
+    <f:view contentType="text/html" renderKitId="PRIMEFACES_MOBILE">
+        <h:head>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/defaultM.css" />
+        </h:head>
+        <h:body>
+            <h:form>                
+                <p:growl id="msgInfo" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <p:outputLabel for="txtUsername" value="#{userProp.lblUserID}" />
+                <h:inputText id="txtUsername" style="width: 200px;"
+                             readonly="true" value="#{changePassBean.m_User}"/>
+                <p:outputLabel for="txtPassOld" value="#{userProp.lblPassOld}" />
+                <h:inputSecret id="txtPassOld" style="width: 200px;" redisplay="true" value="#{changePassBean.m_PassOld}"/>
+                <p:outputLabel for="txtNewPass" value="#{userProp.lblPassNew}" />
+                <h:inputSecret id="txtNewPass" style="width: 200px;" redisplay="true" value="#{changePassBean.m_PassNew}"/>
+                <p:outputLabel for="txtNewPassConfirm" value="#{userProp.lblPassNewConfirm}" />
+                <h:inputSecret id="txtNewPassConfirm" style="width: 200px;" redisplay="true" value="#{changePassBean.m_PassNewConfirm}"/>
+                <p:commandButton styleClass="btnHeight" value="#{userProp.btnAccept}" 
+                                 actionListener="#{changePassBean.onBtnSaveChangePasswordClick}" update="msgInfo"/>
+                <p:commandButton styleClass="btnHeight" value="#{userProp.btnExit}" onclick="parent.PF('dlgChangePass').hide();"/>           
+                <script type="text/javascript">
+                    function CloseChangePass() {
+                        window.location.href = "#{settingsBean.webRootPath}/eam/eamHomeM.jsf";
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>    
+</html>

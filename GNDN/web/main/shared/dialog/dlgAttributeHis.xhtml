@@ -1,0 +1,179 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            <script type="text/javascript" src="#{request.contextPath}/script/common.js"></script>
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">   
+                <!-- Thêm xử lý locale ngày tháng do phiên bản 3.0.M3 chưa tự làm được -->
+                <script type="text/javascript">
+                    setLocale('#{settingsBean.dateLocale}');
+                </script>
+                <p:growl id="messages" showDetail="true" life="2000" />
+                <p:toolbar id="tbrHeader" style="width: 98%">
+                    <p:toolbarGroup align="left">
+                        <h:panelGrid columns="5" cellpadding="0" cellspacing="0" style="margin: 0px;padding-left: 0px;">
+                            <p:commandButton styleClass="btnHeight" icon="addnew" title="Thêm" actionListener="#{attributeHisDialog.onAddNew}" disabled="#{attributeHisDialog.m_disableButton}" update="messages cldDTime valS valNum valSDatetime valSCheck cbx pgCB" oncomplete="handleCmdComplete(xhr, status, args)" />
+                            <p:commandButton styleClass="btnHeight" icon="save" title="Sửa" actionListener="#{attributeHisDialog.onEdit}" disabled="#{attributeHisDialog.m_disableButton}" update="messages cldDTime valS valNum valSDatetime valSCheck cbx pgCB" oncomplete="handleCmdComplete(xhr, status, args)" />
+                            <p:commandButton styleClass="btnHeight" icon="delete" title="Xóa" actionListener="#{attributeHisDialog.onBtnDelClick}" disabled="#{attributeHisDialog.m_disableButton}" update=":formDlg:dtValHis messages"/>
+                            <p:commandButton value="Ghi bản ghi mới nhất vào hiện tại" actionListener="#{attributeHisDialog.onBtnSaveNewestClick}" disabled="#{attributeHisDialog.m_disableButton}" update=":formDlg:dtValHis messages"/>
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="val" id="dtValHis"
+                             value="#{attributeHisDialog.tableModel}" style="width: 98%"
+                             selection="#{attributeHisDialog.selectedValHis}"
+                             scrollHeight="90"
+                             scrollable="true"                              
+                             widgetVar="dtValHis" paginatorPosition="bottom">
+                    <p:column width="45" selectionMode="multiple" style="text-align: center;"/>
+                    <p:column id="time" width="130" headerText="Thời điểm" filterBy="#{val.dtime}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Thời điểm"/><br/>
+                        </f:facet>
+                        <h:outputText value="#{val.dtime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column id="value" headerText="Giá trị" filterBy="#{val.valS}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Giá trị"/><br/>
+                        </f:facet>
+                        <h:outputText value="#{val.valSObject}" rendered="#{attributeHisDialog.isnum}">
+                            <f:converter converterId="DoubleConverter"/>
+                        </h:outputText>
+                        <p:selectBooleanCheckbox value="#{val.valSObject}" rendered="#{attributeHisDialog.isbool}" />
+                        <h:outputText value="#{val.valSObject}" rendered="#{attributeHisDialog.isdate}">
+                            <f:convertDateTime locale="#{settingsBean.dateLocale}"
+                                               pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                        <h:outputText value="#{val.valSObject}" rendered="#{attributeHisDialog.isstring or attributeHisDialog.iscbbox or attributeHisDialog.other}">
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlg" widgetVar="dlg" header="Chi tiết bản ghi lịch sử" closable="true" width="450" position="center center">
+                    <p:ajax event="close" listener="#{attributeHisDialog.onDialogClose}"  update=":formDlg:dtValHis messages"/>
+                    <h:panelGrid columns="2">
+                        <h:panelGroup id="pgVal" >
+                            <table border="0" >
+                                <tr>
+                                    <td><h:outputLabel value="Thời điểm" />
+                                    </td>
+                                    <td> <p:calendar id="cldDTime" locale="#{settingsBean.dateLocale}" pattern="#{settingsProp.DateTimeMask}" value="#{attributeHisDialog.m_date}"
+                                                     converterMessage="#{commonMessages.msgDateInvalid}" size="20" timeZone="#{settingsBean.timeZone}" immediate="true">
+                                        </p:calendar>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="100">
+                                        <h:outputLabel value="Giá trị" />
+                                    </td>
+                                    <td width="380">
+                                        <h:inputText id="valS" value="#{attributeHisDialog.m_value}" rendered="#{attributeHisDialog.isstring}">
+                                        </h:inputText>
+                                        <h:inputText id="valNum" value="#{attributeHisDialog.m_valueDouble}" rendered="#{attributeHisDialog.isnum}">
+                                            <f:converter converterId="DoubleConverter"/>
+                                        </h:inputText>
+                                        <p:selectBooleanCheckbox id="valSCheck" rendered="#{attributeHisDialog.isbool}" value="#{attributeHisDialog.m_valueCheck}"/><h:outputLabel id="lbltest" value="Sử dụng" rendered="#{attributeHisDialog.isbool}"/>
+                                        <p:calendar id="valSDatetime" locale="#{settingsBean.dateLocale}" pattern="#{settingsProp.DateTimeMask}" value="#{attributeHisDialog.m_valueDate}"
+                                                    converterMessage="#{commonMessages.msgDateInvalid}" size="20" rendered="#{attributeHisDialog.isdate}">
+                                        </p:calendar>
+                                        <p:autoComplete id="cbx" rendered="#{attributeHisDialog.iscbbox or attributeHisDialog.other}" dropdown="true" value="#{attributeHisDialog.m_value}"
+                                                        size="30" completeMethod="#{attributeHisDialog.complete}" >
+                                        </p:autoComplete>
+                                        <h:panelGroup id="pgCB" rendered="#{attributeHisDialog.iscbbox or attributeHisDialog.other}">
+                                            <!--                                            <h:inputText id="txtValue" value="{attributeHisDialog.m_value}" style="width:25%" />-->
+                                            <p:commandButton id="cmdOpendlgListQuery" icon="ui-icon-search" style="width:10%" onclick="openDialogOther();"/>
+                                            <!--                                            <h:inputText id="txtDesc" value="{attributeHisDialog.m_otherDesc}" style="width:55%" />-->
+                                        </h:panelGroup>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <p:selectBooleanCheckbox value="#{attributeHisDialog.isedit}"/>
+                                        <h:outputLabel value="Ghi vào hiện tại"/>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </h:panelGroup>
+                        <!--                        oncomplete="PF('dlg').hide();"-->
+                        <f:facet name="footer">
+                            <p:commandButton value="Ghi" actionListener="#{attributeHisDialog.onBtnSaveClick}"  update=":formDlg:dtValHis messages"/>
+                            <p:commandButton value="Hủy bỏ" onclick="PF('dlg').hide();"/>
+                        </f:facet>
+                        <h:inputHidden id="abc" value="#{attributeHisDialog.m_action}" />
+                    </h:panelGrid>
+                </p:dialog>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgListQuery" widgetVar="dlgListQuery"
+                          width="600" height="350"
+                          closable="true" header="Chọn dữ liệu">
+                    <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtListQuery" paginator="true"
+                                 value="#{attributeHisDialog.listFromQuery}"
+                                 rows="10"  selection="#{attributeHisDialog.selectionListQuery}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20" widgetVar="dtListQuery" paginatorPosition="bottom">
+                        <p:column selectionMode="multiple" style="text-align: center;"/>
+                        <p:column headerText="#{commonTMSProp.ColID}"
+                                  filterBy="#{s.colStr1}" filterMatchMode="contains" filterStyle="width:90%">
+                            <h:outputText value="#{s.colStr1}"/>
+                        </p:column>
+                        <p:column headerText="#{commonTMSProp.ColDesc}"
+                                  filterBy="#{s.colStr2}" filterMatchMode="contains" filterStyle="width:90%">
+                            <h:outputText value="#{s.colStr2}"/>
+                        </p:column>
+                    </p:dataTable>                    
+                    <h:panelGroup>
+                        <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{attributeHisDialog.onChooseListQuery}" oncomplete="PF('dlgListQuery').hide();" update="cbx"/>
+                        <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgListQuery').hide();
+                                return false;"  />
+                    </h:panelGroup>
+
+                </p:dialog>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+        function openDialog(val) {
+            var f = document.getElementById('formDlg:abc');
+            f.value = val;
+            PF('dlg').show();
+        }
+        function handleCmdComplete(xhr, status, args) {
+            if (args.Method)
+            {
+                switch (args.Method)
+                {
+                    case 'AddNew':
+                        openDialog('add');
+                        break;
+                    case 'Edit':
+                        openDialog('save');
+                        break;
+                }
+            }
+        }
+        function openDialogOther() {
+            PF('dlgListQuery').show();
+        }
+    </script>
+</html>
+

@@ -1,0 +1,158 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:ajaxStatus style="width:16px;height:16px;">
+                    <f:facet name="start">
+                        <h:graphicImage value="/images/ajaxloading.gif" />
+                    </f:facet>
+
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+                <f:loadBundle basename="evnit.tms.web.eam.dialog.prop.DialogProp"
+                                var="dlgProp" />
+                    <p:dataTable emptyMessage="Không có dữ liệu" var="report" id="dtReportGroup" value="#{reportGroupDialogBean.lstReportGroup}"
+                              paginator="true" rows="10"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="50,100,200" widgetVar="dtReportGroup">
+                    <p:column headerText="Chọn" style="text-align: center;">
+                     
+                        <p:selectBooleanCheckbox value="#{report.bChecked}" >
+                            <p:ajax listener="#{reportGroupDialogBean.updateReportGroup}" />
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="reportgroupid" headerText="Nhóm báo cáo" 
+                              filterBy="#{report.rptgroupid}" 
+                              filterMatchMode="contains" filterStyle="width:90%;"> 
+                        <h:outputText value="#{report.rptgroupid}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="#{dlgProp.desc}" 
+                              filterBy="#{report.rptgroupdesc}" 
+                              filterMatchMode="contains" filterStyle="width:90%;"> 
+                        <h:outputText value="#{report.rptgroupdesc}" />
+                    </p:column>
+                    <p:column id="parentid" headerText="#{dlgProp.parentid}" 
+                              filterBy="#{report.rptgroupid_parent}" 
+                              filterMatchMode="contains" filterStyle="width:90%;"> 
+                        <h:outputText value="#{report.rptgroupid_parent}" />
+                    </p:column>                    
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+      function  init()
+       {
+           if(!#{reportGroupDialogBean.isPostBack})
+           {
+               if ("#{reportGroupDialogBean.initFilter}" != "")
+               {
+                   var oFilter;
+                   oFilter=document.getElementById('formDlg:dtReportGroup:reportgroupid_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtReportGroup:test');
+                   if (oFilter){
+                       oFilter.value= '#{reportGroupDialogBean.initFilter}';
+                       oTest.value= '#{reportGroupDialogBean.initFilter}';
+                       dtReportGroup.filter()
+                   }
+               };
+            }
+       }
+       function press(e){
+            if(e.keyCode==13){
+                 var oFilter;
+                   oFilter=document.getElementById('formDlg:dtReportGroup:reportgroupid_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtReportGroup:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtReportGroup.update = "chk rowIndexVar";
+                dtReportGroup.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                 var oFilter;
+                   oFilter=document.getElementById('formDlg:dtReportGroup:desc_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtReportGroup:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtReportGroup.update = "chk rowIndexVar";
+                dtReportGroup.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                 var oFilter;
+                   oFilter=document.getElementById('formDlg:dtReportGroup:parentid_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtReportGroup:test2');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtReportGroup.update = "chk rowIndexVar";
+                dtReportGroup.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press3(e){
+            if(e.keyCode==13){
+                 var oFilter;
+                   oFilter=document.getElementById('formDlg:dtReportGroup:orgdesc_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtReportGroup:test3');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtReportGroup.update = "chk rowIndexVar";
+                dtReportGroup.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtReportGroup:reportgroupid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

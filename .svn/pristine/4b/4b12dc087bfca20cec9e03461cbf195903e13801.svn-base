@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.Func/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.Func/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            <f:loadBundle var="msgs" basename="main.web.shared.admin.prop.FunctionProp"/>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:toolbar id="tbrHeader" style="background: #ffffff;">
+                    <p:toolbarGroup align="left" rendered="#{sys_FunctionBean.renderedFuncEdit('01.02')}">
+                        <p:commandButton id="btnNewDetail" widgetVar="btnNewDetail" disabled="#{sys_Function_Details.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew"  title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         actionListener="#{sys_Function_Details.onAddNewFunction}" update="@form"/>
+                        <p:commandButton ajax="true" id="btnUpdateDetail" widgetVar="btnUpdateDetail" disabled="#{sys_Function_Details.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Function_Details.onSaveFunction}" />
+                        <p:commandButton ajax="true" id="btnDelDetail" widgetVar="btnDelDetail" disabled="#{sys_Function_Details.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete"  title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         onclick="return window.confirm('Bạn chắc chắn muốn xóa chức năng này?');"
+                                         actionListener="#{sys_Function_Details.onDeleteFunction}" />
+                        <p:commandButton ajax="false" value="Luồng công việc" onclick="parent.OpenFlowDialog('#{sys_Function_Details.function.functionid}')"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2" style="width: 280px">                            
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton ajax="true" id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first"  title="#{commonMessages.btnFirst}"
+                                                 disabled="#{sys_Function_Details.m_bFirst}"
+                                                 actionListener="#{sys_Function_Details.onNavigatorFirst}"/>
+                                <p:commandButton ajax="true" id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{sys_Function_Details.m_bPrevious}"
+                                                 icon="resultset_previous"  title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{sys_Function_Details.onNavigatorPrevious}"/>
+                                <p:commandButton ajax="true" id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{sys_Function_Details.m_bNext}"
+                                                 icon="resultset_next"  title="#{commonMessages.btnNext}"
+                                                 actionListener="#{sys_Function_Details.onNavigatorNext}"/>
+                                <p:commandButton ajax="true" id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{sys_Function_Details.m_bLast}"
+                                                 icon="resultset_last"  title="#{commonMessages.btnLast}"
+                                                 actionListener="#{sys_Function_Details.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>              
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlContent">
+                        <p:focus for="txtFuncID"/>
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="#{msgs.detail_LblFuncId}*"
+                                          styleClass="#{sys_Function_Details.style_TxtFuncID}"/>
+                            </td>
+                            <td >
+                            <p:inputText onfocus="this.select();" id="txtFuncID" style="width: 180px;"
+                                         readonly="#{sys_Function_Details.txtFuncIDReadOnly}"
+                                         value="#{sys_Function_Details.function.functionid}"/>
+                            </td>
+                            <td/>
+                            <td>
+                            <p:inputText onfocus="this.select();" id="txtFuncName" style="width: 350px;"
+                                         value="#{sys_Function_Details.function.functionname}"/>
+                            </td>
+
+                            <td width="110px" align="right" valign="middle">
+                            <h:outputText value="Trạng thái" style="color: blue;"/>
+                            <h:selectBooleanCheckbox id="chbActive" value="#{sys_Function_Details.function.enable}"/>
+                            </td>
+                            </tr>                            
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputText value="Chức năng cha" styleClass="#{sys_Function_Details.m_Style_TxtFuncParentID}"/>
+                            </td>
+                            <td >
+                            <p:inputText onfocus="this.select();" id="txtFuncIDParent" style="width: 180px;"
+                                         value="#{sys_Function_Details.parent.functionid}"
+                                         onkeydown="return KeyEnterSelectFunc(event, this);"/>
+                            </td>
+                            <td>
+                            <p:commandButton ajax="true" styleClass="btnHeight"
+                                             icon="ui-icon ui-icon-search" onclick="OpenFuncDialog()">
+                            </p:commandButton>
+                            </td>
+                            <td >
+                            <p:inputText onfocus="this.select();" id="txtFuncParentDesc" style="width: 350px;" disabled="true"
+                                         value="#{sys_Function_Details.parent.functionname}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Đường dẫn (Desktop)"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <p:inputText onfocus="this.select();" id="txtUrl" style="width: 99%;" value="#{sys_Function_Details.function.url}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Đường dẫn (Mobile)"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <p:inputText onfocus="this.select();" id="txtUrlMobile" style="width: 99%;" value="#{sys_Function_Details.function.urlMobile}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Liên kết ngoài"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isExt}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Liên kết khác"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isExtChild}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Đường dẫn khác"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <p:inputText onfocus="this.select();" id="txtUrlExtChild" style="width: 99%;" value="#{sys_Function_Details.function.urlExtChild}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Biểu tượng"/>
+                            </td>
+                            <td align="left" colspan="3">
+                                <table>
+                                    <tr>
+                                        <td width="150px">
+                                    <p:inputText onfocus="this.select();" id="txtIcon" style="width: 90%;" value="#{sys_Function_Details.function.icon}"/>
+                            </td>
+                            <td>
+                            <p:colorPicker value="#{sys_Function_Details.function.color}" />
+                            </td>
+                            </tr>
+                        </table>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="left" colspan="4">
+                                <table>
+                                    <tr>
+                                        <td align="right" width="150px">
+                                    <h:outputText value="Dùng chung"/>
+                                    </td>
+                                    <td valign="left">
+                                         <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isPUPLIC}"/>
+                                    </td>
+                                <td align="right">
+                                <h:outputText value="Bắt buộc đăng nhập"/>
+                                </td>
+                                <td align="left">
+                                <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isLogin}"/>
+                                </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                <h:outputText value="Hiển thị trên menu"/>
+                                </td>
+                                <td align="left">
+                                <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isMenu}"/>
+                                </td>
+                                <td align="right">
+                                <h:outputText value="Hỗ trợ thiết bị di động"/>
+                                </td>
+                                <td align="left">
+                                <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isMobile}"/>
+                                </td>
+                                </tr>
+                                <tr>
+                                    <td align="right">
+                                <h:outputText value="Luồng nghiệp vụ"/>
+                                </td>
+                                <td align="left">
+                                <h:selectBooleanCheckbox value="#{sys_Function_Details.function.isFlow}"/>
+                                </td>
+                        </tr>
+                        </table>
+                        </td>                        
+                        </tr>                        
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="Sử dụng hàm javascript"/>
+                        </td>
+                        <td align="left" colspan="3">
+                        <p:inputText onfocus="this.select();" style="width: 350px;"
+                                     value="#{sys_Function_Details.function.callFunction}"/>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="Stt"/>
+                        </td>
+                        <td align="left" colspan="3">
+                        <p:inputText onfocus="this.select();" style="width: 350px;"
+                                     value="#{sys_Function_Details.function.functionord}"/>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <fieldset>
+                                    <legend><h:outputLabel value="Phạm vi truy cập"/></legend>
+                                    <table>
+                                    <tr>
+                                        <td align="right">
+                                            <h:outputText value="Nội bộ"/>
+                                        </td>
+                                        <td align="left">
+                                        <h:selectBooleanCheckbox value="#{sys_Function_Details.function.authLocal}"/>
+                                        </td>
+                                        <td align="right">
+                                            <h:outputText value="Mạng ngoài"/>
+                                        </td>
+                                        <td align="left">
+                                        <h:selectBooleanCheckbox value="#{sys_Function_Details.function.authInternet}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                                </fieldset>                                
+                            </td>
+                        </tr>
+                        </table>
+
+                    </p:outputPanel>
+                    <!-- Dialog-->                    
+
+
+                    <script type="text/javascript">
+                        function OpenFuncDialog() {
+                            var f = document.getElementById('browserContent2');
+                            f.src = "./../../shared/dialog/dlgFunction.jsf?display=one";
+                            PF('dlgOpenFuncDialog').show();
+                        }
+                        function KeyEnterSelectFunc(event, control) {
+                            if (event.keyCode == 13) {
+                                if (control.id == "formDlg:txtFuncIDParent") {
+                                    OpenSelectFunc(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function OpenSelectFunc(filterValue) {
+                            var f = document.getElementById('browserContent2');
+                            if (f) {
+                                var url = "./../../shared/dialog/dlgFunction.jsf";
+                                var temp = "?";
+                                url = url + temp + "display=one";
+                                temp = '&amp;';
+                                if (filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgOpenFuncDialog').show();
+                            }
+                            return false
+                        }
+                    </script>
+                </div>
+                <p:dialog appendTo="@(body)" closeOnEscape="true"  id="dlgOpenFuncDialog" widgetVar="dlgOpenFuncDialog"
+                          width="650" height="#{settingsProp.L3DlgHeight}" closable="true"
+                          resizable="true" modal="false" header="Chọn chức năng">
+                    <iframe id="browserContent2" scrolling="auto"
+                            frameborder="true"
+                            width="100%" height="#{settingsProp.L3DlgHeight-50}"
+                            style="border: none">
+                    </iframe>
+                    <center>
+                        <p:commandButton ajax="true" icon="accept" value="Đồng ý" actionListener="#{sys_Function_Details.onAcceptFunctionClick}"
+                                         oncomplete="PF('dlgOpenFuncDialog').hide();" update="txtFuncIDParent txtFuncParentDesc"/>
+                        <p:commandButton ajax="true" icon="cancel" value="Hủy bỏ" onclick="PF('dlgOpenFuncDialog').hide();" />
+                    </center>
+                </p:dialog>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

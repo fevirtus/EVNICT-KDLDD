@@ -1,0 +1,16 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<script type="text/javascript">
+
+function stopRKey(evt) {
+  var evtobj = (evt) ? evt : ((event) ? event : null);
+  var node = (evtobj.target) ? evtobj.target : ((evtobj.srcElement) ? evtobj.srcElement : null);
+  var code=(evtobj.charCode)?evtobj.charCode: evtobj.keyCode;
+  //Disable Enter Key để không submit form khi đang ở text box
+  //if ((code == 13) &amp;&amp; (node.type=="text"))  {return false;}
+
+}
+
+document.onkeydown=stopRKey;
+</script>
+</ui:composition>

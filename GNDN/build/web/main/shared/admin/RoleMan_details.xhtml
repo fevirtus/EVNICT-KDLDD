@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.admin.prop.RoleManProp"/>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="form1">                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{roleMan_Details.renderedFuncEdit('01.03')}">
+                        <p:commandButton disabled="#{roleMan_Details.m_bAddNew}" styleClass="btnHeight"
+                                         
+                                         icon="addnew" ajax="false" title="#{commonMessages.btnAddNew}"
+                                         actionListener="#{roleMan_Details.onAddNewRole}" />
+                        <p:commandButton styleClass="btnHeight"
+                                         
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{roleMan_Details.onSaveRole}" />
+                        <p:commandButton styleClass="btnHeight" disabled="#{roleMan_Details.dtIsDisabledEditDataMain}"
+                                         icon="delete" ajax="false" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDeleteQRoleDetail}');"
+                                         actionListener="#{roleMan_Details.onDeleteRole}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                         icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                         disabled="#{roleMan_Details.m_bFirst}"
+                                         actionListener="#{roleMan_Details.onNavigatorFirst}"/>
+                        <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                         disabled="#{roleMan_Details.m_bPrevious}"
+                                         icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                         actionListener="#{roleMan_Details.onNavigatorPrevious}"/>
+                        <p:commandButton id="btnNext" styleClass="btnHeight"
+                                         disabled="#{roleMan_Details.m_bNext}"
+                                         icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                         actionListener="#{roleMan_Details.onNavigatorNext}"/>
+                        <p:commandButton id="btnLast" styleClass="btnHeight"
+                                         disabled="#{roleMan_Details.m_bLast}"
+                                         icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                         actionListener="#{roleMan_Details.onNavigatorLast}"/>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+
+                <div style="height: 400px;margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlContent">
+                        <table style="width: 100%">
+                            <tr style="height: 25px">
+                                <td width="80px" align="right">
+                                    <h:outputText value="#{msgs.RoleID}*"
+                                              styleClass="#{roleMan_Details.style_TxtCMID}"/>
+                                </td>
+                                <td align="left" colspan="2">
+                                    <h:inputText id="txtRoleID" style="width: 200px;"
+                                                 readonly="#{roleMan_Details.txtCMIDReadOnly}"
+                                                 value="#{roleMan_Details.role.roleid}"/>
+                                </td>
+                            </tr>
+
+                            <tr style="height: 25px">
+                                <td align="right">
+                                    <h:outputText value="#{msgs.RoleDesc}*"
+                                              styleClass="#{roleMan_Details.style_TxtCMID}"/>
+                                </td>
+                                <td align="left" colspan="2">
+                                    <h:inputText id="txtRoleDesc" style="width: 400px;"
+                                                 readonly="#{roleMan_Details.dtIsDisabled}"
+                                                 value="#{roleMan_Details.role.roledesc}"/>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="3"  align="left">
+                                    <h:outputText value="#{msgs.UserOfRole}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td/>
+                                <td valign="top" align="left" style="width:300px">
+                                    <h:selectManyListbox id="slbUser" style="width: 100%;" size="10"
+                                                         value="#{roleMan_Details.userIDSelected}">
+                                        <f:selectItems value="#{roleMan_Details.dsUserForListBox}"
+                                                       var="a" itemLabel="#{a.userid} - #{a.username}"
+                                                       itemValue="#{a.userid}"/>
+                                    </h:selectManyListbox>
+                                </td>
+                                <td align="left" valign="middle">
+                                    <h:panelGrid columns="1">
+                                        <p:commandButton id="btnDeleteUser" icon="delete" value="#{commonMessages.btnDelete}" style="width: 70px"
+                                                         update="slbUser cbUser"
+                                                         actionListener="#{roleMan_Details.onRemoveUserInListBox}"/>
+                                    </h:panelGrid>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td/>
+                                <td align="left">
+                                    <p:selectOneMenu id="cbUser" value="#{roleMan_Details.selectedUser}"
+                                                              style="width: 100%">
+                                        <f:selectItems value="#{roleMan_Details.dsUserForCombo}"
+                                                       var="a" itemLabel="#{a.userid} - #{a.username}"
+                                                               itemValue="#{a.userid}"/>
+                                    </p:selectOneMenu>
+                                </td>
+                                <td align="left">
+                                    <h:panelGrid columns="1">
+                                        <p:commandButton id="btnAddUser" icon="addnew" value="#{commonMessages.btnAdd}" style="width: 70px"
+                                                         update="slbUser msgInfo cbUser"
+                                                         actionListener="#{roleMan_Details.onAddUserInListBox}"/>
+                                    </h:panelGrid>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="left" valign="middle" colspan="3">
+                                    <h:outputText value="#{msgs.active} " style="color: blue;"/>
+                                    <h:selectBooleanCheckbox id="chbActive" value="#{roleMan_Details.role.enable}"/>
+                                    <h:outputText value="#{msgs.isfix} " style="color: blue;"/>
+                                    <h:selectBooleanCheckbox id="chbIsFix" value="#{roleMan_Details.role.isfix}" disabled="true"/>
+                                </td>
+                            </tr>                            
+                        </table>
+                    </p:outputPanel> 
+                    
+                    <script type="text/javascript">
+                        function OpenCompanyDialog() {
+                            var f = document.getElementById('browserContent2');
+                                f.src = "./../../shared/dialog/dlgCompany.jsf?display=one";
+                            PF('dlgOpenCompanyDialog').show();
+                        }
+                        function KeyEnterSelectAsset(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == "form1:txtAssetID_Org"){
+                                    OpenSelectAsset(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function OpenOrgDialog() {
+                            var f = document.getElementById('browserContent1');
+                                f.src = "./../../shared/dialog/dlgOrganization.jsf?display=one";
+                            PF('dlgOpenOrgDialog').show();
+                        }
+                        function handleCmdComplete(xhr, status, args) {
+                             if (args.Method)
+                             {
+                                switch (args.Method)
+                                {
+                                    case 'AddNew':
+                                        var f = document.getElementById('frContactDetail');
+                                        f.src = "../system/Sys_Contact_details.jsf?COMPID="+args.compid;
+                                        PF('dlgOpenContactDetail').show();
+                                        break;
+                                    case 'Edit':
+                                        OpenContactDetail(args.contactid);
+                                        break;
+                                    case 'Delete':
+                                          PF('confirmDel').show();
+                                        break;
+                                }
+                             }
+                        }
+                        function OpenContactDetail(contactid) {
+                                var f = document.getElementById('frContactDetail');                                
+                                if(contactid)
+                                    f.src = "../system/Sys_Contact_details.jsf?CONTACTID=" + contactid;
+                                PF('dlgOpenContactDetail').show();
+                        }
+                        
+                    </script>
+                </div>
+                
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

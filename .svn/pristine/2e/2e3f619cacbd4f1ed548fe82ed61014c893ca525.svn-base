@@ -1,0 +1,61 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package dulieuthuthap.ejb;
+
+import diemdo.remote.IDiemDoRemote;
+import dulieuthuthap.remote.IDuLieuThuThapRemote;
+import java.awt.Cursor;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ejb.Stateless;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
+import main.ejb.shared.common.BaseCommonBL;
+import main.entity.shared.system.S_Assets;
+
+/**
+ *
+ * @author Admin
+ */
+@Stateless
+public class DuLieuThuThapBL extends BaseCommonBL implements IDuLieuThuThapRemote  {
+    
+    @Override
+    public List<S_Assets> getAllOrgByUserId(String userId){
+        List<S_Assets> lst = new ArrayList<>();
+        try {
+            StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("DULIEUTHUTHAP.getAllOrgByUserId", S_Assets.class);
+            storedProcedure.registerStoredProcedureParameter("PCUR", Cursor.class, ParameterMode.REF_CURSOR);
+            storedProcedure.registerStoredProcedureParameter("C_USERID", String.class, ParameterMode.IN);
+            
+            storedProcedure.setParameter("C_USERID", userId);            
+            storedProcedure.execute();
+            lst = storedProcedure.getResultList();
+            
+            List<S_Assets> lst_temp = new ArrayList<>();
+            if (lst.stream().anyMatch(item -> item.getOrlevel()== 1)) {
+                for (S_Assets item1 : lst) {
+                    if (item1.getOrlevel() == 2 || item1.getOrlevel() == 1) {
+                        lst_temp.add(item1);
+                    }
+                }
+                return lst_temp;
+            }
+            else if (lst.stream().anyMatch(item -> item.getOrlevel() == 2)) {
+                for (S_Assets item1 : lst) {
+                    if (item1.getOrlevel() == 2 || item1.getOrlevel() == 3) {
+                        lst_temp.add(item1);
+                    }
+                }
+                return lst_temp;
+            }
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lst;
+    }
+}

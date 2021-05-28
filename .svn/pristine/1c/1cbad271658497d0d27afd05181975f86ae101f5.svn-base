@@ -1,0 +1,233 @@
+btnAdd=Th\u00eam
+btnAddNew=Th\u00eam m\u1edbi
+btnResetNew=Kh\u1edfi t\u1ea1o m\u1edbi
+btnView=Xem   
+btnViewUpdate=Xem/s\u1eeda
+btnDelete=X\u00f3a
+btnRemove=Lo\u1ea1i b\u1ecf
+btnUpdate=S\u1eeda
+btnSave=Ghi
+btnCancel=H\u1ee7y b\u1ecf
+btnAddNewGroup=Th\u00eam m\u1edbi nh\u00f3m
+btnViewGroup=Xem nh\u00f3m
+btnViewUpdateGroup=Xem/s\u1eeda nh\u00f3m
+btnDeleteGroup=X\u00f3a nh\u00f3m
+btnUpdateGroup=S\u1eeda nh\u00f3m
+btnInput=Nh\u1eadp
+btnCancelInput=D\u1eebng nh\u1eadp
+btnCancelAdd=D\u1eebng th\u00eam
+btnCancelUpdate=D\u1eebng s\u1eeda
+btnAccept=\u0110\u1ed3ng \u00fd
+btnChoonse=Ch\u1ecdn
+btnYes=C\u00f3   
+btnNo=Kh\u00f4ng
+btnExit=Tho\u00e1t
+btnClose=\u0110\u00f3ng
+btnOpen=M\u1edf
+btnOpenDialog=M\u1edf c\u1eeda s\u1ed5 ch\u1ecdn
+btnChooseFile=Chon file
+btnChooseFile_Unicode=Ch\u1ecdn file
+btnUpload=T\u1ea3i l\u00ean
+btnAssignRight = G\u00e1n quy\u1ec1n
+btnExec = Th\u1ef1c hi\u1ec7n
+btnExportFile = K\u1ebft xu\u1ea5t file
+btnAddShortcut = T\u1ea1o truy c\u1eadp nhanh ngo\u00e0i trang ch\u1ee7
+btnModifyAttr = C\u1eadp nh\u1eadt thu\u1ed9c t\u00ednh m\u1edf r\u1ed9ng
+btnAddFromID= Th\u00eam t\u1eeb m\u00e3
+btnSearch=T\u00ecm ki\u1ebfm
+#Hotkey
+hkAddNew=(Ctrl+Shift+M)
+hkUpdate=(Ctrl+Shift+S)
+hkDelete=(Ctrl+Shift+X)
+hkChangeStatus=(Ctrl+Shift+Z)
+
+#C\u00e1c n\u00fat/menu thao t\u00e1c panel
+btnPanelSetting = Thi\u1ebft l\u1eadp
+btnPanelMng = Qu\u1ea3n l\u00fd
+btnPanelMoveRemove = Di chuy\u1ec3n/g\u1ee1 b\u1ecf
+#Copy,paste
+btnCopy=Sao ch\u00e9p
+btnPaste=D\u00e1n
+msgCopyOf= B\u1ea3n sao c\u1ee7a
+msgCopyCompleteInfo=Sao ch\u00e9p th\u00e0nh c\u00f4ng @count b\u1ea3n ghi.
+#Di chuy\u1ec3n b\u1ea3n ghi b\u1ea3n ghi
+btnNext=B\u1ea3n ghi k\u1ebf ti\u1ebfp
+btnLast=B\u1ea3n ghi  cu\u1ed1i
+btnPrevious=B\u1ea3n ghi tr\u01b0\u1edbc
+btnFirst=B\u1ea3n ghi \u0111\u1ea7u
+#S\u1eafp x\u1ebfp b\u1ea3n ghi
+btnUp=L\u00ean
+btnDown=Xu\u1ed1ng
+btnMoveFirst=L\u00ean \u0111\u1ea7u
+btnMoveLast=Xu\u1ed1ng cu\u1ed1i
+btnMoveIn=Chuy\u1ec3n v\u00e0o
+btnMoveOut=Chuy\u1ec3n ra
+btnAddGroup=Th\u00eam nh\u00f3m
+btnDeleteGroup=X\u00f3a nh\u00f3m
+btnEditGroup=S\u1eeda nh\u00f3m
+btnDescriptGroup=M\u00f4 t\u1ea3 nh\u00f3m
+btnOtherAction = Thao t\u00e1c kh\u00e1c
+btnChangeStatus = Thay \u0111\u1ed5i tr\u1ea1ng th\u00e1i
+btnViewStatusHis = Xem l\u1ecbch s\u1eed \u0111\u1ed5i tr\u1ea1ng th\u00e1i
+btnDuplicateRecord = Sao ch\u00e9p nh\u00e2n \u0111\u00f4i b\u1ea3n ghi
+btnCheckAll = \u0110\u00e1nh d\u1ea5u t\u1ea5t c\u1ea3
+btnUnCheckAll = B\u1ecf \u0111\u00e1nh d\u1ea5u t\u1ea5t c\u1ea3
+btnSumReport = T\u1ed5ng h\u1ee3p b\u00e1o c\u00e1o
+
+grpInfoChange=Th\u00f4ng tin ng\u01b0\u1eddi thay \u0111\u1ed5i
+#Ti\u00eau \u0111\u1ec1 c\u00e1c c\u1eeda s\u1ed5
+headerDlgSelectOrg=Ch\u1ecdn \u0111\u01a1n v\u1ecb
+headerDlgSelectSite=Ch\u1ecdn khu v\u1ef1c
+headerDlgSelectCategory=Ch\u1ecdn ph\u00e2n lo\u1ea1i thi\u1ebft b\u1ecb, c\u00f4ng tr\u00ecnh
+headerDlgSelectDept=Ch\u1ecdn ph\u00f2ng ban
+headerDlgSelectAttributeGroup=Ch\u1ecdn nh\u00f3m thu\u1ed9c t\u00ednh
+headerDlgSelectCompany=Ch\u1ecdn c\u00f4ng ty
+headerDlgSelectAssetParent=Ch\u1ecdn thi\u1ebft b\u1ecb, c\u00f4ng tr\u00ecnh cha
+headerDlgSelectAsset=Ch\u1ecdn thi\u1ebft b\u1ecb, c\u00f4ng tr\u00ecnh
+headerDlgSelectRoute=Ch\u1ecdn b\u1ed9 thi\u1ebft b\u1ecb, c\u00f4ng tr\u00ecnh
+headerDlgSelectMeter=Ch\u1ecdn th\u00f4ng s\u1ed1
+headerDlgSelectMeterTemplate=Ch\u1ecdn b\u1ed9 th\u00f4ng s\u1ed1
+headerDlgInputTextLong=C\u1eadp nh\u1eadt m\u00f4 t\u1ea3 d\u00e0i
+headerDlgDelete=Kh\u1edfi t\u1ea1o x\u00f3a d\u1eef li\u1ec7u
+headerDlgSafeCollection=Ch\u1ecdn t\u1eadp h\u1ee3p an to\u00e0n
+headerDlgSafeHazard=Ch\u1ecdn c\u00e1c m\u1ed1i nguy hi\u1ec3m
+headerDlgSafePrecaution=Ch\u1ecdn c\u00e1c bi\u1ec7n ph\u00e1p an to\u00e0n
+headerDlgSelectUser=Ch\u1ecdn ng\u01b0\u1eddi d\u00f9ng
+headerDlgSelectRole=Ch\u1ecdn vai tr\u00f2/nh\u00f3m quy\u1ec1n
+headerDlgOpMeterTabGroup=Ch\u1ecdn nh\u00f3m b\u1ea3ng
+headerDlgExportFile=Ch\u1ecdn \u0111\u1ecbnh d\u1ea1ng xu\u1ea5t file
+headerDlgPrevent=Ch\u1ecdn thi\u1ebft l\u1eadp \u0111\u1ecbnh k\u1ef3
+headerDlgSelectLibItem=Ch\u1ecdn \u0111\u00ednh k\u00e8m t\u1eeb th\u01b0 vi\u1ec7n
+headerDlgSelectLibItem_Img=Ch\u1ecdn \u1ea3nh t\u1eeb th\u01b0 vi\u1ec7n
+headerDlgSelectAttItem_Img=Ch\u1ecdn \u1ea3nh t\u1eeb \u0111\u00ednh k\u00e8m
+headerDlgAttachInfo = Th\u00f4ng tin \u0111\u00ednh k\u00e8m
+headerDlgMeterGroup=Ch\u1ecdn nh\u00f3m th\u00f4ng s\u1ed1
+headerDlgMeterGroupParent=Ch\u1ecdn nh\u00f3m th\u00f4ng s\u1ed1 cha
+headerDlgUom=Ch\u1ecdn \u0111\u01a1n v\u1ecb t\u00ednh
+headerDlgValList=Ch\u1ecdn t\u1eadp gi\u00e1 tr\u1ecb
+headerDlgAssignObjRight = G\u00e1n quy\u1ec1n \u0111\u1ed1i t\u01b0\u1ee3ng
+headerDlgContact = Th\u00f4ng tin li\u00ean h\u1ec7
+headerDlgAjaxStatus=\u0110ang x\u1eed l\u00fd...
+
+#C\u00e1c label \u1ee9ng d\u1ee5ng
+lblTMSTitleNoSign=H\u1ec7 th\u1ed1ng qu\u1ea3n l\u00fd v\u00e0 thu th\u1eadp d\u1eef li\u1ec7u \u0111o \u0111\u1ebfm
+lblTMSYear = 2016
+lblTMSTitle=H\u1ec7 th\u1ed1ng qu\u1ea3n l\u00fd v\u00e0 thu th\u1eadp d\u1eef li\u1ec7u \u0111o \u0111\u1ebfm
+lblApp=Ph\u00e2n h\u1ec7
+lblFMG_Sign=QLNL
+lblFMG_Full=Qu\u1ea3n l\u00fd nhi\u00ean li\u1ec7u (QLNL)
+lblEAM_Sign=PMIS
+lblEAM_Full=H\u1ec7 th\u1ed1ng qu\u1ea3n l\u00fd v\u00e0 thu th\u1eadp d\u1eef li\u1ec7u \u0111o \u0111\u1ebfm
+#D\u1ef1 to\u00e1n: EsTiMate
+lblETM_Sign=DT
+lblETM_Full=D\u1ef1 to\u00e1n (DT)
+lblVersion Phi\u00ean b\u1ea3n V2020.07
+lblOrg=\u0110\u01a1n v\u1ecb
+lblChangePass=\u0110\u1ed5i m\u1eadt kh\u1ea9u
+lblExit=Tho\u00e1t
+lblChangeTheme=Khung m\u1ea7u
+#C\u00e1c label kh\u00e1c
+lblUser=Ng\u01b0\u1eddi d\u00f9ng
+lblUserCreate=Ng\u01b0\u1eddi t\u1ea1o
+lblUserUpdate=Ng\u01b0\u1eddi s\u1eeda
+lblUserInput=Ng\u01b0\u1eddi nh\u1eadp
+lblDate=ng\u00e0y
+lblExpAllData = K\u1ebft xu\u1ea5t t\u1ea5t c\u1ea3 d\u1eef li\u1ec7u
+lblExpPageData = K\u1ebft xu\u1ea5t trang d\u1eef li\u1ec7u
+lblBtnChoose = (B\u1ea5m n\u00fat "Ch\u1ecdn" \u0111\u1ec3 hi\u1ec3n th\u1ecb d\u1eef li\u1ec7u theo \u0111i\u1ec1u ki\u1ec7n ch\u1ecdn ho\u1eb7c c\u00e1c thay \u0111\u1ed5i sau khi th\u00eam/s\u1eeda/x\u00f3a)
+lblAuto = T\u1ef1 sinh
+
+#C\u00e1c message
+msgLoadDataError=L\u1ed7i \u0111\u1ecdc d\u1eef li\u1ec7u hi\u1ec3n th\u1ecb.
+msgNotEnoughDataInput=Ch\u01b0a nh\u1eadp \u0111\u1ee7 d\u1eef li\u1ec7u
+msgKhongTonTaiHeSoNhanCong=Kh\u00f4ng t\u1ed3n t\u1ea1i h\u1ec7 s\u1ed1 nh\u00e2n c\u00f4ng
+msgNotChooseRecord=Ch\u01b0a ch\u1ecdn h\u00e0ng d\u1eef li\u1ec7u
+msgChooseOneRecord=Xin vui l\u00f2ng ch\u1ecdn m\u1ed9t b\u1ea3n ghi.
+msgNotCheckRecord=Ch\u01b0a \u0111\u00e1nh d\u1ea5u h\u00e0ng d\u1eef li\u1ec7u
+msgDataInputError=L\u1ed7i nh\u1eadp d\u1eef li\u1ec7u
+msgNoDataToSave = Kh\u00f4ng c\u00f3 d\u1eef li\u1ec7u n\u00e0o c\u1ea7n ghi
+msgAddNewSuccess= \u0110\u00e3 th\u00eam m\u1edbi th\u00e0nh c\u00f4ng
+msgSaveSuccess=\u0110\u00e3 ghi th\u00e0nh c\u00f4ng
+msgDeleteSuccess=\u0110\u00e3 x\u00f3a th\u00e0nh c\u00f4ng
+msgSaveError=L\u1ed7i ghi d\u1eef li\u1ec7u
+msgDeleteError=Kh\u00f4ng th\u1ec3 x\u00f3a d\u1eef li\u1ec7u, c\u00f3 th\u1ec3 b\u1ea3n ghi \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng t\u1ea1i n\u01a1i kh\u00e1c
+msgTransactionAbort = X\u1eed l\u00fd thao t\u00e1c kh\u00f4ng th\u00e0nh c\u00f4ng, b\u1ea3n ghi c\u00f3 th\u1ec3 \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng t\u1ea1i n\u01a1i kh\u00e1c
+msgGenError=L\u1ed7i x\u1eed l\u00fd
+msgMoveRecordSuccess=\u0110\u00e3 di chuy\u1ec3n b\u1ea3n ghi th\u00e0nh c\u00f4ng
+msgMoveRecordError=L\u1ed7i di chuy\u1ec3n b\u1ea3n ghi
+msgMoveRecordErrorByOrdNull=Kh\u00f4ng th\u1ec3 di chuy\u1ec3n do m\u1ed9t trong hai b\u1ea3n ghi ch\u01b0a c\u00f3 STT
+msgDlgDelete=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u?
+msgDlgDeleteInfo=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc?
+msgDlgDeleteFolderInfo=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @nth\u01b0 m\u1ee5c ch\u1ecdn@desc? C\u00e1c th\u01b0 m\u1ee5c con s\u1ebd b\u1ecb x\u00f3a theo.
+msgComfirmDelete=B\u1ea1n c\u00f3 mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u \u0111\u00e3 ch\u1ecdn?
+msgRecord=b\u1ea3n ghi
+msgRecordNum=S\u1ed1 b\u1ea3n ghi
+msgRecordNotExist = B\u1ea3n ghi kh\u00f4ng c\u00f2n t\u1ed3n t\u1ea1i!
+msgIDContainSpecialChar = M\u00e3 nh\u1eadp kh\u00f4ng h\u1ee3p l\u1ec7, c\u00f3 ch\u1ee9a k\u00fd t\u1ef1 \u0111\u1eb7c bi\u1ec7t (';,|)!
+msgSaveToAction = B\u1ea1n c\u1ea7n ghi d\u1eef li\u1ec7u tr\u01b0\u1edbc khi ti\u1ebfp t\u1ee5c
+msgNotChooseFolder=Ch\u01b0a ch\u1ecdn th\u01b0 m\u1ee5c c\u1ea7n th\u00eam m\u1edbi t\u00e0i li\u1ec7u!
+msgDlgDeleteDT=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc? C\u00f3 th\u1ec3 c\u00e1c c\u1ea5u tr\u00fac, h\u1ea1ng m\u1ee5c con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteDTDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u? C\u00f3 th\u1ec3 c\u00e1c c\u1ea5u tr\u00fac, h\u1ea1ng m\u1ee5c con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteOrg=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc? C\u00f3 th\u1ec3 c\u00e1c \u0111\u01a1n v\u1ecb qu\u1ea3n l\u00fd c\u1ea5p con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteOrgDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u? C\u00f3 th\u1ec3 c\u00e1c \u0111\u01a1n v\u1ecb qu\u1ea3n l\u00fd c\u1ea5p con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteSite=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc? C\u00f3 th\u1ec3 c\u00e1c khu v\u1ef1c c\u1ea5p con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteSiteDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u? C\u00f3 th\u1ec3 c\u00e1c khu v\u1ef1c c\u1ea5p con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteDept=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc? C\u00f3 th\u1ec3 c\u00e1c ph\u00f2ng ban c\u1ea5p con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteDeptDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u? C\u00f3 th\u1ec3 c\u00e1c ph\u00f2ng ban c\u1ea5p con s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteComp=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc? C\u00f3 th\u1ec3 c\u00e1c c\u00f4ng ty c\u1ea5p con v\u00e0 c\u00e1c li\u00ean h\u1ec7 tr\u1ef1c thu\u1ed9c n\u00f3 s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteCompDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u? C\u00f3 th\u1ec3 c\u00e1c c\u00f4ng ty c\u1ea5p con v\u00e0 c\u00e1c li\u00ean h\u1ec7 tr\u1ef1c thu\u1ed9c n\u00f3 s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteKpi=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u @desc?
+msgDlgDeleteKpiDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u?
+msgDlgDeleteQRole=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc? C\u00f3 th\u1ec3 c\u00e1c nh\u00f3m quy\u1ec1n li\u00ean quan s\u1ebd b\u1ecb x\u00f3a theo.
+msgDlgDeleteQRoleDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u? C\u00f3 th\u1ec3 c\u00e1c nh\u00f3m quy\u1ec1n li\u00ean quan s\u1ebd b\u1ecb x\u00f3a theo.
+msgNotRightOnSite = B\u1ea1n kh\u00f4ng \u0111\u01b0\u1ee3c quy\u1ec1n thay \u0111\u1ed5i d\u1eef li\u1ec7u tr\u00ean khu v\u1ef1c
+msgNotRightOnOrg = B\u1ea1n kh\u00f4ng \u0111\u01b0\u1ee3c quy\u1ec1n thay \u0111\u1ed5i d\u1eef li\u1ec7u tr\u00ean \u0111\u01a1n v\u1ecb
+msgNotRightOnObj = B\u1ea1n kh\u00f4ng \u0111\u01b0\u1ee3c quy\u1ec1n th\u1ef1c hi\u1ec7n thao t\u00e1c tr\u00ean \u0111\u1ed1i t\u01b0\u1ee3ng
+msgNotAccessOnSite = B\u1ea1n kh\u00f4ng \u0111\u01b0\u1ee3c quy\u1ec1n truy c\u1eadp d\u1eef li\u1ec7u tr\u00ean khu v\u1ef1c
+msgNotAccessOnOrg = B\u1ea1n kh\u00f4ng \u0111\u01b0\u1ee3c quy\u1ec1n truy c\u1eadp d\u1eef li\u1ec7u tr\u00ean \u0111\u01a1n v\u1ecb
+msgNotAccessOnObj = B\u1ea1n kh\u00f4ng \u0111\u01b0\u1ee3c quy\u1ec1n truy c\u1eadp d\u1eef li\u1ec7u c\u1ee7a \u0111\u1ed1i t\u01b0\u1ee3ng
+msgDlgDeleteUom=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a @count h\u00e0ng d\u1eef li\u1ec7u@desc?
+msgDlgDeleteUomDetail=B\u1ea1n ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u?
+msgEditRootFolder=B\u1ea1n kh\u00f4ng th\u1ec3 s\u1eeda/x\u00f3a d\u1eef li\u1ec7u t\u1ea1i th\u01b0 m\u1ee5c g\u1ed1c n\u00e0y!
+msgAttGroupChoose = C\u1ea7n ch\u1ecdn nh\u00f3m b\u1eb1ng c\u00e1ch ch\u1ecdn h\u00e0ng ti\u00eau \u0111\u1ec1 nh\u00f3m!
+msgNotification = Th\u00f4ng b\u00e1o
+msgSessExpired = Phi\u00ean l\u00e0m vi\u1ec7c \u0111\u00e3 qu\u00e1 th\u1eddi gian ch\u1edd, h\u1ec7 th\u1ed1ng s\u1ebd t\u1ef1 \u0111\u1ed9ng b\u1eaft \u0111\u1ea7u l\u1ea1i trong v\u00f2ng 5s ho\u1eb7c b\u1ea1n <a href="tmsLogin.jsf">b\u1ea5m \u0111\u00e2y</a> \u0111\u1ec3 th\u1ef1c hi\u1ec7n ngay.
+msgAccessFuncNotGrant = Truy c\u1eadp ch\u1ee9c n\u0103ng ch\u01b0a \u0111\u01b0\u1ee3c quy\u1ec1n, h\u1ec7 th\u1ed1ng s\u1ebd t\u1ef1 \u0111\u1ed9ng b\u1eaft \u0111\u1ea7u l\u1ea1i trong v\u00f2ng 5s ho\u1eb7c b\u1ea1n <a href="tmsLogin.jsf">b\u1ea5m \u0111\u00e2y</a> \u0111\u1ec3 th\u1ef1c hi\u1ec7n ngay.
+msgLoginBack = B\u1ea5m \u0111\u00e2y \u0111\u1ec3 quay l\u1ea1i trang \u0111\u0103ng nh\u1eadp
+msgDeleteLogHis = B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a l\u1ecbch s\u1eed truy c\u1eadp?
+
+#confirm
+cfmDelete = B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n x\u00f3a d\u1eef li\u1ec7u?
+
+#check nh\u1eadp d\u1eef li\u1ec7u
+msgDateInvalid=Nh\u1eadp ng\u00e0y kh\u00f4ng h\u1ee3p l\u1ec7.
+msgDecimalInvalid=Nh\u1eadp s\u1ed1 kh\u00f4ng h\u1ee3p l\u1ec7.
+#msg gh\u00e9p t\u00ean label v\u1edbi c\u1ee5m n\u00e0y th\u00e0nh message ho\u00e0n ch\u1ec9nh
+msgValIsDate = ph\u1ea3i l\u00e0 ki\u1ec3u ng\u00e0y!
+msgValIsNum = ph\u1ea3i l\u00e0 ki\u1ec3u s\u1ed1!
+msgValIsNot = ch\u01b0a \u0111\u01b0\u1ee3c nh\u1eadp!
+msgValIsInt = ph\u1ea3i l\u00e0 ki\u1ec3u s\u1ed1 nguy\u00ean!
+#C\u00e1c th\u00f4ng b\u00e1o l\u1ed7i khi sinh key
+msgIDSmallerSValue=M\u00e3 kh\u00f4ng h\u1ee3p l\u1ec7, c\u1ea7n > 
+msgIDTooBig=L\u1ed7i nh\u1eadp kho\u1ea3ng c\u00e1ch m\u00e3 > 
+msgIDExist=M\u00e3 b\u1ea3n ghi \u0111\u00e3 t\u1ed3n t\u1ea1i!
+msgIDNotDefine=Ch\u01b0a \u0111\u1ecbnh ngh\u0129a c\u1ea5u h\u00ecnh sinh m\u00e3!
+msgIDIncorrectForm=K\u00ed t\u1ef1 nh\u1eadp kh\u00f4ng h\u1ee3p l\u1ec7, kh\u00f4ng c\u00f3 d\u1ea5u c\u00e1ch v\u00e0 c\u00e1c k\u00ed t\u1ef1 \u0111\u1eb7c bi\u1ec7t!
+msgIDErr = L\u1ed7i khi sinh kh\u00f3a
+#lable t\u1ea5t c\u1ea3
+lbAll=T\u1ea5t c\u1ea3
+lbAccessCount=S\u1ed1 l\u01b0\u1ee3t truy c\u1eadp
+lbAccessOnline=S\u1ed1 ng\u01b0\u1eddi tr\u1ef1c tuy\u1ebfn
+#C\u00e1c th\u00f4ng b\u00e1o ki\u1ec3m tra query
+msgQueryIsEmpty=C\u00e2u l\u1ec7nh truy v\u1ea5n ch\u01b0a \u0111\u01b0\u1ee3c nh\u1eadp. H\u00e3y nh\u1eadp c\u00e2u truy v\u1ea5n!
+msgQueryIsNotSystax=C\u00e2u l\u1ec7nh truy v\u1ea5n kh\u00f4ng \u0111\u01b0\u1ee3c ch\u1ee9a c\u00e1c t\u1eeb kh\u00f3a: insert, update, delete, truncate, alter, drop!
+msgQueryIsNotResult=C\u00e2u l\u1ec7nh truy v\u1ea5n kh\u00f4ng h\u1ee3p l\u1ec7. H\u00e3y ki\u1ec3m tra l\u1ea1i!
+msgQueryIsSuccess=C\u00e2u l\u1ec7nh truy v\u1ea5n th\u00e0nh c\u00f4ng: @value
+msgQueryIsNotNumberResult=C\u00e2u l\u1ec7nh truy v\u1ea5n tr\u1ea3 v\u1ec1 m\u1ed9t chu\u1ed7i: @value. H\u00e3y ki\u1ec3m tra l\u1ea1i!
+msgQueryIsNullResult=C\u00e2u l\u1ec7nh truy v\u1ea5n kh\u00f4ng tr\u1ea3 v\u1ec1 gi\u00e1 tr\u1ecb. H\u00e3y ki\u1ec3m tra l\u1ea1i!
+msgFromDayToDay=T\u1eeb ng\u00e0y ph\u1ea3i nh\u1ecf h\u01a1n \u0111\u1ebfn ng\u00e0y
+
+#Tooltip th\u00ed nghi\u1ec7m
+
+ttUpdateResult=Th\u00eam m\u1edbi thi\u1ebft l\u1eadp th\u00ed nghi\u1ec7m
+ttEditUpdateResult=S\u1eeda k\u1ebft qu\u1ea3 th\u00ed nghi\u1ec7m

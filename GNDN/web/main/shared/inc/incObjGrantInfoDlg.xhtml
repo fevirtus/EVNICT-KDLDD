@@ -1,0 +1,57 @@
+<!--
+Hiện thông tin quyền của đổi tượng, không có nút
+Cách sử dụng:
+1. Inlude cụm này vào file xhtml
+    <h:inputHidden id="hfObjTypeId" value="Mã kiểu đối tượng trong S_LST_OBJ"/>
+    <h:inputHidden id="hfObjId" value="Gán mã của đối tượng từ bean"/>
+    <ui:include src="..\..\shared\inc\incObjGrantInfoDlg.xhtml"/>
+
+   Chú ý: tạo property get/set riêng cho gán hfObjId mà không dùng cùng hàm get/set của Obj vì có thể conflict, trong đó get thì link vào hàm lấy ra id, còn set thì không làm cả.
+2. Để cập nhật lại thông tin quyền khi gọi cửa sổ gán quyền, thêm phần update cho id pnObjRightInfo
+
+3. Tham khảo cách dùng: eam\kpi\eamKPI_details.xhtml
+-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+     <f:loadBundle var="this" basename="main.web.shared.admin.prop.ObjGrantProp"/>
+     <h:panelGrid columns="2" id="pnObjRightInfo" cellpadding="0" cellspacing="3">
+         <h:outputText value="#{this.arlbAsignRightInfo} "/>
+         <h:outputText value="#{objGrantInfoBean.objGrantInfo} " style="color: blue"/>
+     </h:panelGrid>
+
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAssignObjRight" widgetVar="dlgAssignObjRight" modal="true"
+              width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+              onHide="document.getElementById('ifrdlgAssignObjRight').src=''"
+              header="#{commonMessages.headerDlgAssignObjRight}">
+        <p:ajax event="close" update="pnObjRightInfo"/>
+        <iframe id="ifrdlgAssignObjRight" scrolling="auto"
+                frameborder="true" width="100%" height="99%"
+                style="border: none">
+        </iframe>
+    </p:dialog>
+
+    <script type="text/javascript">
+          function handleCmdAssignObjRightComplete(xhr, status, args) {
+             if (args.Method)
+             {
+                switch (args.Method)
+                {
+                    case 'AssignObjRight':
+                        var f = document.getElementById('ifrdlgAssignObjRight');
+                        f.src = "#{settingsBean.webRootPath}/shared/admin/dlgObjGrant.jsf?ObjTypeID=" + args.ObjTypeID + "&amp;ObjID=" + args.ObjID;
+                        PF('dlgAssignObjRight').show();
+                        break;
+                }
+             }
+            }
+
+            function closeDlgAssignObjRight()
+            {
+                PF('dlgAssignObjRight').hide();
+            }
+     </script>
+</ui:composition>

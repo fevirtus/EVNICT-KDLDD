@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{grantReportRightBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="this" basename="main.web.shared.admin.prop.GrantRightProp"/>
+
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="PHÂN QUYỀN BÁO CÁO" />
+                </h:panelGroup>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <h:panelGrid columns="3" cellspacing="5" >
+                    <h:outputText value="Chọn người dùng: "></h:outputText>
+                    <p:selectOneMenu id="cbUserRole" value="#{grantReportRightBean.m_userRoleID}" filterMatchMode="contains" filter="true" style="width: 300px;">
+                        <f:selectItems value="#{grantReportRightBean.dsUserRole}"/>
+                        <p:ajax event="valueChange" listener="#{grantReportRightBean.onUserRoleChange}" update=":#{p:component('treeReport')} :#{p:component('btnCopy')}"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="btnCopy" icon="copy" 
+                                     title="Copy quyền báo cáo" 
+                                     onclick="openCopyGrantReport('#{grantReportRightBean.m_userRoleID}')"/>
+                </h:panelGrid>
+                <p:ajaxStatus style="display:block;margin-bottom:2em;">
+                    <f:facet name="start">
+                        <p:graphicImage name="./images/ajaxloading0.gif" />
+                    </f:facet>
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+                <p:ajaxStatus onstart="PF('statusDialog')').show()" onsuccess="PF('statusDialog').hide()" />
+                <p:dialog appendTo="@(body)" closeOnEscape="true" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                    <p:graphicImage name="./images/ajaxloading0.gif" />
+                </p:dialog>
+                <h:panelGrid columns="4" cellspacing="5" >
+                    <p:tree value="#{grantReportRightBean.treeReports}" var="doc"
+                            selectionMode="checkbox"
+                            selection="#{grantReportRightBean.selectedNodes}" style="width: 1024px;" id="treeReport" widgetVar="treeReport">
+                        <p:ajax event="select" listener="#{grantReportRightBean.onNodeSelect}" update=":formMain:msgInfo"/>
+                        <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                            <h:outputText value="#{doc.rptgroupdesc}"/>
+                        </p:treeNode>                            
+                    </p:tree>                    
+                </h:panelGrid>
+                <center>
+                    <p:commandButton value="#{commonMessages.btnSave} #{this.grantFnc}" actionListener="#{grantReportRightBean.onSave}" icon="edit"  update=":formMain:msgInfo"/>
+                </center>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="ifrGrantCopy" widgetVar="ifrGrantCopy"
+                          width="650" height="320" closable="true"
+                          header="Sao chép phân quyền báo cáo">
+                    <iframe id="ifrGrantCopy" scrolling="auto"
+                            frameborder="true" width="100%" 
+                            height="80%"
+                            style="border: none">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function openCopyGrantReport(userCopy) {
+                        var f = document.getElementById('ifrGrantCopy');
+
+                        if (f)
+                        {
+                            var url = "../../shared/admin/GrantRightCopyReport.jsf";
+                            var temp = "?";
+                            url = url + temp + "userCopy=" + userCopy;
+                            f.src = url;
+
+                            PF('ifrGrantCopy').show();
+                        }
+                    }
+
+                    function openGrantWflow(grantMode, ruId, functionId)
+                    {
+                        var f = document.getElementById('ifrGrantWflow');
+                        if (f)
+                        {
+                            var url = "../admin/GrantRightWflow.jsf";
+                            var temp = "?";
+                            url = url + temp + "grantMode=" + grantMode;
+                            temp = '&amp;';
+                            url = url + temp + "ruId=" + ruId;
+                            temp = '&amp;';
+                            url = url + temp + "functionId=" + functionId;
+                            f.src = url;
+                            PF('dlgGrantWflow').show();
+                        }
+                    }
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case '':
+                                    break;
+                            }
+                        }
+                    }
+
+                    //Hàm xử lý đánh dấu cột phân quyền cha/con trên cây
+                    function onCheckFuncRight(obj, funcid, postId)
+                    {
+                        //var chk = document.getElementById();
+                        //alert("objid = " + obj.id + ", funcid = " + funcid);
+                        var objid = obj.id;
+                        var arr = objid.split(":");
+                        var iId = parseInt(arr[3]), sCheck = obj.checked;
+                        funcid = funcid + ".";
+                        while (true)
+                        {
+                            iId++; //Duyệt các hàng trong grid
+                            objid = 'formMain:tabViewAll:ttGrantFnc:' + iId + ':hfFuncId';
+                            var hf = document.getElementById(objid);
+                            if (!hf)
+                                break;
+                            var s = hf.value;
+                            if (s.indexOf(funcid) == 0) //Nếu là chức năng con: id bắt đầu funcid
+                            {
+                                objid = 'formMain:tabViewAll:ttGrantFnc:' + iId + ':' + postId;
+                                var chk = document.getElementById(objid);
+                                if (chk)
+                                    chk.checked = sCheck;
+                            }
+                            else
+                                break;
+                        }
+                        //alert('iID=' + iId + ', value=' + sCheck);
+
+                        //alert("objid = " + obj.id + ", funcid = " + funcid);
+                    }
+
+                    function hideDlgChangeStatus() {
+                        PF('ifrGrantCopy').hide();
+                    }
+
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

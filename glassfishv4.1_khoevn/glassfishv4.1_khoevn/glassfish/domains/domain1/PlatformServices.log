@@ -1,0 +1,40 @@
+==========================================
+Thu Feb 26 15:48:07 ICT 2015
+The Windows Service was created successfully.  It is ready to be started.  Here are the details:
+ID of the service: domain1
+Display Name of the service:domain1 GlassFish Server
+Server Directory: C:\glassfishv4.1\glassfish\domains\domain1
+Configuration file for Windows Services Wrapper: C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.xml
+The service can be controlled using the Windows Services Manager or you can use the
+Windows Services Wrapper instead:
+Start Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  start
+Stop Command:   C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  stop
+Restart Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  restart
+Uninstall Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  uninstall
+Install Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  install
+Status Command: C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe status
+You can also verify that the service is installed (or not) with sc query state= all
+windows.services.uninstall.good=Found the Windows Service and successfully uninstalled it.
+==========================================
+
+
+==========================================
+Thu Feb 26 16:10:30 ICT 2015
+The Windows Service was created successfully.  It is ready to be started.  Here are the details:
+ID of the service: domain1
+Display Name of the service:domain1 GlassFish Server
+Server Directory: C:\glassfishv4.1\glassfish\domains\domain1
+Configuration file for Windows Services Wrapper: C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.xml
+The service can be controlled using the Windows Services Manager or you can use the
+Windows Services Wrapper instead:
+Start Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  start
+Stop Command:   C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  stop
+Restart Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  restart
+Uninstall Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  uninstall
+Install Command:  C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe  install
+Status Command: C:\glassfishv4.1\glassfish\domains\domain1\bin\domain1Service.exe status
+You can also verify that the service is installed (or not) with sc query state= all
+windows.services.uninstall.good=Found the Windows Service and successfully uninstalled it.
+==========================================
+
+

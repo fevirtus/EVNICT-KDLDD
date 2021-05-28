@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>            
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="form1">                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left">
+                        <p:commandButton disabled="#{sys_Contact_Details.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" ajax="false" title="{commonMessages.btnAddNew}"
+                                         actionListener="#{sys_Contact_Details.onAddNewContact}" />
+                        <p:commandButton disabled="#{sys_Contact_Details.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Contact_Details.onSaveContact}" />
+                        <p:commandButton disabled="#{sys_Contact_Details.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete" ajax="false" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDelete}');"
+                                         actionListener="#{sys_Contact_Details.onDeleteContact}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                         icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                         disabled="#{sys_Contact_Details.m_bFirst}"
+                                         actionListener="#{sys_Contact_Details.onNavigatorFirst}"/>
+                        <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                         disabled="#{sys_Contact_Details.m_bPrevious}"
+                                         icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                         actionListener="#{sys_Contact_Details.onNavigatorPrevious}"/>
+                        <p:commandButton id="btnNext" styleClass="btnHeight"
+                                         disabled="#{sys_Contact_Details.m_bNext}"
+                                         icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                         actionListener="#{sys_Contact_Details.onNavigatorNext}"/>
+                        <p:commandButton id="btnLast" styleClass="btnHeight"
+                                         disabled="#{sys_Contact_Details.m_bLast}"
+                                         icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                         actionListener="#{sys_Contact_Details.onNavigatorLast}"/>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlContent">
+                        <p:focus for="txtContactID"/>
+                        <table width="95%">
+                            <tr style="height: 25px">
+                                <td width="10%" align="right">
+                                <h:outputText value="#{msgs.detail_LblContact}*"
+                                          styleClass="#{sys_Contact_Details.style_TxtCMID}"/>
+                                </td>
+                                <td width="20%">
+                                    <h:inputText id="txtContactID" style="width: 95%"
+                                                 readonly="#{sys_Contact_Details.txtCMIDReadOnly}"
+                                                 value="#{sys_Contact_Details.contact.contactid}"/>
+                                </td>                                
+                                <td width="60%" colspan="2">
+                                    <h:inputText id="txtContactDesc" style="width: 100%"
+                                                 value="#{sys_Contact_Details.contact.contactdesc}"/>
+                                </td>                                
+                            </tr>
+<!--                            <tr style="height: 25px">
+                                <td align="right">
+                                    <h:outputText value="{msgs.detail_LblComp}"/>
+                                </td>
+                                <td >
+                                    <h:inputText id="txtCompID" style="width: 95%" readonly="true"
+                                                 value="{sys_Contact_Details.contact.compid}"/>
+                                </td>                                
+                                <td colspan="2">
+                                    <h:inputText id="txtCompDesc" style="width: 100%" readonly="true"
+                                                 value="{sys_Contact_Details.compDesc}"/>
+                                </td>
+                            </tr>-->
+                            <tr style="height: 25px">
+                                <td align="right">
+                                    <h:outputText value="#{msgs.detail_LblPos}"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="txtPos" style="width: 95%"
+                                                 value="#{sys_Contact_Details.contact.pos}"/>
+                                </td>
+                                
+                                <td width="10%" align="right">
+                                    <h:outputText value="#{msgs.detail_LblTel}"/>
+                                </td>
+                                <td>
+                                <h:inputText id="txtTel" style="width: 40%" value="#{sys_Contact_Details.contact.phone}"/>
+                                </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                                    <h:outputText value="#{msgs.detail_LblEmail}"/>
+                                </td>
+                                <td >
+                                <h:inputText id="txtEmail" style="width: 95%" value="#{sys_Contact_Details.contact.email}"/>
+                                </td>
+                                
+                                <td align="right">
+                                    <h:outputText value="#{msgs.detail_LblFax}"/>
+                                </td>
+                                <td>
+                                <h:inputText id="txtFax" style="width: 40%;" value="#{sys_Contact_Details.contact.fax}"/>
+                                </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td align="right">
+                                    <h:outputText value="#{msgs.detail_LblNote}"/>
+                                </td>
+                                <td colspan="3">
+                                <h:inputText id="txtNote" style="width: 100%;" value="#{sys_Contact_Details.contact.note}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                    </p:outputPanel>
+                    <!-- Dialog-->                    
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenDeptDialog" widgetVar="dlgOpenDeptDialog"
+                              width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                              resizable="true" modal="true" header="Chọn phòng ban/bộ phận">
+                        <iframe id="browserContent2" scrolling="auto"
+                                frameborder="true"
+                                width="100%" height="99%"
+                                style="border: none">
+                        </iframe>
+                        <h:panelGroup>
+                            <h:commandButton value="Đồng ý" actionListener="#{sys_Dept_Details.onAcceptDeptClick}"/>
+                            <h:commandButton value="Hủy bỏ" onclick="PF('dlgOpenDeptDialog').hide();" />
+                        </h:panelGroup>
+                    </p:dialog>
+                    
+<!--                    <script type="text/javascript">
+                        function OpenDeptDialog() {
+                            var f = document.getElementById('browserContent2');
+                                f.src = "./../../shared/dialog/dlgDept.jsf?display=one";
+                            PF('dlgOpenDeptDialog').show();
+                        }
+                        function KeyEnterSelectAsset(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == "form1:txtAssetID_Org"){
+                                    OpenSelectAsset(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        
+                    </script>-->
+                </div>               
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

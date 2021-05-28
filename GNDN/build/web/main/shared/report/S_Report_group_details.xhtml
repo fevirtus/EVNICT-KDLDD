@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />            
+            <f:loadBundle var="msgs" basename="main.web.shared.report.prop.ReportProp"/>
+
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="form1">                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{reportGroupBean.renderedFuncEdit('04.02.02')}">
+                        <p:commandButton disabled="#{reportGroupBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{reportGroupBean.onAddNewDetail}" />
+                        <p:commandButton disabled="#{reportGroupBean.disabledSaveData}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{reportGroupBean.onSaveDetail}" />
+                        <p:commandButton disabled="#{reportGroupBean.disabledDeleteData}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{msgs.msgComfirmDeleteTabGroup_DT}');"
+                                         actionListener="#{reportGroupBean.onDeleteDetail}" />
+                        <p:commandButton disabled="#{reportGroupBean.disabledDeleteData}" styleClass="btnHeight"
+                                         icon="group_key" title="#{msgs.detail_Grp_BtnRight}"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                         icon="resultset_first" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnFirst}"
+                                         disabled="#{reportGroupBean.m_bFirst}"
+                                         actionListener="#{reportGroupBean.onNavigatorFirst}"/>
+                        <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                         disabled="#{reportGroupBean.m_bPrevious}"
+                                         icon="resultset_previous" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnPrevious}"
+                                         actionListener="#{reportGroupBean.onNavigatorPrevious}"/>
+                        <p:commandButton id="btnNext" styleClass="btnHeight"
+                                         disabled="#{reportGroupBean.m_bNext}"
+                                         icon="resultset_next" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnNext}"
+                                         actionListener="#{reportGroupBean.onNavigatorNext}"/>
+                        <p:commandButton id="btnLast" styleClass="btnHeight"
+                                         disabled="#{reportGroupBean.m_bLast}"
+                                         icon="resultset_last" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnLast}"
+                                         actionListener="#{reportGroupBean.onNavigatorLast}"/>
+                    </p:toolbarGroup>
+                </p:toolbar> 
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">
+                    <table style="margin-top: 10px;">
+                        <tr style="height: 25px">
+                            <td width="110px" align="right">
+                        <h:outputText value="#{msgs.detail_Grp_LblGroupTab}*"
+                                      styleClass="#{reportGroupBean.style_TxtID}"/>
+                        </td>
+                        <td >
+                        <h:inputText style="width: 180px;" onkeydown="return KeyEnter(event);" maxlength="25"
+                                     readonly="#{reportGroupBean.txtIDReadOnly}"
+                                     value="#{reportGroupBean.tabGroup.rptgroupid}"/>
+                        </td>
+                        <td/>
+                        <td >
+                        <h:inputText style="width: 350px;" onkeydown="return KeyEnter(event);" maxlength="255"
+                                     value="#{reportGroupBean.tabGroup.rptgroupdesc}"/>
+                        </td>
+                        <td width="110px" align="right">
+                        <h:outputText value="Stt"
+                                      styleClass="#{reportGroupBean.style_TxtID}"/>
+                        </td>
+                        <td >
+                        <h:inputText style="width: 50px;" 
+                                     value="#{reportGroupBean.tabGroup.rptgroupord}"/>
+                        </td>
+
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.detail_Grp_LblParent}"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtTabGroupParent" style="width: 180px;"
+                                     value="#{reportGroupBean.tabGroup.rptgroupid_parent}"
+                                     onkeydown="return KeyEnterSelectParent(event, this);"/>
+                        </td>
+                        <td >
+                        <p:commandButton icon="ui-icon-search" title="#{commonMessages.btnOpenDialog}"
+                                         disabled="#{reportGroupBean.disabledSaveData}"
+                                         onclick="OpenSelectParent('');" style="height: 23px;"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtTabGroupParentDesc" style="width: 350px;" readonly="true"
+                                     value="#{reportGroupBean.tabGroupParentDesc}"
+                                     onkeydown="return KeyEnter(event);"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="Diễn giải"/>
+                        </td>
+                        <td colspan="3">
+                        <h:inputText  style="width: 500px;"
+                                      value="#{reportGroupBean.tabGroup.note}"/>
+                        </td>       
+
+                        </tr>
+                        <tr style="height: 25px">    
+                            <td align="right">
+                        <h:outputText value="Sử dụng"/>
+                        </td>
+                        <td>                                                              
+                        <h:selectBooleanCheckbox id="chbActive" value="#{reportGroupBean.tabGroup.enable}"/>
+                        </td>
+                        </tr>
+                    </table>
+                    <p:separator />
+                    <!-- Vùng người thay đổi-->
+                    <p:outputPanel id="pnlUser">
+                        <table width="98%">
+                            <tr>
+                                <td align="left">
+                            <h:graphicImage url="./../../images/user/user_add.png"/>
+                            <h:outputText value=" #{commonMessages.lblUserCreate}: "/>
+                            <h:outputText id="lblUserCreate" value="#{reportGroupBean.tabGroup.userCrId}"/>
+                            <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                            <h:outputText id="lblDateCreate" value="#{reportGroupBean.tabGroup.userCrDtime}">
+                                <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                            </h:outputText>
+                            </td>
+                            <td align="right">
+                            <h:graphicImage url="./../../images/user/user_edit.png"/>
+                            <h:outputText value=" #{commonMessages.lblUserUpdate}: "/>
+                            <h:outputText id="lblUserUpdate" value="#{reportGroupBean.tabGroup.userMdfId}"/>
+                            <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                            <h:outputText id="lblDateUpdate" value="#{reportGroupBean.tabGroup.userMdfDtime}">
+                                <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                            </h:outputText>
+                            </td>
+                            </tr>
+                        </table>
+                    </p:outputPanel>
+                </p:outputPanel>
+                <!-- Dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgSelectParent" widgetVar="dlgSelectParent"
+                          width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                          header="#{commonMessages.headerDlgOpMeterTabGroup}">
+                    <p:ajax event="close" listener="#{reportGroupBean.onCancelChooseParent}"/>
+                    <iframe id="ifrSelectParent" scrolling="auto"
+                            frameborder="0" width="100%" height="#{settingsProp.NormalDlgIFrameHeight}">
+                    </iframe>
+                    <div align="left">
+                        <h:panelGroup>
+                            <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}"
+                                             actionListener="#{reportGroupBean.onAcceptChooseTabGroupParent}"
+                                             update="txtTabGroupParent txtTabGroupParentDesc" oncomplete="PF('dlgSelectParent').hide();"/>
+                            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgSelectParent').hide();" />
+                        </h:panelGroup>
+                    </div>
+                </p:dialog>                
+                <script type="text/javascript">
+                    function KeyEnterSelectParent(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectParent(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    function OpenSelectParent(filterValue) {
+                        var f = document.getElementById('ifrSelectParent');
+                        if (f) {
+                            var url = "../dialog/dlgReportGroup.jsf";
+                            var temp = '?';
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgSelectParent').show();
+                        }
+                        return false;
+                    }
+
+                    function KeyEnterSelectSite(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectSite(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    function OpenSelectSite(filterValue) {
+                        var f = document.getElementById('ifrSelectSite');
+                        if (f) {
+                            var url = "./../../shared/dialog/dlgSite.jsf";
+                            var temp = '?';
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgSelectSite').show();
+                        }
+                        return false;
+                    }
+
+                    function KeyEnter(event) {
+                        if (event.keyCode == 13) {
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

@@ -1,0 +1,99 @@
+<ui:composition xmlns:h="http://java.sun.com/jsf/html"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+    <script type="text/javascript">
+        function OpenDlgBBMng(sUrl) {
+            var f = document.getElementById('ifrDlgBBMng');
+            f.src = sUrl;
+            PF('dlgBBMng').show();
+        }
+    </script>
+    <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />    
+    <p:panel id="#{pltSM_BB_Bean.getiSm_Portlet().pltid}" rendered="#{pltSM_BB_Bean.isShow}">
+        <f:facet name="header">
+            <h:outputText value="#{propSM_BB.BBPltName}" />
+        </f:facet>
+        <p:dataList emptyMessage="Không có dữ liệu" 
+                    id="grdBB" var="dt"
+                    value="#{pltSM_BB_Bean.pltSM_BB_DataModel}"                                     
+                    paginatorPosition="bottom">         
+            <p:column>
+                <h:outputLink value="#" target="_blank">
+                    <p:ajax event="click" immediate="true" update=":#{p:component('dlgBBDetail')}" listener="#{pltSM_BB_Bean.onShowDetail(dt)}" oncomplete="PF('dlgBBDetail').show();"/>
+                    <h:outputText value="#{dt.bbmsum}"/>
+                    <h:outputText value=" (#{dt.sender}:"/>
+                    <h:outputText value="#{dt.sendDTime}">
+                        <f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}"/>
+                    </h:outputText>
+                    <h:outputText value="-#{dt.attachCount})"/>
+                </h:outputLink>
+            </p:column>
+            <f:facet name="footer">
+            </f:facet>
+        </p:dataList>        
+    </p:panel>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" header="#{pltSM_BB_Bean.m_pbbCurrentBB.bbmsum}" widgetVar="dlgBBDetail" id="dlgBBDetail">
+        <p:ajax event="close" listener="#{pltSM_BB_Bean.ondlgBBDetail}" update="formMain:grdBB"/>
+        <h:panelGrid id="pnBBDetail" columns="1" cellpadding="1" width="100%">            
+            <h:panelGroup>
+                <h:outputText value="#{pltSM_BB_Bean.pbbViewAttach} " />
+                <p:commandButton title="#{commonMessages.btnOpen}"
+                                 type="button"
+                                 styleClass="ui-btn-inline"
+                                 icon="ui-icon-search"
+                                 actionListener="#{pltSM_BB_Bean.onpbbShowDlgAttach}" 
+                                 oncomplete="OpenAttachFileDialogFromParent('#{pltSM_BB_Bean.m_pbbCurrentBB.bbmid}')" 
+                                 disabled="#{pltSM_BB_Bean.m_pbbCurrentBB.attachCount==0?true:false}">
+                </p:commandButton><h:outputText value="#{pltSM_BB_Bean.m_pbbCurrentBB.bbmdetail}" escape="false" />
+            </h:panelGroup>
+        </h:panelGrid>
+    </p:dialog>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgBBMng" widgetVar="dlgBBMng" 
+              width="1024" height="640" closable="true"
+              resizable="true" modal="true" header="#{propSM_BB.BBTitle}">
+        <p:ajax event="close" listener="#{pltSM_BB_Bean.onpbbCloseDlgMan}" update="formMain:grdBB"/>
+        <iframe id="ifrDlgBBMng" scrolling="auto"
+                frameborder="true"
+                width="100%" height="#{settingsProp.MainDlgIFrameHeight}"
+                style="border: none">
+        </iframe>
+        <h:panelGroup>
+            <p:commandButton value="#{commonMessages.btnClose}" icon="cancel" onclick="PF('dlgBBMng').hide();
+                    return false;" ajax="false"/>
+        </h:panelGroup>
+    </p:dialog>
+    <script type="text/javascript">
+        function OpenAttachFileDialogFromParent(bbid) {
+            var url = "#{settingsBean.webRootPath}/shared/attach/dlgAfOtherImages.jsf";
+            var temp = "?";
+            url = url + temp + "ObjTypeID=BBMSG";
+            temp = '&amp;';
+            url = url + temp + "ObjID=" + bbid;
+            showdlgNormalTopModal1(url);
+        }
+
+        function OpenAttachFileDialog(bbid) {
+            var url = "#{settingsBean.webRootPath}/shared/attach/dlgAfOtherImages.jsf";
+            var temp = "?";
+            url = url + temp + "ObjTypeID=BBMSG";
+            temp = '&amp;';
+            url = url + temp + "ObjID=" + bbid;
+            //Gọi hàm mở cửa sổ không phải modal
+            var width = #{settingsProp.NormalDlgWidth};
+            var height = #{settingsProp.NormalDlgHeight};
+            var left = (screen.width - width) / 2;
+            var top = (screen.height - height) / 2;
+            var params = 'width=' + width + ', height=' + height;
+            params += ', top=' + top + ', left=' + left + ',scrollbars=yes,location=no,status=no';
+            newwin = window.open(url, 'popwindow', params);
+            if (window.focus) {
+                newwin.focus()
+            }
+        }
+
+    </script>
+
+</ui:composition>
+

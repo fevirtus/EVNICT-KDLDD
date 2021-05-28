@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>BulletinBoard Read Log</title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+        #{pltBBMng.assertFuncRight('02.31')}
+    </h:head>
+    <h:body>
+    <h:form onsubmit="return false" id="formDlg">
+        <p:toolbar>
+            <p:toolbarGroup align="right">
+                <h:panelGroup id="tbNavigator">
+                <p:commandButton icon="resultset_first" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onDtNvgFirst}" disabled="#{pltBBMng.dtNvgDisabledPrev}" update="@form"/>
+                <p:commandButton icon="resultset_previous" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onDtNvgPrev}" disabled="#{pltBBMng.dtNvgDisabledPrev}" update="@form"/>
+                <p:commandButton icon="resultset_next" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onDtNvgNext}" disabled="#{pltBBMng.dtNvgDisabledNext}" update="@form"/>
+                <p:commandButton icon="resultset_last" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onDtNvgLast}" disabled="#{pltBBMng.dtNvgDisabledNext}" update="@form"/>
+                </h:panelGroup>
+            </p:toolbarGroup>
+        </p:toolbar>
+        <p:outputPanel id="msgInfo">
+            <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+            <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+        </p:outputPanel>
+        <div style="height: #{settingsProp.NormalDlgContentHeight}px;overflow:auto; margin-top: 5px;margin-bottom: 5px">
+            <h:panelGrid columns="3" cellpadding="5">
+                <h:outputText value="#{propSM_BB.BB}"/>
+                <h:inputText readonly="true" value="#{pltBBMng.m_currentBBNew.bbmid}" style="width: 150px"/>
+                <h:inputText readonly="true" value="#{pltBBMng.m_currentBBNew.bbmsum}" style="width: 500px"/>
+            </h:panelGrid>
+            <h:panelGrid columns="3" cellpadding="20">
+                <h:outputText value="#{pltBBMng.bbLogMsgUserRcv}"/>
+            </h:panelGrid>
+            <p:tabView>
+                <p:tab title="#{pltBBMng.bbLogMsgTabReadUser}">
+                    <p:dataTable emptyMessage="Không có dữ liệu" var="dt" value="#{pltBBMng.bbLogDsReadUser}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginator="true" 
+                                 scrollHeight="220"
+                                 scrollable="true"
+                                 paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="50" rowsPerPageTemplate="50,100,150,200"
+                                 style="width:720px;overflow:auto" >
+                        <p:column headerText="#{propSM_BB.BBLogColUserID}">
+                            <h:outputText value="#{dt.userid}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColUserName}">
+                            <h:outputText value="#{dt.username}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColTel}">
+                            <h:outputText value="#{dt.tel}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColEmail}">
+                            <h:outputText value="#{dt.email}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColDatetime}">
+                            <h:outputText value="#{dt.bblogreaddtime}">
+                                <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColDesc}">
+                            <h:outputText value="#{dt.descript}">
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColNeedUpdate}">
+                            <p:selectBooleanCheckbox disabled="true" value="#{dt.bblogisupdate}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <h:outputText value="#{pltBBMng.bbLogMsgReadUpdate}"/>
+                </p:tab>
+                <p:tab title="#{pltBBMng.bbLogMsgTabNoReadUser}">
+                    <p:dataTable emptyMessage="Không có dữ liệu" var="dt" value="#{pltBBMng.bbLogDsNoReadUser}"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="5,10,15,20"
+                                 style="width:720px;overflow:auto">
+                        <p:column headerText="#{propSM_BB.BBLogColUserID}">
+                            <h:outputText value="#{dt.userid}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColUserName}">
+                            <h:outputText value="#{dt.username}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColTel}">
+                            <h:outputText value="#{dt.tel}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColEmail}">
+                            <h:outputText value="#{dt.email}"/>
+                        </p:column>
+                        <p:column headerText="#{propSM_BB.BBLogColDesc}">
+                            <h:outputText value="#{dt.descript}">
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:tabView>
+        </div>
+    </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,157 @@
+<html xmlns="http://www.w3.func/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogFuncProp"
+                              var="dlgProp" />
+                <p:dataTable paginatorAlwaysVisible="false" filterEvent="enter" 
+                             emptyMessage="#{commonMessages.noRecordsfound}" var="func" id="dtFunction" value="#{functionDialog.dsQ_FunctionForGrid}"
+                              paginator="true" rows="100"
+                              scrollHeight="230"
+                              scrollable="true"
+                              paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,500" widgetVar="dtFunction" rowIndexVar="0">
+                    <p:column headerText="Chọn" style="text-align: center;" width="25">                        
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{functionDialog.bCheckAll}" rendered="#{functionDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{functionDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>                       
+                        <p:selectBooleanCheckbox value="#{func.bChecked}" id="chk">
+                            <p:ajax listener="#{functionDialog.updateFunction}" />
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="funcid" headerText="#{dlgProp.funcid}" width="100" filterBy="#{func.functionid}" filterMatchMode="contains" filterStyle="width:90%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="#{dlgProp.funcid}"/><br/>
+                            <p:inputText onfocus="this.select();" id="test" onkeydown="return press(event);" style="width: 90%"/>
+                        </f:facet>
+                        <h:outputText value="#{func.functionid}"/>
+                    </p:column>
+                    <p:column id="funcName" headerText="#{dlgProp.funcName}" filterBy="#{func.functionname}" filterMatchMode="contains" filterStyle="width:90%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="#{dlgProp.funcName}"/><br/>
+                            <p:inputText onfocus="this.select();" id="test1" onkeydown="return press1(event);" style="width: 90%"/>
+                        </f:facet>
+                        <h:outputText value="#{func.functionname}" />
+                    </p:column>
+                    <p:column id="parentid" headerText="#{dlgProp.parentid}" width="100" filterBy="#{func.functionparentid}" filterMatchMode="contains" filterStyle="width:90%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="#{dlgProp.parentid}"/><br/>
+                            <p:inputText onfocus="this.select();" id="test2" onkeydown="return press2(event);" style="width: 90%"/>
+                        </f:facet>
+                        <h:outputText value="#{func.functionparentid}" />
+                    </p:column>
+                    <p:column headerText="#{dlgProp.status}" style="text-align: center" width="100">
+                        <p:selectBooleanCheckbox disabled="true" value="#{func.enable}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+        function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtFunction:functionid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtFunction:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtFunction.update = "chk rowIndexVar";
+                dtFunction.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtFunction:functionparentid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtFunction:test2');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtFunction.update = "chk rowIndexVar";
+                dtFunction.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtFunction:functionname_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtFunction:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtFunction.update = "chk rowIndexVar";
+                dtFunction.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+      function  init()
+       {
+           if(!#{functionDialog.isPostBack})
+           {
+               if ("#{functionDialog.initFilter}" != "")
+               {
+                   var oFilter;
+                   oFilter=document.getElementById('formDlg:dtFunction:functionid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtFunction:test');
+                   if (oFilter){
+                       oFilter.value= '#{functionDialog.initFilter}';
+                       oTest.value= '#{functionDialog.initFilter}';
+                       dtFunction.filter();
+                }
+              }           
+       }
+       function EnterFilter(event){
+             if (event.keyCode == 13){
+                 dtFunction.filter();
+                 return false;
+             }
+             return true;
+       }
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtFunction:funcid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();       
+    </script>
+</html>

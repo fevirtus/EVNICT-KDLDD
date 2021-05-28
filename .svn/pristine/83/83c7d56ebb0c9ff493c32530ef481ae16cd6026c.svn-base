@@ -1,0 +1,270 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.S_AttributeProp"/>
+            #{s_AttributesGroupDetailBean.assertFuncRight('02.17')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="form1">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{s_AttributesGroupDetailBean.renderedFuncEdit('02.17')}">
+                        <p:commandButton disabled="#{s_AttributesGroupDetailBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{s_AttributesGroupDetailBean.onAddNewDetail}" />
+                        <p:commandButton disabled="#{s_AttributesGroupDetailBean.dtIsDisabledSaveMain}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{s_AttributesGroupDetailBean.onSaveDetail}" />
+                        <p:commandButton disabled="#{s_AttributesGroupDetailBean.dtIsDisabledEditDataMain}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{msgs.dlg_group_MsgComfirmDelete}');"
+                                         actionListener="#{s_AttributesGroupDetailBean.onDeleteDetail}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                         icon="resultset_first" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnFirst}"
+                                         disabled="#{s_AttributesGroupDetailBean.m_bFirst}"
+                                         actionListener="#{s_AttributesGroupDetailBean.onNavigatorFirst}"/>
+                        <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                         disabled="#{s_AttributesGroupDetailBean.m_bPrevious}"
+                                         icon="resultset_previous" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnPrevious}"
+                                         actionListener="#{s_AttributesGroupDetailBean.onNavigatorPrevious}"/>
+                        <p:commandButton id="btnNext" styleClass="btnHeight"
+                                         disabled="#{s_AttributesGroupDetailBean.m_bNext}"
+                                         icon="resultset_next" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnNext}"
+                                         actionListener="#{s_AttributesGroupDetailBean.onNavigatorNext}"/>
+                        <p:commandButton id="btnLast" styleClass="btnHeight"
+                                         disabled="#{s_AttributesGroupDetailBean.m_bLast}"
+                                         icon="resultset_last" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnLast}"
+                                         actionListener="#{s_AttributesGroupDetailBean.onNavigatorLast}"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">
+                    <p:focus />
+                    <table style="margin-top: 10px;">
+                        <tr style="height: 25px">
+                            <td width="120px" align="right">
+                                <h:outputText value="#{msgs.main_group_Title}*"
+                                              styleClass="#{s_AttributesGroupDetailBean.style_TxtID}"/>
+                            </td>
+                            <td >
+                                <h:inputText style="width: 180px;" onkeydown="return KeyEnter(event);"
+                                             readonly="#{s_AttributesGroupDetailBean.txtIDReadOnly}" maxlength="25"
+                                             value="#{s_AttributesGroupDetailBean.attributeGroup.attrgroupid}"/>
+                            </td>
+                            <td/>
+                            <td >
+                                <h:inputText style="width: 400px;" onkeydown="return KeyEnter(event);"  maxlength="255"
+                                             value="#{s_AttributesGroupDetailBean.attributeGroup.attrgroupdesc}"/>
+                            </td>                            
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td >
+                                <h:outputText value="#{msgs.dlg_att_LblColNote}" style="#{settingsProp.StyleNote_Italic}"/>
+                            </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                                <h:outputText value="#{commonTMSProp.LblOrg}"
+                                              styleClass="#{s_AttributesGroupDetailBean.style_TxtOrgID}"/>
+                            </td>
+                            <td >
+                                <h:inputText style="width: 180px;" id="txtOrgID"
+                                             value="#{s_AttributesGroupDetailBean.attributeGroup.orgid}"
+                                             onkeydown="return KeyEnterSelectOrg(event,this);"/>
+                            </td>
+                            <td>
+                                <p:commandButton styleClass="btnHeight"
+                                                 icon="ui-icon ui-icon-search" onclick="OpenOrgDialog()">
+                                </p:commandButton>
+                            </td>
+                             <td >
+                                <h:inputText style="width: 400px;" readonly="true"
+                                             value="#{s_AttributesGroupDetailBean.orgDesc}"
+                                             onkeydown="return KeyEnter(event);"/>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td/>
+                            <td valign="middle">
+                                <h:panelGrid columns="1">
+                                    <h:outputText value="Sử dụng cho" style="font-weight: bold"/>
+                                    <h:panelGroup>
+                                        <div style="width: 180px;height:100px;overflow:auto; margin: 5px; border: solid thin #B9B9B9;">
+                                            <h:selectManyCheckbox id="attGrUsedAll" layout="pageDirection" value="#{s_AttributesGroupDetailBean.lstObjsID_Use}" disabled="#{s_AttributesGroupDetailBean.m_usedAll}">
+                                                <f:selectItems value="#{s_AttributesGroupDetailBean.dsLstObjs}" var="s"
+                                                               itemLabel="#{s.objname}" itemValue="#{s.objtypeid}"/>
+                                            </h:selectManyCheckbox>
+                                        </div>
+                                    </h:panelGroup>
+<!--                                    <h:panelGroup>
+                                        <p:selectBooleanCheckbox value="{s_AttributesGroupDetailBean.m_usedAll}">
+                                            <f:ajax event="valueChange" render="attGrUsedAll"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value = "{commonMessages.lbAll}"/>
+                                    </h:panelGroup>-->
+                                </h:panelGrid>
+                            </td>
+                            <td valign="middle" colspan="2">
+                                <h:panelGrid columns="1">
+                                    <h:outputText value="Ngầm định cho" style="font-weight: bold"/>
+                                    <h:panelGroup>
+                                        <div style="width: 180px;height:100px;overflow:auto; margin: 5px; border: solid thin #B9B9B9;">
+                                            <h:selectManyCheckbox id="attGrAll" layout="pageDirection" value="#{s_AttributesGroupDetailBean.lstObjsID_Default}" disabled="#{s_AttributesGroupDetailBean.m_usedAll}">
+                                                <f:selectItems value="#{s_AttributesGroupDetailBean.dsLstObjs}" var="s"
+                                                               itemLabel="#{s.objname}" itemValue="#{s.objtypeid}"/>
+                                            </h:selectManyCheckbox>
+                                        </div>
+                                    </h:panelGroup>
+<!--                                    <h:panelGroup>
+                                        <p:selectBooleanCheckbox value="{s_AttributesGroupDetailBean.m_usedAll}">
+                                            <f:ajax event="valueChange" render="attGrAll"/>
+                                        </p:selectBooleanCheckbox>
+                                        <h:outputText value = "{commonMessages.lbAll}"/>
+                                    </h:panelGroup>-->
+                                </h:panelGrid>
+                            </td>
+                        </tr>
+                       
+                        <tr style="height: 20px" valign="top">
+                            <td align="right">
+                                <h:outputText value="#{commonTMSProp.LblActive}"/>
+                            </td>
+                            <td >
+                                <p:selectBooleanCheckbox value="#{s_AttributesGroupDetailBean.attributeGroup.enable}"/>
+                            </td>
+                            <td/>
+                            <td >
+                                <h:outputText value="#{commonTMSProp.LblFix} "/>
+                                <p:selectBooleanCheckbox disabled="true" value="#{s_AttributesGroupDetailBean.attributeGroup.isfix}"/>
+                            </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                                <h:outputText value="#{msgs.dlg_group_NameTable}*"
+                                              styleClass="#{s_AttributesGroupDetailBean.style_TxtTableName}"/>
+                            </td>
+                            <td colspan="3">
+                                <h:inputText id="txtTableName" style="width: 450px;" readonly="#{!s_AttributesGroupDetailBean.m_bEditTableName}"
+                                             value="#{s_AttributesGroupDetailBean.attributeGroup.tablenameData}"
+                                             onkeydown="return KeyEnter(event);" maxlength="50"/>
+                                <p:selectBooleanCheckbox value="#{s_AttributesGroupDetailBean.m_bEditTableName}">
+                                    <p:ajax event="valueChange" update="txtTableName"/>
+                                </p:selectBooleanCheckbox>
+                                <h:outputText value="#{commonMessages.btnUpdate}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                                <p:selectBooleanCheckbox value="#{s_AttributesGroupDetailBean.check}"/>
+                            </td>
+                            <td align="left" colspan="3">
+                                <h:outputText value="#{msgs.dlg_att_CreatePhysicalTab}"/>
+                            </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td valign="bottom">
+                        <p:commandButton disabled="#{s_AttributesGroupDetailBean.dtIsDisabledSaveMain}"
+                                         icon="save" value="#{commonMessages.btnSave}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{s_AttributesGroupDetailBean.onSaveDetail}" />
+                            </td>
+                        </tr>
+                    </table>
+                    <p:separator/>
+                    <!-- Vùng người thay đổi-->
+                    <p:outputPanel id="pnlUser">
+                        <table width="98%" style="margin-top: 5px;">
+                            <tr>
+                                <td align="left">
+                                    <h:graphicImage url="./../../images/user/user_add.png"/>
+                                    <h:outputText value=" #{commonMessages.lblUserCreate}: "/>
+                                    <h:outputText id="lblUserCreate" value="#{s_AttributesGroupDetailBean.attributeGroup.userCrId}"/>
+                                    <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                                    <h:outputText id="lblDateCreate" value="#{s_AttributesGroupDetailBean.attributeGroup.userCrDtime}">
+                                        <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                                    </h:outputText>
+                                </td>
+                                <td align="right">
+                                    <h:graphicImage url="./../../images/user/user_edit.png"/>
+                                    <h:outputText value=" #{commonMessages.lblUserUpdate}: "/>
+                                    <h:outputText id="lblUserUpdate" value="#{s_AttributesGroupDetailBean.attributeGroup.userMdfId}"/>
+                                    <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                                    <h:outputText id="lblDateUpdate" value="#{s_AttributesGroupDetailBean.attributeGroup.userMdfDtime}">
+                                        <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                                    </h:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                    </p:outputPanel>
+                </p:outputPanel>
+                <!-- Dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenOrgDialog" widgetVar="dlgOpenOrgDialog"
+                              width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" closable="true"
+                              resizable="true" modal="true" header="Chọn đơn vị">
+                    <iframe id="browserContent1" scrolling="auto"
+                            frameborder="true"
+                            width="100%" height="99%"
+                            style="border: none">
+                    </iframe>
+                    <h:panelGroup>
+                        <h:commandButton value="Đồng ý" actionListener="#{s_AttributesGroupDetailBean.onAcceptOrganizationClick}"/>
+                        <h:commandButton value="Hủy bỏ" onclick="PF('dlgOpenOrgDialog').hide();" />
+                    </h:panelGroup>
+                </p:dialog>
+
+                <script type="text/javascript">                   
+                    function KeyEnter(event){
+                        if (event.keyCode == 13){
+                            return false;
+                        }
+                        return true;
+                    }
+                    function OpenOrgDialog() {
+                            var f = document.getElementById('browserContent1');
+                                f.src = "./../../shared/dialog/dlgOrganization.jsf?display=one";
+                            PF('dlgOpenOrgDialog').show();
+                    }
+                     function KeyEnterSelectOrg(event, control){
+                        if (event.keyCode == 13){
+                            if(control.id == "form1:txtOrgID"){
+                                OpenSelectOrg(control.value);
+                            }
+                            return false;
+                        }
+                        return true;
+             }
+             function OpenSelectOrg(filterValue) {
+                        var f = document.getElementById('browserContent1');
+                        if(f){
+                        var url = "./../../shared/dialog/dlgOrganization.jsf";
+                            var temp = "?";
+                            url = url + temp + "display=one";
+                            temp = '&amp;' ;
+                            if(filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgOpenOrgDialog').show();
+                        }
+                        return false
+             }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

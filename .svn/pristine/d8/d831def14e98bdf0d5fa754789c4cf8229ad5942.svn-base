@@ -1,0 +1,48 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package diemdo.remote;
+
+import diemdo.ADiemdo;
+import diemdo.ADiemdoAx;
+import diemdo.ADiemdoAxPK;
+import diemdo.ADiemdoNhom;
+import diemdo.ALstCategory;
+import diemdo.ALstLoaiDd;
+import diemdo.ALstTcDd;
+import diemdo.ALstType;
+import diemdo.ALstUlevel;
+import java.util.List;
+import main.remote.shared.common.ICommon;
+
+import javax.ejb.Local;
+
+@Local
+public interface IDiemDoRemote extends ICommon {
+
+    public List<ADiemdoNhom> getAllDiemDoNhom();
+
+    public ADiemdoNhom getDiemDoNhomByID(String id);
+
+    public void deleteDiemDoNhomById(String id);
+
+    public List<ADiemdo> getAllDiemDo();
+
+    public ADiemdo getDiemDoByID(String id);
+    
+    public List<ALstCategory> getAllCategoryId();
+    
+    public List<ALstType> getAllTypeId();
+    
+    public List<ALstLoaiDd> getAllLoaiDD();
+    
+    public List<ALstTcDd> getAllTcDD();
+    
+    public List<ALstUlevel> getAllUlevel();
+    
+    public List<ADiemdoAx> getAllAxByMaDD(String maDD);
+    
+    public List<ADiemdoAx> getAllAx();
+}

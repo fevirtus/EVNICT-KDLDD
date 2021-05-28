@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            #{danhMucDungChungDetailBean.assertFuncRight('02.32')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left"  rendered="#{danhMucDungChungDetailBean.renderedFuncEdit('02.32')}">
+                        <p:commandButton id="btnNew" disabled="#{danhMucDungChungDetailBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="@form"
+                                         actionListener="#{danhMucDungChungDetailBean.onAddNewDetail}"/>
+                        <p:commandButton id="btnUpdate" disabled="#{danhMucDungChungDetailBean.disabledSaveData}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="@form"
+                                         actionListener="#{danhMucDungChungDetailBean.onSaveDetail}"/>
+                        <p:commandButton id="btnDel" disabled="#{danhMucDungChungDetailBean.disabledDeleteData}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDelete}');"
+                                         actionListener="#{danhMucDungChungDetailBean.onDeleteDetail}"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="5">
+                            <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                             icon="resultset_first" update="@form" title="#{commonMessages.btnFirst}"
+                                             disabled="#{danhMucDungChungDetailBean.m_bFirst}"
+                                             actionListener="#{danhMucDungChungDetailBean.onNavigatorFirst}"/>
+                            <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                             disabled="#{danhMucDungChungDetailBean.m_bPrevious}"
+                                             icon="resultset_previous" update="@form" title="#{commonMessages.btnPrevious}"
+                                             actionListener="#{danhMucDungChungDetailBean.onNavigatorPrevious}"/>
+                            <p:commandButton id="btnNext" styleClass="btnHeight"
+                                             disabled="#{danhMucDungChungDetailBean.m_bNext}"
+                                             icon="resultset_next" update="@form" title="#{commonMessages.btnNext}"
+                                             actionListener="#{danhMucDungChungDetailBean.onNavigatorNext}"/>
+                            <p:commandButton id="btnLast" styleClass="btnHeight"
+                                             disabled="#{danhMucDungChungDetailBean.m_bLast}"
+                                             icon="resultset_last" update="@form" title="#{commonMessages.btnLast}"
+                                             actionListener="#{danhMucDungChungDetailBean.onNavigatorLast}"/>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                        <h:panelGrid id="confirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                            <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{danhMucDungChungDetailBean.m_sDeleteMsg}"/>
+                        </h:panelGrid>
+                        <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                         actionListener="#{danhMucDungChungDetailBean.onDeleteEnd}" update="@form" />
+                        <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                    </p:dialog>
+
+                    <p:outputPanel id="pnlContent">
+                        <p:focus/>
+                        <table>                           
+
+                            <tr style="height: 25px">
+                                <td width="100px" align="right">
+                            <h:outputLabel value="Mã*"
+                                           styleClass="#{danhMucDungChungDetailBean.m_Style_TxtID}"/>
+                            </td>
+                            <td>
+                            <h:inputText id="txtFielCode" style="width: 150px;"                                                
+                                         value="#{danhMucDungChungDetailBean.m_SListFieldALL.fieldcode}"/>
+                            </td>
+                            <td width="100px" align="right">
+                            <h:outputLabel value="Tên*"
+                                           styleClass="#{danhMucDungChungDetailBean.m_Style_TxtDesc}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtFieldDesc" style="width: 300px;"
+                                         value="#{danhMucDungChungDetailBean.m_SListFieldALL.fielddesc}"/>
+                            </td>                                   
+                            </tr>
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputLabel value="Ghi chú"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtNote" style="width: 150px;"
+                                         value="#{danhMucDungChungDetailBean.m_SListFieldALL.note}"/>
+                            </td>
+                            
+                                <td align="right">
+                            <h:outputLabel value="Stt"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtOrg" style="width: 150px;"
+                                         value="#{danhMucDungChungDetailBean.m_SListFieldALL.fieldord}"/>
+                            </td>                                
+                            </tr>
+
+
+
+                        </table>                    
+                    </p:outputPanel>
+
+
+                    <script type="text/javascript">
+                        function KeyEnterSelectCategory(event, control) {
+                            if (event.keyCode == 13) {
+                                if (control.id == ":formDlg:txtListID") {
+                                    OpenSelectCategory(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        function OpenSelectCategory(filterValue) {
+                            var f = document.getElementById('ifrSelectCategory');
+                            if (f) {
+                                var url = "./../dialog/dlgLstCategory.jsf";
+                                var temp = '?';
+                                url = url + temp + "display=one";
+                                temp = '&amp;';
+                                if (filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgSelectCategory').show();
+                            }
+                            return false;
+                        }
+                        function handleCmdComplete(xhr, status, args) {
+                            if (args.Method)
+                            {
+                                switch (args.Method)
+                                {
+                                    case 'DeleteCAAT':
+                                        PF('confirmDel').show();
+                                        break;
+                                    case 'DeleteCAMT':
+                                        PF('confirmDel').show();
+                                        break;
+                                }
+                            }
+                        }
+
+                        function OpenSelectOrg(filterValue) {
+                            var f = document.getElementById('ifrSelectOrg');
+                            if (f) {
+                                var url = "../../shared/dialog/dlgOrganization.jsf";
+                                var temp = '?';
+                                url = url + temp + "display=one";
+                                temp = '&amp;';
+                                if (filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgSelectOrg').show();
+                            }
+                            return false;
+                        }
+
+                        function OpenSelectAttribute() {
+                            var f = document.getElementById('ifrSelectAttribute');
+                            if (f) {
+                                var url = "./../../shared/dialog/dlgAttrGroup.jsf?display=many&amp;objtype=A";
+                                f.src = url;
+                                PF('dlgSelectAttribute').show();
+                            }
+                            return false;
+                        }
+                        function OpenSelectMeterTemp() {
+                            var f = document.getElementById('ifrSelectMeterTemp');
+                            if (f) {
+                                var url = "./../dialog/dlgMeterTemplate.jsf?display=many";
+                                f.src = url;
+                                PF('dlgSelectMeterTemp').show();
+                            }
+                            return false;
+                        }
+
+
+                        function OpenATDetail(filterValue) {
+                            window.open("./../../shared/system/S_AttributesMgt.jsf?AGID=" + filterValue, "_blank");
+                        }
+                        function OpenMTDetail(cmid) {
+//                            var f = document.getElementById('frMeterTemplateDetail');
+//                            if(cmid)
+//                                f.src = "../asset/asset_metertemp_detail.jsf?MTID=" + cmid;
+//                            else
+//                                f.src = "../asset/asset_metertemp_detail.jsf";
+//                            PF('dlgOpenMeterTemplateDetail').show();
+
+                            window.open("../asset/asset_metertemp_detail.jsf?MTID=" + cmid, "_blank");
+                        }
+                    </script>
+                    <style type="text/css">
+                        .attrGroup {
+                            font-weight: bold;
+                            background-color: #eeeeee !important;
+                            background-image: none !important;
+                        }
+                        .scroll_box{
+                            width: 600px;
+                            overflow:auto;
+                        }
+                    </style>
+                </div>               
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

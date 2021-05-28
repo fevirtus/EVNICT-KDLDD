@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left">
+                        <p:commandButton id="btnNew" disabled="#{danhMucDungChungFunDetailBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="@all"
+                                         actionListener="#{danhMucDungChungFunDetailBean.onAddNewDetail}"
+                                         oncomplete="document.getElementById('formDlg:txtFielCode').focus();"/>
+                        <p:commandButton id="btnUpdate" disabled="#{danhMucDungChungFunDetailBean.disabledSaveData}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="@form"
+                                         actionListener="#{danhMucDungChungFunDetailBean.onSaveDetail}"/>
+                        <p:commandButton id="btnDel" disabled="#{danhMucDungChungFunDetailBean.disabledDeleteData}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDelete}');"
+                                         actionListener="#{danhMucDungChungFunDetailBean.onDeleteDetail}"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="5">
+                            <ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>
+                            <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                             icon="resultset_first" update="@form" title="#{commonMessages.btnFirst}"
+                                             disabled="#{danhMucDungChungFunDetailBean.m_bFirst}"
+                                             actionListener="#{danhMucDungChungFunDetailBean.onNavigatorFirst}"/>
+                            <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                             disabled="#{danhMucDungChungFunDetailBean.m_bPrevious}"
+                                             icon="resultset_previous" update="@form" title="#{commonMessages.btnPrevious}"
+                                             actionListener="#{danhMucDungChungFunDetailBean.onNavigatorPrevious}"/>
+                            <p:commandButton id="btnNext" styleClass="btnHeight"
+                                             disabled="#{danhMucDungChungFunDetailBean.m_bNext}"
+                                             icon="resultset_next" update="@form" title="#{commonMessages.btnNext}"
+                                             actionListener="#{danhMucDungChungFunDetailBean.onNavigatorNext}"/>
+                            <p:commandButton id="btnLast" styleClass="btnHeight"
+                                             disabled="#{danhMucDungChungFunDetailBean.m_bLast}"
+                                             icon="resultset_last" update="@form" title="#{commonMessages.btnLast}"
+                                             actionListener="#{danhMucDungChungFunDetailBean.onNavigatorLast}"/>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                        <h:panelGrid id="confirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                            <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{danhMucDungChungFunDetailBean.m_sDeleteMsg}"/>
+                        </h:panelGrid>
+                        <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                         actionListener="#{danhMucDungChungFunDetailBean.onDeleteEnd}" update="@form" />
+                        <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                    </p:dialog>
+
+                    <p:outputPanel id="pnlContent">
+                        <p:focus/>
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="100px" align="right">
+                            <h:outputLabel value="Mã danh mục"
+                                           styleClass="#{danhMucDungChungFunDetailBean.m_Style_TxtID}"/>
+                            </td>
+                            <td>
+                            <p:inputText id="txtFielCode" style="width: 150px;" readonly="#{danhMucDungChungFunDetailBean.txtReadOnly}"                                                
+                                         value="#{danhMucDungChungFunDetailBean.m_SListALL.listid}"/>
+                            </td>
+                            <td width="100px" align="right">
+                            <p:inputText style="width: 300px;"                                                
+                                         value="#{danhMucDungChungFunDetailBean.m_SListALL.listdesc}"/>
+                            </td>
+                            
+                            </tr>
+                            <tr>
+                                <td width="100px" align="right">
+                            <h:outputLabel value="Mã nhóm"/>
+                            </td>
+                            <td colspan="2">
+                            <p:autoComplete onfocus="this.select();" 
+                                            id="txtTen"
+                                            var="p"
+                                            forceSelection="true"
+                                            dropdown="true"
+                                            scrollHeight="300"
+                                            itemLabel="#{p.grouplistdesc}" itemValue="#{p}"
+                                            queryDelay="100"
+                                            converter="#{sListGroupConverter}"
+                                            value="#{danhMucDungChungFunDetailBean.m_SListALL.grouplistid}" 
+                                            completeMethod="#{danhMucDungChungFunDetailBean.completeSearchNameGroup}"  >                                
+                                <p:column style="width: 100px;">
+                                    <h:outputText value="#{p.grouplistid}"></h:outputText>
+                                </p:column>
+                                <p:column style="width: 230px;">
+                                    <h:outputText value="#{p.grouplistdesc}"></h:outputText>
+                                </p:column>
+                            </p:autoComplete>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                                    <h:outputLabel value="Sắp xếp"/>
+                                </td>
+                                <td>
+                                    <p:inputText style="width: 100px;"                                                
+                                         value="#{danhMucDungChungFunDetailBean.m_SListALL.listord}"/>
+                                </td>
+                            </tr>
+                        </table>                    
+                    </p:outputPanel>
+
+
+                    <script type="text/javascript">
+                        function KeyEnterSelectCategory(event, control) {
+                            if (event.keyCode == 13) {
+                                if (control.id == ":formDlg:txtListID") {
+                                    OpenSelectCategory(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        function OpenSelectCategory(filterValue) {
+                            var f = document.getElementById('ifrSelectCategory');
+                            if (f) {
+                                var url = "./../dialog/dlgLstCategory.jsf";
+                                var temp = '?';
+                                url = url + temp + "display=one";
+                                temp = '&amp;';
+                                if (filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgSelectCategory').show();
+                            }
+                            return false;
+                        }
+                        function handleCmdComplete(xhr, status, args) {
+                            if (args.Method)
+                            {
+                                switch (args.Method)
+                                {
+                                    case 'DeleteCAAT':
+                                          PF('confirmDel').show();
+                                        break;
+                                    case 'DeleteCAMT':
+                                          PF('confirmDel').show();
+                                        break;
+                                }
+                            }
+                        }
+
+                        function OpenSelectOrg(filterValue) {
+                            var f = document.getElementById('ifrSelectOrg');
+                            if (f) {
+                                var url = "../../shared/dialog/dlgOrganization.jsf";
+                                var temp = '?';
+                                url = url + temp + "display=one";
+                                temp = '&amp;';
+                                if (filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgSelectOrg').show();
+                            }
+                            return false;
+                        }
+
+                        function OpenSelectAttribute() {
+                            var f = document.getElementById('ifrSelectAttribute');
+                            if (f) {
+                                var url = "./../../shared/dialog/dlgAttrGroup.jsf?display=many&amp;objtype=A";
+                                f.src = url;
+                                PF('dlgSelectAttribute').show();
+                            }
+                            return false;
+                        }
+                        function OpenSelectMeterTemp() {
+                            var f = document.getElementById('ifrSelectMeterTemp');
+                            if (f) {
+                                var url = "./../dialog/dlgMeterTemplate.jsf?display=many";
+                                f.src = url;
+                                PF('dlgSelectMeterTemp').show();
+                            }
+                            return false;
+                        }
+
+
+                        function OpenATDetail(filterValue) {
+                            window.open("./../../shared/system/S_AttributesMgt.jsf?AGID=" + filterValue, "_blank");
+                        }
+                        function OpenMTDetail(cmid) {
+//                            var f = document.getElementById('frMeterTemplateDetail');
+//                            if(cmid)
+//                                f.src = "../asset/asset_metertemp_detail.jsf?MTID=" + cmid;
+//                            else
+//                                f.src = "../asset/asset_metertemp_detail.jsf";
+//                            PF('dlgOpenMeterTemplateDetail').show();
+
+                            window.open("../asset/asset_metertemp_detail.jsf?MTID=" + cmid, "_blank");
+                        }
+                    </script>
+                    <style type="text/css">
+                        .attrGroup {
+                            font-weight: bold;
+                            background-color: #eeeeee !important;
+                            background-image: none !important;
+                        }
+                        .scroll_box{
+                            width: 600px;
+                            overflow:auto;
+                        }
+                    </style>
+                </div>               
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

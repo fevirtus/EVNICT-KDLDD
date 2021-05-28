@@ -1,0 +1,275 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">                
+                <f:loadBundle var="msgs" basename="main.web.shared.report.prop.ReportProp"/>
+            </ui:define>
+            <ui:define name="content">                                
+                <h:form id="frmRptConfig">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                    </p:outputPanel>    
+                    <div class="p-grid">
+                        <div class="p-col-12 p-md-3">                      
+                            <p:contextMenu for="trvReportGroup">
+                                <p:menuitem value="Phân quyền" update="msgInfo" process="@this"
+                                            actionListener="#{reportConfigBean.onAssetGrant}"
+                                            oncomplete="handleCmdComplete(xhr, status, args)" icon="ui-icon-key"/>
+                            </p:contextMenu>
+                            <p:tree style="width:500px;height: auto;border: 0px" id="trvReportGroup" widgetVar="trvReportGroup" 
+                                    value="#{reportConfigBean.m_RootNode}" var="node" cache="false"
+                                    selectionMode="single" selection="#{reportConfigBean.selectedNode}">
+                                <p:ajax event="select" process="@this @(tlBar)"  update="@widgetVar(dtReportTab) frmRptConfig:tlBar" listener="#{reportConfigBean.onNodeSelect}" />
+                                <p:treeNode collapsedIcon="ui-icon ui-icon-folder-collapsed" expandedIcon="ui-icon ui-icon-folder-open">
+                                    <h:outputText value="#{node.rptgroupdesc}" />
+                                </p:treeNode>
+                            </p:tree>
+                        </div> 
+                        <div class="p-col-12 p-md-9">
+                            <div>
+                                <p:toolbar id="tlBar" >
+                                    <f:facet name="left">
+                                        <p:commandButton icon="pi pi-user-plus" title="#{msgs.main_Tbar_BtnAddGroup}" styleClass="p-mr-2 p-mb-2"
+                                                         value="Thêm nhóm"
+                                                         actionListener="#{reportConfigBean.onAddNewTabGroup}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                        <p:commandButton icon="pi pi-user-edit" title="#{msgs.main_Tbar_BtnEditGroup}" styleClass="warning-button p-mr-2 p-mb-2"
+                                                         value="Sửa nhóm"
+                                                         actionListener="#{reportConfigBean.onEditTabGroup}"
+                                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                        <p:commandButton icon="pi pi-user-minus" title="#{msgs.main_Tbar_BtnDeleteGroup}" styleClass="danger-button p-mr-2 p-mb-2"
+                                                         value="Xóa nhóm"
+                                                         actionListener="#{reportConfigBean.onDeleteTabGroupStart}"
+                                                         update="msgInfo dlgConfirmDelContent" 
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+
+                                        <span class="ui-separator">
+                                            <span class="pi pi-ellipsis-v" />
+                                        </span>
+
+                                        <p:commandButton id="btnNew" styleClass="p-mr-2 p-mb-2" icon="pi pi-plus" title="#{msgs.main_Tbar_BtnAddTab} #{commonMessages.hkAddNew}"
+                                                         actionListener="#{reportConfigBean.onAddTab}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                        <p:commandButton id="btnUpdate" styleClass="warning-button p-mr-2 p-mb-2" icon="pi pi-pencil" title="#{msgs.main_Tbar_BtnEditTab} #{commonMessages.hkUpdate}"
+                                                         actionListener="#{reportConfigBean.onEditTab}"
+                                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                        <p:commandButton id="btnDel" styleClass="danger-button p-mr-2 p-mb-2" icon="pi pi-trash" title="#{msgs.main_Tbar_BtnDeleteTab} #{commonMessages.hkDelete}"
+                                                         update="msgInfo dlgConfirmDelContent" actionListener="#{reportConfigBean.onDeleteTabStart}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                    </f:facet>
+
+                                    <f:facet name="right">
+                                        <p:commandButton rendered="#{reportConfigBean.renderedFuncEdit('02.17')}"
+                                                         icon="pi pi-step-backward-alt" title="#{commonMessages.btnMoveFirst}" styleClass="btnHeight"
+                                                         disabled="#{reportConfigBean.disableButtonRowSort}"
+                                                         update="frmRptConfig:dtReportTab msgInfo" actionListener="#{reportConfigBean.onMoveAttributeFirst}"/>
+                                        <p:commandButton rendered="#{reportConfigBean.renderedFuncEdit('02.17')}"
+                                                         icon="pi pi-caret-left" title="#{commonMessages.btnUp}" styleClass="btnHeight"
+                                                         disabled="#{reportConfigBean.disableButtonRowSort}"
+                                                         update="frmRptConfig:dtReportTab msgInfo" actionListener="#{reportConfigBean.onMoveAttributeUp}"/>
+                                        <p:commandButton rendered="#{reportConfigBean.renderedFuncEdit('02.17')}"
+                                                         icon="pi pi-caret-right" title="#{commonMessages.btnDown}" styleClass="btnHeight"
+                                                         disabled="#{reportConfigBean.disableButtonRowSort}"
+                                                         update="frmRptConfig:dtReportTab msgInfo" actionListener="#{reportConfigBean.onMoveAttributeDown}"/>
+                                        <p:commandButton rendered="#{reportConfigBean.renderedFuncEdit('02.17')}"
+                                                         icon="pi pi-step-forward-alt" title="#{commonMessages.btnMoveLast}" styleClass="btnHeight"
+                                                         disabled="#{reportConfigBean.disableButtonRowSort}"
+                                                         update="frmRptConfig:dtReportTab msgInfo" actionListener="#{reportConfigBean.onMoveAttributeLast}"/>
+                                    </f:facet>
+                                </p:toolbar>
+
+                                <div class="card">
+                                    <p:dataTable var="s" id="dtReportTab" paginator="true"
+                                                 scrollHeight="400"
+                                                 scrollable="true"
+                                                 value="#{reportConfigBean.reportDataModel}"
+                                                 rows="50" emptyMessage="" selection="#{reportConfigBean.selectReports}"
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="50,100,150,200" widgetVar="dtReportTab" paginatorPosition="bottom">
+                                        <p:column selectionMode="multiple" width="45" style="text-align: center;"/>
+                                        <p:column style="text-align: center;" width="55">
+                                            <p:commandButton styleClass="btnHeight" icon="edit" title="#{msgs.main_Tbar_BtnEditTab}"
+                                                             actionListener="#{reportConfigBean.onEditTabFromGrid}"
+                                                             oncomplete="OpenTabDetail('#{s.rptid}','');"/>
+                                        </p:column>
+
+                                        <p:column style="text-align: center;" width="55">
+                                            <p:commandButton styleClass="btnHeight" icon="view" title="#{msgs.main_Tbar_BtnEditTab}"
+                                                             actionListener="#{reportConfigBean.onEditTabFromGrid}"
+                                                             oncomplete="showDlgReport('#{s.rptid}');"
+                                                             />
+                                        </p:column>
+                                        <p:column headerText="#{msgs.main_Grd_TabID}"  width="150"
+                                                  filterBy="#{s.rptid}" filterMatchMode="contains" filterStyle="width:90%">
+                                            <h:outputText value="#{s.rptid}"/>
+                                        </p:column>
+                                        <p:column headerText="#{msgs.main_Grd_TabDesc}"
+                                                  filterBy="#{s.rptdesc}" filterMatchMode="contains" filterStyle="width:97%">
+                                            <h:outputText value="#{s.rptdesc}"/>
+                                        </p:column>
+                                        <p:column headerText="#{msgs.main_Grd_TabEnable}" width="100" style="text-align: center;"
+                                                  filterBy="#{s.enable}" filterMatchMode="contains" filterStyle="width:90%">
+                                            <h:selectBooleanCheckbox value="#{s.enable}" disabled="true"/>
+                                        </p:column>
+                                        <p:column headerText="Stt" style="text-align: center;" width="100"
+                                                  filterBy="#{s.rptord}" filterMatchMode="contains" filterStyle="width:90%">
+                                            <h:outputText value="#{s.rptord}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </div>                    
+                    </div>
+
+                    <!-- Vùng dialog-->
+
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                        <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                            <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{reportConfigBean.m_sDeleteMsg}"/>
+                        </h:panelGrid>
+                        <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="confirmDel').hide(); reApplyFilterGrd();"
+                                         actionListener="#{reportConfigBean.onDeleteEnd}" update="frmRptConfig:trvReportGroup frmRptConfig:dtReportTab msgInfo" />
+                        <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                    </p:dialog>
+
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgTabGroupDetail" widgetVar="dlgTabGroupDetail" header="Chi tiết nhóm báo cáo"
+                              width="#{settingsProp.MainDlgWidth}" height="#{settingsProp.MainDlgIFrameHeight}"
+                              closable="true" modal="true" resizable="false">
+                        <p:ajax event="close" listener="#{reportConfigBean.onCloseDetail}" update="frmRptConfig:trvReportGroup frmRptConfig:dtReportTab"/>
+                        <iframe id="frTabGroupDetail" scrolling="no"
+                                frameborder="0" width="100%" height="99%">
+                        </iframe>
+                    </p:dialog>
+                    <!-- Vùng dialog-->
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgTabDetail" widgetVar="dlgTabDetail" header="Chi tiết báo cáo"
+                              width="1100" height="700"
+                              closable="true"  modal="true" resizable="false">                        
+                        <iframe id="frTabDetail" scrolling="no"
+                                frameborder="0" width="100%" height="99%">
+                        </iframe>
+                    </p:dialog>
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgReportView" widgetVar="dlgReportView" header="Hiển thị báo cáo"
+                              width="600" height="500"
+                              closable="true"  modal="true" resizable="false">
+                        <p:ajax event="close"/>
+                        <iframe id="frReportView" scrolling="no"
+                                frameborder="0" width="100%" height="99%">
+                        </iframe>
+                    </p:dialog>
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAssetGrant" widgetVar="dlgAssetGrant"
+                              resizable="false"
+                              width="1024" height="640" closable="true"                  
+                              header="Phân quyền thao tác báo cáo">
+                        <iframe id="bcAssetGrant" scrolling="auto"
+                                frameborder="true" width="100%" height="635"
+                                style="border: none">
+                        </iframe>
+                    </p:dialog>
+                    <script type="text/javascript">
+                        function handleCmdComplete(xhr, status, args) {
+                            if (args.Method)
+                            {
+                                switch (args.Method)
+                                {
+                                    case 'CopyReport':
+                                        var f = document.getElementById('frTabGroupDetail');
+                                        f.src = "../report/S_Report_Copy.jsf";
+                                        PF('dlgTabGroupDetail').show();
+                                        break;
+                                    case 'NewGroup':
+                                        OpenGroup();
+                                    case 'AddTabGroup':
+                                        OpenTabGroupDetail('', args.id);
+                                        break;
+                                    case 'EditTabGroup':
+                                        OpenTabGroupDetail(args.id, '');
+                                        break;
+                                    case 'DeleteTabGroup':
+                                        PF('confirmDel').show();
+                                        break;
+                                    case 'AddTab':
+                                        OpenTabDetail('', args.id);
+                                        break;
+                                    case 'EditTab':
+                                        OpenTabDetail(args.id, '');
+                                        break;
+                                    case 'DeleteTab':
+                                        PF('confirmDel').show();
+                                        break;
+                                    case 'Grant':
+                                        var f = document.getElementById('bcAssetGrant');
+                                        var s = "../report/S_GranReport.jsf";
+
+                                        if (args.reportId)
+                                        {
+                                            var temp = "?";
+                                            s = s + temp + "ReportID=" + args.reportId;
+                                            temp = '&amp;';
+                                            s = s + temp + "TypeID=" + args.typeId;
+
+                                        }
+                                        f.src = s;
+                                        PF('dlgAssetGrant').show();
+                                        break;
+                                }
+                            }
+                        }
+
+                        function OpenGroup() {
+                            var f = document.getElementById('frTabGroupDetail');
+                            f.src = "../report/S_Report_group_details.jsf";
+                            PF('dlgTabGroupDetail').show();
+                        }
+
+                        function OpenTabGroupDetail(id, parrentid) {
+                            var f = document.getElementById('frTabGroupDetail');
+                            if (id) {
+                                f.src = "../report/S_Report_group_details.jsf?rptgroupid=" + id;
+                            }
+                            else {
+                                if (parrentid)
+                                    f.src = "../report/S_Report_group_details.jsf?rptgroupidParent=" + parrentid;
+                                else
+                                    f.src = "../report/S_Report_group_details.jsf";
+                            }
+                            PF('dlgTabGroupDetail').show();
+                        }
+                        function OpenTabDetail(id, rptgroupid) {
+                            var f = document.getElementById('frTabDetail');
+                            if (id)
+                                f.src = "../report/S_Report_details.jsf?rptid=" + id;
+                            else {
+                                if (rptgroupid)
+                                    f.src = "../report/S_Report_details.jsf?rptgroupid=" + rptgroupid;
+                                else
+                                    f.src = "../report/S_Report_details.jsf";
+                            }
+                            PF('dlgTabDetail').show();
+                        }
+
+                        function OpenReporView(id) {
+                            var f = document.getElementById('frReportView');
+                            if (id)
+                                f.src = "../report/S_Report_View.jsf?rptid=" + id;
+
+                            PF('dlgReportView').show();
+                        }
+
+                        function reApplyFilterGrd()
+                        {
+                            if (!#{settingsProp.FilterWhenCloseDlg})
+                                return;
+                            dtReportTab.filter();
+                        }
+                    </script>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

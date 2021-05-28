@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:pr="http://primefaces.org/rain">
+
+    <style>
+        .ui-menu .ui-menu-parent .ui-menu-child
+        {
+            width: 250px;
+        }
+    </style>    
+    <div class="menu-wrapper">
+        <div class="layout-menu-container">        
+            <h:form id="menuform">
+                <pr:menu widgetVar="RainMenuWidget" id="mnuMain"  model="#{organizationBean.menuSystem}">                    
+                </pr:menu>
+            </h:form>
+
+        </div>
+        <div style="border-bottom: 2px solid; border-color: #ffffff;">
+            <h:outputText value="Title" style="font-size: 14px; font-weight: bold; color: #4B576F;"/>
+        </div>
+    </div>
+</ui:composition>

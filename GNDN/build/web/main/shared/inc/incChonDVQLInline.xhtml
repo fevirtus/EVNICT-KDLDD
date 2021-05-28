@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">                
+                <div style="width: 315px;height: 290px;overflow: auto">
+                    <p:tree id="treeDonVi" style="width:350px;height: auto;border: 0px"
+                            value="#{chonDonViQuanLyInlineBean.rootTreeNode}" var="node"
+                            dynamic="true" cache="false"                        
+                            selectionMode="single" selection="#{chonDonViQuanLyInlineBean.selectedTreeNode}">
+                        <p:ajax event="select" listener="#{chonDonViQuanLyInlineBean.onChangeOrg}"
+                                oncomplete="handleMainSelectOrg(xhr, status, args)"/>                    
+                        <p:treeNode collapsedIcon="ui-icon-bookmark" expandedIcon="ui-icon-bookmark">
+                            <h:outputText value="#{node.orgdesc}" />                                
+                        </p:treeNode>
+                    </p:tree>
+                </div>
+            </h:form>
+        </h:body>
+        <script type="text/javascript">
+            function handleMainSelectOrg(xhr, status, args) {
+                //alert(args.Method);
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'reload':
+                            location.reload();
+                            break;
+                    }
+                }
+            }
+        </script>
+    </f:view>
+</html>

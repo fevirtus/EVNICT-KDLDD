@@ -1,0 +1,295 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package diemdo.ejb;
+
+import diemdo.ADiemdo;
+import diemdo.ADiemdoAx;
+import diemdo.ADiemdoMix;
+import diemdo.ADiemdoNhom;
+import diemdo.ADiemdoTariff;
+import diemdo.ADiemdoTariffMix;
+import diemdo.ADiemdoTariffMix2;
+import diemdo.ALstCategory;
+import diemdo.ALstLoaiDd;
+import diemdo.ALstTcDd;
+import diemdo.ALstType;
+import diemdo.ALstUlevel;
+import diemdo.remote.IDiemDoRemote;
+import java.util.List;
+import javax.ejb.Stateless;
+import main.ejb.shared.common.BaseCommonBL;
+import javax.persistence.Query;
+import main.entity.shared.system.S_Assets;
+
+/**
+ *
+ * @author TUYEN EVN
+ */
+@Stateless
+public class DiemDoBL extends BaseCommonBL implements IDiemDoRemote {
+
+    @Override
+    public List<ADiemdoNhom> getAllDiemDoNhom() {
+        try {
+            String sQuery = "select * from A_DIEMDO_NHOM";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoNhom.class);
+            List<ADiemdoNhom> lst = query.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public ADiemdoNhom getDiemDoNhomByID(String id) {
+        try {
+            String sQuery = "Select * From A_DIEMDO_NHOM where MA_NHOM_DD = '" + id + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoNhom.class);
+            ADiemdoNhom diemdo = (ADiemdoNhom) query.getSingleResult();
+            return diemdo;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public void deleteDiemDoNhomById(String id) {
+        try {
+            String sQuery = "Delete From A_DIEMDO_NHOM where MA_NHOM_DD ='" + id + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoNhom.class);
+            entityManager.remove(getDiemDoNhomByID(id));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
+        }
+    }
+
+    @Override
+    public List<ADiemdo> getAllDiemDo() {
+        try {
+            String sQuery = "select * from A_DIEMDO";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdo.class);
+            List<ADiemdo> lst = query.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<ADiemdoMix> getAllDiemDoMix() {
+        try {
+            String sQuery = "select A.*, B.TEN_NHOM_DD, C.TEN_LOAI_DD, D.TEN_TC_DD, E.ULEVELDESC, F.ORGDESC from A_DIEMDO a LEFT JOIN A_DIEMDO_NHOM b ON A.MA_NHOM_DD = B.MA_NHOM_DD LEFT JOIN A_LST_LOAI_DD c ON A.MA_LOAI_DD = C.MA_LOAI_DD LEFT JOIN A_LST_TC_DD d ON A.MA_TC_DD = D.MA_TC_DD LEFT JOIN A_LST_ULEVEL e ON A.ULEVELID = E.ULEVELID LEFT JOIN S_ORGANIZATION f ON A.ORGID_REF = F.ORGID";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoMix.class);
+            List<ADiemdoMix> lst = query.getResultList();
+            return lst;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public ADiemdoMix getDiemDoMixByID(String id) {
+        try {
+            String sQuery = "select A.*, B.TEN_NHOM_DD, C.TEN_LOAI_DD, D.TEN_TC_DD, E.ULEVELDESC, F.ORGDESC from A_DIEMDO a LEFT JOIN A_DIEMDO_NHOM b ON A.MA_NHOM_DD = B.MA_NHOM_DD LEFT JOIN A_LST_LOAI_DD c ON A.MA_LOAI_DD = C.MA_LOAI_DD LEFT JOIN A_LST_TC_DD d ON A.MA_TC_DD = D.MA_TC_DD LEFT JOIN A_LST_ULEVEL e ON A.ULEVELID = E.ULEVELID LEFT JOIN S_ORGANIZATION f ON A.ORGID_REF = F.ORGID where A.MA_DIEMDO = '" + id + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoMix.class);
+            ADiemdoMix diemdo = (ADiemdoMix) query.getSingleResult();
+            return diemdo;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public ADiemdo getDiemDoByID(String id) {
+        try {
+            String sQuery = "Select * From A_DIEMDO where MA_DIEMDO = '" + id + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdo.class);
+            ADiemdo diemdo = (ADiemdo) query.getSingleResult();
+            return diemdo;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<ALstCategory> getAllCategoryId() {
+        try {
+            String sQuery = "Select * from A_LST_CATEGORY";
+            Query query = entityManager.createNativeQuery(sQuery, ALstCategory.class);
+            List<ALstCategory> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ALstType> getAllTypeId() {
+        try {
+            String sQuery = "Select * from A_LST_TYPE";
+            Query query = entityManager.createNativeQuery(sQuery, ALstType.class);
+            List<ALstType> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ALstLoaiDd> getAllLoaiDD() {
+        try {
+            String sQuery = "Select * from A_LST_LOAI_DD";
+            Query query = entityManager.createNativeQuery(sQuery, ALstLoaiDd.class);
+            List<ALstLoaiDd> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ALstTcDd> getAllTcDD() {
+        try {
+            String sQuery = "Select * from A_LST_TC_DD";
+            Query query = entityManager.createNativeQuery(sQuery, ALstTcDd.class);
+            List<ALstTcDd> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ALstUlevel> getAllUlevel() {
+        try {
+            String sQuery = "Select * from A_LST_ULEVEL";
+            Query query = entityManager.createNativeQuery(sQuery, ALstUlevel.class);
+            List<ALstUlevel> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ADiemdoAx> getAllAxByMaDD(String maDD) {
+        try {
+            String sQuery = "Select * from A_DIEMDO_AX WHERE MA_DIEMDO = '" + maDD + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoAx.class);
+            List<ADiemdoAx> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ADiemdoAx> getAllAx() {
+        try {
+            String sQuery = "Select * from A_DIEMDO_AX ORDER BY ngay DESC";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoAx.class);
+            List<ADiemdoAx> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<S_Assets> getAllOganization() {
+        try {
+            String sQuery = "Select S_ORGANIZATION.ORGDESC, S_ORGANIZATION.ORGID  from S_ORGANIZATION";
+            Query query = entityManager.createNativeQuery(sQuery, S_Assets.class);
+            List<S_Assets> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ADiemdoTariff> getAllTariff() {
+        try {
+            String sQuery = "Select * FROM A_DIEMDO_TARIFF";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoTariff.class);
+            List<ADiemdoTariff> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ADiemdoTariffMix> getAllTariffMix(int monthLoad, int yearLoad) {
+        try {
+            String sQuery = "SELECT a.*, b.TEN_DIEMDO FROM A_DIEMDO_TARIFF a INNER JOIN A_DIEMDO b ON a.MA_DIEMDO = b.MA_DIEMDO WHERE a.THANG >= " + monthLoad + " AND a.NAM >= " + yearLoad;
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoTariffMix.class);
+            List<ADiemdoTariffMix> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<ADiemdoTariffMix2> getAllTariffMix2(int monthLoad, int yearLoad) {
+        try {
+            String sQuery = "/* Formatted on 3/23/2021 2:31:16 PM (QP5 v5.252.13127.32867) */\n"
+                    + "SELECT a.*, b.*, C.TEN_DIEMDO\n"
+                    + "  FROM (  SELECT MA_DIEMDO,\n"
+                    + "                 CASE\n"
+                    + "                    WHEN MAX (CASE WHEN DEN_NGAY IS NULL THEN 1 ELSE 0 END) = 0\n"
+                    + "                    THEN\n"
+                    + "                       MAX (DEN_NGAY)\n"
+                    + "                 END\n"
+                    + "                    AS DEN_NGAY_LASTEST\n"
+                    + "            FROM A_DIEMDO_TARIFF\n"
+                    + "        GROUP BY MA_DIEMDO) a\n"
+                    + "       LEFT JOIN A_DIEMDO_TARIFF b\n"
+                    + "          ON (   a.DEN_NGAY_LASTEST = B.DEN_NGAY\n"
+                    + "              OR a.DEN_NGAY_LASTEST IS NULL AND B.DEN_NGAY IS NULL)\n"
+                    + "       LEFT JOIN A_DIEMDO c ON A.MA_DIEMDO = C.MA_DIEMDO";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoTariffMix2.class);
+            List<ADiemdoTariffMix2> list = query.getResultList();
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public ADiemdoTariffMix getTariffMixById(String maDD, String thang, String nam, String dateId) {
+        try {
+            String sQuery = "SELECT a.*, b.TEN_DIEMDO FROM A_DIEMDO_TARIFF a INNER JOIN A_DIEMDO b ON a.MA_DIEMDO = b.MA_DIEMDO WHERE a.MA_DIEMDO = '" + maDD
+                    + "' AND A.THANG = '" + thang + "' AND A.NAM = '" + nam + "' AND A.DATEID = '" + dateId + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoTariffMix.class);
+            ADiemdoTariffMix tariffMix = (ADiemdoTariffMix) query.getSingleResult();
+            return tariffMix;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public ADiemdoTariff getTariffById(String maDD, String thang, String nam, String dateId) {
+        try {
+            String sQuery = "SELECT * FROM A_DIEMDO_TARIFF WHERE MA_DIEMDO = '" + maDD
+                    + "' AND THANG = '" + thang + "' AND NAM = '" + nam + "' AND DATEID = '" + dateId + "'";
+            Query query = entityManager.createNativeQuery(sQuery, ADiemdoTariff.class);
+            ADiemdoTariff tariff = (ADiemdoTariff) query.getSingleResult();
+            return tariff;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}

@@ -1,0 +1,107 @@
+<ui:composition xmlns:h="http://java.sun.com/jsf/html"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+    <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+    <p:panel id="#{pltSM_Inbox_Bean.getiSm_Portlet().pltid}"  rendered="#{pltSM_Inbox_Bean.isShow}" header="#{propSM_BB.IBPltName}">
+        <f:facet name="options">
+            <p:menu>
+                <p:submenu label="#{commonMessages.btnPanelSetting}">
+                    <!--
+                    <p:menuitem update="formMain:pibcbFilter formMain:pnGrdIB formMain:msgInfo" value="Test create Message" actionListener="{pltSM_Inbox_Bean.onpibCmdTestCreateMsg}"
+                                icon="/images/DataEditing/manage.png"/>
+                    -->
+                    <p:menuitem value="#{commonMessages.btnPanelMoveRemove}" url="#" onclick="showDlgUpdatePortlet('pltInbox')"
+                                icon="/images/DataEditing/option.png"/>
+                </p:submenu>
+            </p:menu>
+        </f:facet>
+        <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 5px">
+            <tr>
+                <td>
+                    <h:outputText value="#{propSM_BB.IBFilter} "/>
+                    <p:selectOneMenu id="pibcbFilter" value="#{pltSM_Inbox_Bean.m_pibFilterVal}">
+                        <f:selectItem itemValue="true" itemLabel="#{propSM_BB.IBFilter_Visible}"/>
+                        <f:selectItem itemValue="false" itemLabel="#{propSM_BB.IBFilter_Hidden}"/>
+                        <p:ajax event="valueChange" listener="#{pltSM_Inbox_Bean.onpibChangeFilter}" update="formMain:pnGrdIB formMain:pnBtnFunc"/>
+                    </p:selectOneMenu>
+                </td>
+                <td align="right">
+                    <h:panelGroup id="pnBtnFunc">
+                        <p:commandButton update="formMain:pnGrdIB formMain:msgInfo" actionListener="#{pltSM_Inbox_Bean.onpibCmdHidden}"
+                                         styleClass="btnHeight" value="#{propSM_BB.IBCmdHidden}" rendered="#{pltSM_Inbox_Bean.m_pibFilterVal=='true'}">
+                        </p:commandButton>
+                        <p:commandButton update="formMain:pnGrdIB formMain:msgInfo" actionListener="#{pltSM_Inbox_Bean.onpibCmdVisible}"
+                                         styleClass="btnHeight" value="#{propSM_BB.IBCmdVisible}" rendered="#{pltSM_Inbox_Bean.m_pibFilterVal=='false'}">
+                        </p:commandButton>
+                    </h:panelGroup>
+                    <p:commandButton update="formMain:pnGrdIB formMain:msgInfo" actionListener="#{pltSM_Inbox_Bean.onpibCmdDelete}"
+                                     styleClass="btnHeight" value="#{commonMessages.btnDelete}">
+                    </p:commandButton>
+                </td>
+            </tr>
+        </table>
+        <h:panelGroup id="pnGrdIB">
+            <p:dataTable emptyMessage="Không có dữ liệu" id="grdIB" var="dt" value="#{pltSM_Inbox_Bean.pltInboxDataModell}" selectionMode="single" selection="#{pltSM_Inbox_Bean.m_pibCurrentIB}"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         scrollHeight="220"
+                         scrollable="true"
+                         paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="50" rowsPerPageTemplate="50,100,150,200"
+                         ><!--onRowSelectUpdate="formMain:pibpnDesc"
+                         rowSelectListener="{pltSM_Inbox_Bean.onpibGrdRowSelect}">-->
+                <p:ajax event="rowSelect" listener="#{pltSM_Inbox_Bean.onpibGrdRowSelect}" update=":#{p:component('dlgIBDetail')}" oncomplete="PF('dlgIBDetail').show();"/>
+                <p:column headerText="Chọn" style="text-align: center;" width="45">
+                    <f:facet name="header">
+                        <h:selectBooleanCheckbox value="#{pltSM_Inbox_Bean.m_pibCheckAll}">
+                            <p:ajax event="valueChange" listener="#{pltSM_Inbox_Bean.onpibCheckAll}" update="grdIB"/>
+                        </h:selectBooleanCheckbox>
+                    </f:facet>
+                    <h:selectBooleanCheckbox value="#{dt.bChecked}" >
+                        <f:ajax event="valueChange" listener="#{pltSM_Inbox_Bean.onpibCheckOne}" execute="@all" immediate="true"/>
+                    </h:selectBooleanCheckbox>
+                </p:column>
+
+                <p:column headerText="#{propSM_BB.IBColID}" width="100">
+                    <h:outputText value="#{dt.msgid}"/>
+                    <h:graphicImage url="#{dt.htmlNewImg}" rendered="#{dt.htmlNewImg != ''}"/>
+                </p:column>
+                <p:column headerText="#{propSM_BB.IBColSubject}">
+                    <h:outputText value="#{dt.subject}"/>
+                </p:column>
+                <p:column headerText="#{propSM_BB.IBColDSend}" width="100">
+                    <h:outputText value="#{dt.senddtime}">
+                        <f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}"/>
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+            <!--<div align="right">
+                <h:outputText value="#{pltSM_Inbox_Bean.pibRecordCountIB}" style="#{settingsProp.StyleNote_Bold}"/>
+            </div>
+            <p:outputPanel id="pibpnDesc">
+                <h:panelGrid columns="1" cellpadding="5" style="width: 100%;text-align: justify;">
+                    <h:outputText value="#{propSM_BB.IBContent}" style="#{settingsProp.StyleNote_Bold}" rendered="#{pltSM_Inbox_Bean.m_pibCurrentIB.content != null}"/>
+                    <h:outputText value="#{pltSM_Inbox_Bean.m_pibCurrentIB.content}" escape="false"/>
+                </h:panelGrid>
+                <p:outputPanel rendered="#{pltSM_Inbox_Bean.renderEAMDesc}">
+                    <ui:include src="../inc/incInboxEAMDesc.xhtml"/>
+                </p:outputPanel>
+            </p:outputPanel>
+            -->
+        </h:panelGroup>
+    </p:panel>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" header="#{propSM_IB.BBDetail}" widgetVar="dlgIBDetail" id="dlgIBDetail" modal="true"
+              width="800" height="600">
+        <h:panelGrid id="pnIBDetail" columns="1" cellpadding="4" width="100%">
+            <h:panelGroup>
+                <table cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td><h:outputText value="#{propSM_BB.IBColID}: " style="#{settingsProp.StyleNote_Bold}"/><h:outputText value="#{pltSM_Inbox_Bean.m_pibCurrentIB.msgid}" /></td>
+                    </tr>
+                </table>
+            </h:panelGroup>
+            <h:outputText value="#{propSM_BB.BBDetailContent}" style="#{settingsProp.StyleNote_Bold}" />
+            <h:outputText value="#{pltSM_Inbox_Bean.m_pibCurrentIB.content}" escape="false" />
+        </h:panelGrid>
+    </p:dialog>
+</ui:composition>

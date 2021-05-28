@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{roleManBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.admin.prop.RoleManProp"/>
+                
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{msgs.title}" />
+                </h:panelGroup>
+                <p:toolbar style="margin-bottom: 5px;">
+                    <p:toolbarGroup align="left" rendered="#{roleManBean.renderedFuncEdit('01.03')}">
+                        <p:commandButton styleClass="btnHeight" icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         onclick="OpenQRoleDetail('');"/>
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                         actionListener="#{roleManBean.onEditRole}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <p:commandButton styleClass="btnHeight" icon="delete" title="#{commonMessages.btnDelete}"
+                                         update="msgInfo dlgConfirmDelContent" actionListener="#{roleManBean.onDeleteRoleStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"/>                        
+                    </p:toolbarGroup>                    
+                </p:toolbar>                
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{roleManBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                     actionListener="#{roleManBean.onDeleteRoleEnd}" update="dtQRole msgInfo" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtQRole" paginator="true" rows="100"
+                             value="#{roleManBean.q_RoleDataModel}"
+                             selection="#{roleManBean.arrSelectQRole}"
+                             scrollHeight="410"
+                             scrollable="true"
+                             paginatorPosition="bottom"
+                             widgetVar="dtQRole" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,500">
+                    <p:column selectionMode="multiple" style="text-align: center;" width="25"/>
+                    <p:column style="text-align: center;" width="25">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                         onclick="OpenQRoleDetail('#{s.roleid}');"/>
+                    </p:column>
+                    <p:column id="roleid" style="width:200px" width="100"
+                              headerText="#{msgs.RoleID}"
+                              filterBy="#{s.roleid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.roleid}"/>
+                    </p:column>
+                    <p:column style="width:400px"
+                              headerText="#{msgs.RoleDesc}"
+                              filterBy="#{s.roledesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.roledesc}"/>
+                    </p:column>
+                    <p:column style="text-align: center; width:50px"
+                              headerText="#{msgs.active}"
+                              filterBy="#{s.enable}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.enable}" disabled="true"/>
+                    </p:column>
+                    <p:column style="text-align: center; width:50px"
+                              headerText="#{msgs.isfix}"
+                              filterBy="#{s.isfix}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.isfix}" disabled="true"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <!-- Vùng dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenQRoleDetail" widgetVar="dlgOpenQRoleDetail" header="#{msgs.header_details}"
+                          width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}"
+                          onHide="document.getElementById('frQRoleDetail').src=''"
+                          closable="true"  modal="true" resizable="false">
+                    <p:ajax event="close" listener="#{roleManBean.onCloseRoleDetail}" update="dtQRole"/>
+                    <iframe id="frQRoleDetail" scrolling="no"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'Edit':
+                                    OpenQRoleDetail(args.roleid);
+                                    break;
+                                case 'Delete':
+                                      PF('confirmDel').show();
+                                    break;                                
+                            }
+                        }
+                    }
+                    function OpenQRoleDetail(roleid) {
+                        var f = document.getElementById('frQRoleDetail');
+                        if(roleid)
+                            f.src = "../admin/RoleMan_details.jsf?ROLEID=" + roleid;
+                        else
+                            f.src = "../admin/RoleMan_details.jsf";
+                        PF('dlgOpenQRoleDetail').show();
+                    }
+                </script>
+                <style type="text/css">
+                    .hasDatepicker {
+                        width: 100px;
+                    }
+                </style>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

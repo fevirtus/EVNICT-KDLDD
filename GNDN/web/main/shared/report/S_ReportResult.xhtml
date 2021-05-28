@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+            <style>
+                .ui-datatable-scrollable-body td
+                {
+                    border: none !important;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form id="formDlg">
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <h:inputHidden id="rId" value="#{s_ReportResultBean.objId}"/>
+                <h:inputHidden id="hfObjTypeId" value="RPT"/>
+                <h:inputHidden id="hfObjId" value="#{s_ReportResultBean.objId}"/>                        
+                <ui:include id="incAG" src="/main/shared/report/AttGroupReport.xhtml"/>
+                <fieldset>
+                    <legend>
+                        <h:outputText value="Mẫu báo cáo*"></h:outputText>
+                    </legend>
+                    <p:selectOneMenu style="width: 450px;" value="#{s_ReportResultBean.reportFormSelect}">
+                        <f:selectItems value="#{s_ReportResultBean.lstReportForm}"
+                                       var="item"
+                                       itemLabel="#{item.rptformdesc}" itemValue="#{item.rptformid}" />
+                    </p:selectOneMenu>
+                    <table>
+                        <tr>
+                            <td align="center">
+                                <i>
+                                    <h:outputText style="color: blue" value="#{s_ReportResultBean.report.note}"></h:outputText>
+                                </i>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>                
+                <center>
+                    <table>
+                        <tr>
+                            <td>
+                        <p:ajaxStatus style="width:16px;height:16px;">
+                            <f:facet name="start">
+                                <h:graphicImage value="/images/global/ajaxloading.gif" />
+                            </f:facet>
+
+                            <f:facet name="complete">
+                                <h:outputText value="" />
+                            </f:facet>
+                        </p:ajaxStatus>
+                        </td>
+                        <td>
+                        <p:commandButton id="fakeReport" ajax="false" styleClass="reportButton" style="display: none;">
+                            <p:fileDownload contentDisposition="inline" value="#{s_ReportResultBean.fileReport}"/>
+                        </p:commandButton>                    
+                        <p:commandButton id="cmdExcel" value="Xuất Excel" ajax="true" update="msgInfo dlgLogView"
+                                         actionListener="#{s_ReportResultBean.exportExcel}" 
+                                         oncomplete="handleCmdCompleteCT(xhr, status, args);"/>
+                        <p:commandButton value="Xem" ajax="true" actionListener="#{s_ReportResultBean.exportHtml}" oncomplete="viewReport();"/>
+                        <p:commandButton id="cmdLog" value="Log tổng hợp" oncomplete="PF('dlgLogView').show();" ajax="true"/>
+                        </td>
+                        </tr>
+                    </table>
+                </center>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgLogView" widgetVar="dlgLogView" header="Log tổng hợp dữ liệu"
+                          width="450"
+                          style="height: 100%"
+                          closable="true"  modal="true" resizable="false">                   
+                    <p:inputTextarea id="txtLog" cols="120" rows="20" value="#{s_ReportResultBean.txtLog}"/>
+                </p:dialog>
+            </h:form>
+            <script type="text/javascript">
+                function viewReport()
+                {
+                    window.open('#{request.contextPath}/main/shared/report/S_ReportResultView.jsf', '_blank');
+                }
+                function handleCmdCompleteCT(xhr, status, args) {
+                    if (args.Method)
+                    {
+                        switch (args.Method)
+                        {
+                            case 'Report':
+                                if (args.status)
+                                    document.getElementById('formDlg:fakeReport').click();
+                                break;
+                        }
+                    }
+                }
+            </script>
+        </h:body>
+
+    </f:view>
+</html>

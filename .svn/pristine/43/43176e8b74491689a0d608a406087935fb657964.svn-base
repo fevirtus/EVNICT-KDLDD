@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <mime-mapping>
+        <extension>ttf</extension>
+        <mime-type>application/font-sfnt</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>woff</extension>
+        <mime-type>application/font-woff</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>woff2</extension>
+        <mime-type>application/font-woff2</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>eot</extension>
+        <mime-type>application/vnd.ms-fontobject</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>eot?#iefix</extension>
+        <mime-type>application/vnd.ms-fontobject</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg#exosemibold</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg#exobolditalic</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg#exomedium</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg#exoregular</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg#fontawesomeregular</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    
+    <listener>
+        <listener-class>main.web.system.ApplicationContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>main.web.system.UsersSessionListener</listener-class>
+    </listener>
+    <!-- Indicate the encryption algorithm used for encrypt the view state. -->
+    <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FULL_STATE_SAVING_VIEW_IDS</param-name>
+        <param-value>/tmsLogin.xhtml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.numberOfLogicalViews</param-name>
+        <param-value>25</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.numberOfViewsInSession</param-name>
+        <param-value>25</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>commons</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.primefaces.extensions.DELIVER_UNCOMPRESSED_RESOURCES</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.openfaces.validation.disabled</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Production</param-value>
+        <!--Đổi sang giá trị Production để tránh ghi log 'cannot find component with identifier'. Giá trị hiện log là: Development-->
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+    <!-- File Upload filter -->
+    <filter>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+        <init-param>
+            <param-name>thresholdSize</param-name>
+            <param-value>104857600</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    <!-- -->
+    <servlet>
+        <servlet-name>Push Servlet</servlet-name>
+        <servlet-class>org.primefaces.push.PushServlet</servlet-class>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Push Servlet</servlet-name>
+        <url-pattern>/primepush/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>PdfServlet</servlet-name>
+        <servlet-class>myreport.PdfServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HtmlServlet</servlet-name>
+        <servlet-class>servlets.HtmlServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>myreport.ImageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>XlsServlet</servlet-name>
+        <servlet-class>myreport.XlsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JExcelApiServlet</servlet-name>
+        <servlet-class>myreport.JExcelApiServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RtfServlet</servlet-name>
+        <servlet-class>myreport.RtfServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OdtServlet</servlet-name>
+        <servlet-class>myreport.OdtServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>jsp</servlet-name>
+        <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
+        <init-param>
+            <param-name>development</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>xpoweredBy</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>genStrAsCharArray</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.jsf</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    
+    
+    
+    <!--ThaoDD: Thêm để điều khiển khi expired session -->
+    <!--<exception-type>javax.servlet.ServletException</exception-type>-->
+    <!--
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/sessionExpired.jsp</location>
+    </error-page>
+    -->
+    <!-- Xử lý theme từ file rar cho PrimeFace 3  -->
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>rain-#{templateGNDN.theme}</param-value>
+    </context-param>
+    <!--<context-param>
+        <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+        <param-value>-1</param-value>
+    </context-param>
+    -->
+    <filter>
+        <filter-name>Users Session Filter</filter-name>
+        <filter-class>main.web.system.UsersSessionFilter</filter-class>
+    </filter>
+    <!-- Cấu hình quan trọng cần có: xử lý lỗi font Unicode -->
+    <filter-mapping>
+        <filter-name>Users Session Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    <!-- Cấu hình quan trọng cần có: khai bao Interface ShareInfo -->
+    <!-- Cấu hình quan trọng cần có: khai bao Interface -->
+    <ejb-local-ref>
+        <ejb-ref-name>IAdmin</ejb-ref-name>
+        <local>main.remote.shared.admin.IAdmin</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IObjGrant</ejb-ref-name>
+        <local>main.remote.shared.admin.IObjGrant</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IRoleMan</ejb-ref-name>
+        <local>main.remote.shared.admin.IRoleMan</local>
+    </ejb-local-ref>
+    
+    <ejb-local-ref>
+        <ejb-ref-name>IQueryShareRemote</ejb-ref-name>
+        <local>main.remote.shared.common.IQueryShareRemote</local>
+    </ejb-local-ref>
+    
+        
+    <ejb-local-ref>
+        <ejb-ref-name>IChonDonViRemote</ejb-ref-name>
+        <local>main.remote.shared.system.IChonDonViRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IDanhMucDungChungRemote</ejb-ref-name>
+        <local>main.remote.shared.system.IDanhMucDungChungRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IOrganization</ejb-ref-name>
+        <local>main.remote.shared.system.IOrganization</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ISM_BB_BLRemote</ejb-ref-name>
+        <local>main.remote.shared.system.ISM_BB_BLRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ISM_HomepageBLRemote</ejb-ref-name>
+        <local>main.remote.shared.system.ISM_HomepageBLRemote</local>
+    </ejb-local-ref>    
+    <ejb-local-ref>
+        <ejb-ref-name>ISysRemote</ejb-ref-name>
+        <local>main.remote.shared.system.ISysRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ISystemCommonRemote</ejb-ref-name>
+        <local>main.remote.shared.system.ISystemCommonRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IReportConfigRemote</ejb-ref-name>
+        <local>main.remote.shared.report.IReportConfigRemote</local>
+    </ejb-local-ref>
+    
+    <ejb-local-ref>
+        <ejb-ref-name>ISysFunctionFlowRemote</ejb-ref-name>
+        <local>main.remote.shared.admin.ISysFunctionFlowRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IReportGrantRemote</ejb-ref-name>
+        <local>main.remote.shared.report.IReportGrantRemote</local>
+    </ejb-local-ref>      
+    <ejb-local-ref>
+        <ejb-ref-name>IReportWareHouseRemote</ejb-ref-name>
+        <local>main.remote.shared.report.IReportWareHouseRemote</local>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>IDiemDoRemote</ejb-ref-name>
+        <local>diemdo.remote.IDiemDoRemote</local>
+    </ejb-local-ref>
+</web-app>

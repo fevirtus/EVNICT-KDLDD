@@ -1,0 +1,32 @@
+<!--
+    Cửa sổ thông tin liên hệ
+-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">    
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgReportMain" header="Báo cáo" widgetVar="dlgReportMain" resizable="false"
+              width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" modal="true"
+              onHide="document.getElementById('ifrdlgReportMain').src='';">
+        <iframe id="ifrdlgReportMain" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none;background: transparent !important;">
+        </iframe>
+    </p:dialog>
+    <script type="text/javascript">
+        function showDlgReport(rId) {
+            var f = document.getElementById('ifrdlgReportMain');
+            f.src = "#{settingsBean.webRootPath}/main/shared/report/S_ReportResult.jsf?rId=" + rId;
+            PF('dlgReportMain').show();
+        }
+
+        function closeForm()
+        {
+            PF('dlgReportMain').hide();
+
+        }
+    </script>
+</ui:composition>

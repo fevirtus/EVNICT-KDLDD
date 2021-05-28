@@ -1,0 +1,204 @@
+<!--Dùng cho nhiều mục đích: tích hợp thành một tab của form, gọi thông qua Dialog -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:panelGroup id="panelAG">
+        <f:loadBundle basename="main.web.shared.system.prop.AttGroupProp" var="attProp" />
+        <table width="100%">
+            <tr>
+                <td valign="top" style="height: 280px">
+                    <style type="text/css">
+                        .attrGroup {
+                            font-weight: bold;
+                            background-color: #eeeeee;
+                            background-image: none !important;
+                        }
+                        .scroll_box{
+                            width: 100%;
+                            overflow:auto;
+                        }
+                        .historyVal {
+                            background-image: url(../../images/History.png) !important;
+                            /*                            width: 20px;height:20px;*/
+                        }
+                    </style>                    
+                    <p:dataTable emptyMessage="Không có dữ liệu" var="attr" id="dtAttGroupMinh" rowStyleClass="#{attr.colInt1 ==0 ? 'attrGroup' : null}"
+                                 selectionMode="single" value="#{attGroupBean.m_dmAttGroup}"  scrollable="true" scrollHeight="#{attGroupBean.height}">
+                        <p:column headerText="#{attProp.lblAtt_Col}" style="width:150px">
+                            <h:outputText value="#{attr.colStr5}" />
+                        </p:column>
+                        <p:column headerText="#{attProp.lblAtt_Name}" style="padding-left: #{attr.colInt2}px;">
+                            <h:outputText value="#{attr.colStr1}" rendered="#{attr.colInt1==1?true:false}"/>
+                            <p:inputText value="#{attr.colStr1}" rendered="#{attr.colInt1==0?true:false}" 
+                                         readonly="#{attGroupBean.m_disableButton}"
+                                         style="font-weight: bold;width: 200px;background: transparent;"/>
+                        </p:column>
+                        <p:column headerText="#{attProp.lblAtt_Type}" style="width:40px">
+                            <h:outputText value="#{attr.colStr2}" />
+                        </p:column>
+                        <!--                        <p:column headerText="{attProp.lblAtt_Sign}">
+                                                <h:outputText value="{attr.colStr10}" />
+                                            </p:column>-->
+                        <p:column headerText="#{attProp.lblAtt_Uom}" style="width:40px">
+                            <h:outputText value="#{attr.colStr11}" />
+                        </p:column>
+                        <p:column headerText="#{attProp.lblAtt_value}" style="padding-left:0px;width:300px">
+                            <p:inputText style="width:100%" value="#{attr.colStr3}" readonly="#{attGroupBean.m_disableButton}"
+                                         rendered="#{((attr.colInt4!=null and  attr.colInt4 &lt;=100) or attr.colInt4==null) and attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6!='BOOL' and attr.colStr6!='DATE' and attr.colStr6!='NUM'?true:false):false):false}"/>
+                            <p:inputTextarea style="width:100%" value="#{attr.colStr3}" readonly="#{attGroupBean.m_disableButton}"
+                                             rendered="#{attr.colInt4!=null and  attr.colInt4 &gt;100 and attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6!='BOOL' and attr.colStr6!='DATE' and attr.colStr6!='NUM'?true:false):false):false}"/>
+                            <p:inputText style="width:100%" value="#{attr.colDou1}" readonly="#{attGroupBean.m_disableButton}"
+                                         rendered="#{attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6!='BOOL' and attr.colStr6!='DATE' and attr.colStr6!='STR' and attr.colStr6!='GEO'?true:false):false):false}">
+                                <f:converter converterId="DoubleConverter"/>
+                            </p:inputText>
+                            <h:selectBooleanCheckbox value="#{attr.colBol1}" rendered="#{attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6=='BOOL'?true:false):false):false}" disabled="#{attGroupBean.m_disableButton}"/>
+                            <p:calendar size="12" value="#{attr.colDate1}" locale="#{settingsBean.dateLocale}"
+                                        rendered="#{attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6=='DATE'?true:false):false):false}"
+                                        pattern="#{settingsBean.dateMask}" disabled="#{attGroupBean.m_disableButton}"/>
+                            <p:autoComplete scrollHeight="100" id="dd" rendered="#{attr.colStr12=='CBBOX' or attr.colStr12=='CBLST'?(attr.colInt1==1?true:false):false}" dropdown="true" value="#{attr.colStr4}"
+                                            completeMethod="#{attGroupBean.complete}">
+                                <p:ajax event="itemSelect" process="dtAttGroupMinh"/>
+                                <f:attribute name="AttrID" value="#{attr.colStr7}"/>
+                            </p:autoComplete>
+                            <h:panelGroup id="pgCB" rendered="#{attr.colStr12=='CBBOX' or attr.colStr12=='CBLST'?(attr.colInt1==1?true:false):false}">
+                                <p:commandButton id="cmdOpendlgListQuery" icon="ui-icon-search" style="width:10%" disabled="#{attGroupBean.m_disableButton}" process="@this" update=""
+                                                 actionListener="#{attGroupBean.onLoadListQuery}"
+                                                 oncomplete="handleCmdCompleteCut(xhr, status, args)">
+                                    <f:param name="AttrID" value="#{attr.colStr7}"/>
+                                </p:commandButton>
+                            </h:panelGroup>
+                            <h:outputText value="#{attr.colDou1}" style="width:100%" rendered="#{attr.colStr12=='COUNT'?(attr.colInt1==1?true:false):false}">
+                                <f:converter converterId="DoubleConverter"/>
+                            </h:outputText>
+                        </p:column>                       
+                    </p:dataTable>                    
+                </td>               
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h:panelGrid columns="1">
+                        <h:panelGroup>
+                            <h:panelGrid columns="4">
+                                <p:commandButton id="btnAddAtt" icon="addnew" value="Thêm mới" style="width: 140px;"
+                                                 disabled="#{attGroupBean.m_disableButtonAdd}"
+                                                 onclick="OpenSelectAttrGroup();"/>
+                                <p:commandButton id="btnSaveAtt" icon="save" value="Ghi" style="width: 100px;"
+                                                 disabled="#{attGroupBean.m_disableButtonSave}" update="@form"
+                                                 actionListener="#{attGroupBean.onSaveAttGroupForObject}"/>
+                                <p:commandButton id="btnDeleteAtt" icon="delete" value="Xóa" style="width: 120px;"
+                                                 disabled="#{attGroupBean.m_disableButtonSave}" update="@form"
+                                                 actionListener="#{attGroupBean.onDeleteAttGroup}"/>                                
+                                <p:commandButton icon="cancel" onclick="parent.dlgAttGroup.hide()" rendered="false" value="#{commonMessages.btnClose}"/>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </table>
+    </h:panelGroup>
+    <script type="text/javascript">
+        function OpenSelectAttrGroup() {
+            var f = document.getElementById('browserContent_att_SelectAttGroup');
+            var objtype = document.getElementById('formDlg:tabView0:hfObjTypeId');
+            if (!objtype)
+                objtype = document.getElementById('formDlg:hfObjTypeId');
+            if (!objtype)
+                objtype = document.getElementById('formDlg:tabView0:hfObjTypeId');
+            if (!objtype)
+                objtype = document.getElementById('formDlg:hfObjTypeId');
+
+            if (f) {
+                var url = "./../../shared/dialog/dlgAttrGroup.jsf?display=many&amp;objtype=" + objtype.value;
+                f.src = url;
+                PF('dlgAtt_ChoonseAttr_Group').show();
+            }
+        }//////
+        function handleCmdCompleteCut(xhr, status, args) {
+            if (args.Method)
+            {
+                switch (args.Method)
+                {
+                    case 'LoadListQuery':
+                        PF('dlgListQuery').show();
+                        break;
+                    case 'LoadAttrHisVal':
+                        OpenHistoryValueDialog(args.AttrDataID, args.AttrID);
+                        break;
+                }
+            }
+        }
+        function OpenHistoryValueDialog(attrdataid, attrid) {
+            var f = document.getElementById('ifrOpenHistoryValueDialog');
+            if (attrdataid)
+                f.src = "#{settingsBean.webRootPath}/shared/dialog/dlgAttributeHis.jsf?attrdataid=" + attrdataid + "&amp;attrid=" + attrid;
+            else
+                f.src = "#{settingsBean.webRootPath}/shareddialog/dlgAttributeHis.jsf";
+            PF('dlgOpenHistoryValueDialog').show();
+        }
+    </script>
+
+
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenHistoryValueDialog" widgetVar="dlgOpenHistoryValueDialog" header="#{attProp.lblTitle_AttrHis}"
+              width="700" height="430" closable="true"
+              resizable="true"  position="top top">
+        <p:ajax event="close" update="panelAG" listener="#{attGroupBean.onCloseAttrGroupHisDiaglog}"/>
+        <iframe id="ifrOpenHistoryValueDialog" scrolling="auto"
+                frameborder="0" width="100%" height="400">
+        </iframe>
+        <h:panelGroup>
+            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgOpenHistoryValueDialog').hide();
+                    return false;"  />
+        </h:panelGroup>
+    </p:dialog>
+
+
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAtt_ChoonseAttr_Group" widgetVar="dlgAtt_ChoonseAttr_Group"
+              width="700" height="400" closable="true"
+              header="#{commonMessages.headerDlgSelectAttributeGroup}" position="top top">
+        <p:ajax event="close" listener="#{attGroupBean.onCancelSelectAttr_Group}"/>
+        <iframe id="browserContent_att_SelectAttGroup" scrolling="auto"
+                frameborder="0" width="100%" height="360">
+        </iframe>
+        <div align="left">
+            <h:panelGroup>
+                <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{attGroupBean.onChooseAttr_Group}" oncomplete="PF('dlgAtt_ChoonseAttr_Group').hide();"
+                                 update="panelAG btnAddAtt btnSaveAtt btnDeleteAtt"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgAtt_ChoonseAttr_Group').hide();
+                        return false;"  />
+            </h:panelGroup>
+        </div>
+    </p:dialog>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgListQuery" widgetVar="dlgListQuery"
+              width="700" height="408"
+              closable="true" header="Chọn dữ liệu" position="top top">
+        <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtListQuery" paginator="true"
+                     value="#{attGroupBean.listFromQuery}"
+                     rows="200"  selection="#{attGroupBean.selectionOneListQuery}"
+                     scrollable="true"
+                     scrollHeight="250"
+                     selectionMode="single"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="100,200,500" widgetVar="dtListQuery" paginatorPosition="bottom">
+            <p:column width="25" selectionMode="single" style="text-align: center;"/>
+            <p:column width="100" headerText="#{commonTMSProp.ColID}"
+                      filterBy="#{s.colStr1}" filterMatchMode="contains" filterStyle="width:90%">
+                <h:outputText value="#{s.colStr1}"/>
+            </p:column>
+            <p:column width="210" headerText="#{commonTMSProp.ColDesc}"
+                      filterBy="#{s.colStr2}" filterMatchMode="contains" filterStyle="width:90%">
+                <h:outputText value="#{s.colStr2}"/>
+            </p:column>
+        </p:dataTable>
+        <div style="margin-top: 10px">
+            <h:panelGroup >
+                <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{attGroupBean.onChooseListQuery}" oncomplete="PF('dlgListQuery').hide();"
+                                 update="dtAttGroupMinh"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgListQuery').hide();
+                        return false;"  />
+            </h:panelGroup>
+        </div>
+    </p:dialog>
+</ui:composition>

@@ -1,0 +1,44 @@
+<!--
+    Thông tin mô tả thêm phân hệ EAM, đưa vào trong portlet Inbox
+-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+    <p:separator id="separatorid" style="width:100%;height: 5px;" rendered="#{pltEAMDescBean.m_separator}"/>
+        <a href="#{settingsBean.webRootPath}/eam/problem/problem.jsf">
+            <h:outputText rendered="#{pltEAMDescBean.m_roleProblem}" value="Thông tin sự cố:" style="#{settingsProp.StyleNote_Bold}"/>
+        </a>
+        <h:panelGrid columns="1" cellpadding="5" style="width: 100%;text-align: justify;" rendered="#{pltEAMDescBean.m_roleProblem}">
+            <h:outputText value="- Số sự cố mới: #{pltEAMDescBean.m_newProblem}"/>
+            <h:outputText value="- Số sự cố đang xử lý: #{pltEAMDescBean.m_inprgProblem}"/>
+            <h:outputText value="- Số sự cố đã xử lý xong trong 30 ngày gần nhất: #{pltEAMDescBean.m_closedProblem}"/>
+        </h:panelGrid>
+        <a href="#{settingsBean.webRootPath}/eam/work/WorkMan.jsf">
+            <h:outputText rendered="#{pltEAMDescBean.m_roleWork}" value="Thông tin công việc:" style="#{settingsProp.StyleNote_Bold}"/>
+        </a>
+        <h:panelGrid columns="1" cellpadding="5" style="width: 100%;text-align: justify;" rendered="#{pltEAMDescBean.m_roleWork}">
+            <h:outputText value="- Số cv đăng ký kế hoạch (từ dự báo): #{pltEAMDescBean.m_forecastWork}"/>
+            <h:outputText value="- Số cv chưa thực hiện: #{pltEAMDescBean.m_newWork}"/>
+            <h:outputText value="- Số cv đang thực hiện: #{pltEAMDescBean.m_inprgWork}"/>
+            <h:outputText value="- Số cv đã hoàn thành trong 30 ngày gần nhất: #{pltEAMDescBean.m_closedWork}"/>
+            <h:outputText value="- Số cv quá hạn: #{pltEAMDescBean.m_notcomplete}"/>
+            <!--                    <h:outputText value="- Danh sách công việc đã hoàn thành:"/>-->
+        </h:panelGrid>
+        <a href="#{settingsBean.webRootPath}/eam/preventive/ForecastW.jsf?for=pl">
+            <h:outputText rendered="#{pltEAMDescBean.m_roleWork}" value="Dự báo công việc:" style="#{settingsProp.StyleNote_Bold}"/>
+        </a>
+        <h:panelGrid columns="1" cellpadding="5" style="width: 100%;text-align: justify;" rendered="#{pltEAMDescBean.m_roleWork}">
+            <h:outputText value="- Số cv đến hạn: #{pltEAMDescBean.m_forecastNow}"/>
+            <h:outputText value="- Số cv dự báo trong vòng 1 tháng: #{pltEAMDescBean.m_forecastMonth}"/>
+            <h:outputText value="- Số cv dự báo trong vòng 1 năm: #{pltEAMDescBean.m_forecastYear}"/>
+        </h:panelGrid>
+        <a href="#{settingsBean.webRootPath}/shared/system/Sys_Vttbs_Pheduyet.jsf?for=pl">
+            <h:outputText rendered="#{pltEAMDescBean.m_roleVttbs}" value="Duyệt vật tư thêm vào CT QLVT:" style="#{settingsProp.StyleNote_Bold}"/>
+        </a>
+        <h:panelGrid columns="1" cellpadding="5" style="width: 100%;text-align: justify;" rendered="#{pltEAMDescBean.m_roleVttbs}">
+            <h:outputText value="- Số lượng vật tư chưa duyệt: #{pltEAMDescBean.m_vttbnotapproved}"/>
+        </h:panelGrid>
+</ui:composition>

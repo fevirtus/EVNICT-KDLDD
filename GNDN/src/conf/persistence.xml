@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="TMS_EAM_EJBPU" transaction-type="JTA">
+        <jta-data-source>jdbc/eam</jta-data-source>
+        <jar-file>lib/GNDN_Core.jar</jar-file>
+        <jar-file>lib/GNDN_Entity.jar</jar-file>
+        <shared-cache-mode>NONE</shared-cache-mode>
+        <properties/>
+    </persistence-unit>
+    <persistence-unit name="TMS_WAREHOUSE_EJBPU" transaction-type="JTA">
+        <jta-data-source>jdbc/warehouse</jta-data-source>
+        <jar-file>lib/GNDN_Core.jar</jar-file>        
+        <jar-file>lib/GNDN_Entity.jar</jar-file>
+        <shared-cache-mode>NONE</shared-cache-mode>
+        <properties/>
+    </persistence-unit>
+    <persistence-unit name="TMS_SHAREINFO_EJBPU" transaction-type="JTA">
+        <jta-data-source>jdbc/shareinfo</jta-data-source>
+        <jar-file>lib/GNDN_Core.jar</jar-file>  
+        <jar-file>lib/GNDN_Entity.jar</jar-file>      
+        <shared-cache-mode>NONE</shared-cache-mode>        
+        <properties/>
+    </persistence-unit>
+    <persistence-unit name="TMS_SHAREATTACH_EJBPU" transaction-type="JTA">
+        <jta-data-source>jdbc/shareattach</jta-data-source>
+        <jar-file>lib/GNDN_Core.jar</jar-file>   
+        <jar-file>lib/GNDN_Entity.jar</jar-file>    
+        <shared-cache-mode>NONE</shared-cache-mode>        
+        <properties/>
+    </persistence-unit>
+    <persistence-unit name="KDLDD_VANHANH_EJBPU" transaction-type="JTA">
+        <jta-data-source>jdbc/vanhanh</jta-data-source>
+        <jar-file>lib/GNDN_Core.jar</jar-file>  
+        <jar-file>lib/GNDN_VanHanh.jar</jar-file>       
+        <jar-file>lib/GNDN_Entity.jar</jar-file>    
+        <jar-file>lib/TMS_Util.jar</jar-file>    
+        <shared-cache-mode>NONE</shared-cache-mode>        
+        <properties/>
+    </persistence-unit>
+    
+</persistence>

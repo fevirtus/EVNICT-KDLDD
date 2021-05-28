@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+        </h:head>
+        <h:body styleClass="#{guestPreferences.inputStyleClass}">
+            <h:form onsubmit="return false" id="form1">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left">
+                        <p:commandButton disabled="#{userDetailBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{userDetailBean.onAddNewUser}"
+                                         oncomplete="document.getElementById('form1:txtUserID').focus();"/>
+                        <p:commandButton disabled="#{userDetailBean.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{userDetailBean.onSaveUser}"/>
+                        <p:commandButton disabled="#{userDetailBean.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDelete}');"
+                                         actionListener="#{userDetailBean.onDeleteUser}"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                         icon="resultset_first" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnFirst}"
+                                         disabled="#{userDetailBean.m_bFirst}"
+                                         actionListener="#{userDetailBean.onNavigatorFirst}"/>
+                        <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                         disabled="#{userDetailBean.m_bPrevious}"
+                                         icon="resultset_previous" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnPrevious}"
+                                         actionListener="#{userDetailBean.onNavigatorPrevious}"/>
+                        <p:commandButton id="btnNext" styleClass="btnHeight"
+                                         disabled="#{userDetailBean.m_bNext}"
+                                         icon="resultset_next" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnNext}"
+                                         actionListener="#{userDetailBean.onNavigatorNext}"/>
+                        <p:commandButton id="btnLast" styleClass="btnHeight"
+                                         disabled="#{userDetailBean.m_bLast}"
+                                         icon="resultset_last" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnLast}"
+                                         actionListener="#{userDetailBean.onNavigatorLast}"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
+
+                <!--<div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">-->
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="confirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{userDetailBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                     actionListener="#{userDetailBean.onDeleteEnd}" update="msgInfo pnlContent tbrHeader" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+
+                <p:outputPanel id="pnlContent">
+                    <p:focus/>
+                    <table>
+                        <tr style="height: 25px">
+                            <td width="110px" align="right">
+                        <h:outputText value="#{userProp.lblUserID}*"
+                                      styleClass="#{userDetailBean.m_Style_TxtUserID}"/>
+                        </td>
+                        <td>
+                        <p:inputText id="txtUserID" style="width: 200px;"
+                                     readonly="#{userDetailBean.txtUserIDReadOnly}"
+                                     value="#{userDetailBean.m_User.userid}"/>
+                        </td>
+                        <td width="150px" align="right">
+                        <h:outputText value="#{userProp.lblUserName}" styleClass="#{userDetailBean.m_Style_TxtUserID}"/>
+                        </td>
+                        <td>
+                        <p:inputText id="txtUserDesc" style="width: 300px;"
+                                     value="#{userDetailBean.m_User.username}"/>
+                        </td>
+                        <td align="right">
+                        <h:outputText value="#{userProp.lblEnable}"/>
+                        </td>
+                        <td>
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_User.enable}"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_bPass}">
+                            <p:ajax event="valueChange" update="txtPass"/>
+                        </h:selectBooleanCheckbox>
+                        <h:outputText value="#{userProp.lblPass}"
+                                      styleClass="#{userDetailBean.m_Style_TxtPass}"/>
+                        </td>
+                        <td>
+                        <p:password id="txtPass" style="width: 200px;" redisplay="true" 
+                                    disabled="#{!userDetailBean.m_bPass}"
+                                    value="#{userDetailBean.m_sPass}"/>
+                        </td>
+                        <td align="right" >
+                        <h:outputText value="#{userProp.lblTel}"/>
+                        </td>
+                        <td colspan="3">
+                        <p:inputText style="width: 300px;"
+                                     value="#{userDetailBean.m_User.tel}"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_User.authenType}">
+                            <p:ajax event="valueChange" update="txtUserIdDomain"/>
+                        </h:selectBooleanCheckbox>
+                        <h:outputText value="TK Domain"
+                                      styleClass="#{userDetailBean.m_Style_TxtPass}"/>                        
+                        </td>
+                        <td>
+                        <p:inputText id="txtUserIdDomain" style="width: 200px;" 
+                                     disabled="#{!userDetailBean.m_User.authenType}"
+                                     value="#{userDetailBean.m_User.useridDomain}"/>
+                        </td>
+                        <td align="right" >
+
+                        </td>
+                        <td colspan="3">
+
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{userProp.lblEmail}"/>
+                        </td>
+                        <td>
+                        <p:inputText style="width: 200px;"
+                                     value="#{userDetailBean.m_User.email}"/>
+                        </td>
+                        <td align="right">
+                        <h:outputText value="T/đ gửi mail nhắc nhở"/>
+                        </td>
+                        <td colspan="3">
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_User.enableautomail}"/>
+                        <p:spacer width="10"/>
+                        <h:outputText value="T/đ gửi mail báo cáo"/>
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_User.enableautomailreport}"/>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Quản lý"/>
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_User.isRoot}"/>
+                        <p:spacer width="10"/>
+                        <h:outputText value="Khách hàng"/>
+                        <h:selectBooleanCheckbox value="#{userDetailBean.m_User.iscustomer}"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{userProp.lblDescript}"/>
+                        </td>
+                        <td>
+                        <p:inputText style="width: 99%;" value="#{userDetailBean.m_User.descript}"/>
+                        </td>
+                        <td align="right">
+                        <h:outputText value="Đường dẫn mặc định" />
+                        </td>
+                        <td>
+                        <p:inputText style="width: 99%;" value="#{userDetailBean.m_User.urlDefault}"/>    
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="Nhóm người dùng"/>
+                        </td>
+                        <td colspan="2">
+                        <p:selectOneMenu id="cboGroupUser" value="#{userDetailBean.m_User.groupuserid}"
+                                         style="margin-right:10px;font-size:12px;width: 98%">
+                            <f:selectItems value="#{userDetailBean.listUserGroup}"
+                                           var="a" itemLabel="#{a.groupuserdesc}"
+                                           itemValue="#{a.groupuserid}"/>
+                        </p:selectOneMenu>
+                        </td>                        
+                        </tr>
+
+                    </table>
+                    <table style="width:100%;" cellpadding="0" cellspacing="3px">
+                        <tr>
+                            <td valign="top" style="width: 50%">
+                                 <!--<p:fieldset id="fsDept" toggleable="true" legend="#{userProp.lblListDept}" style="margin-top: 5px;height: 360px">-->
+                                <fieldset>
+                                    <legend>Danh sách trạm biến áp</legend>
+                                    <table>
+                                        <tr style="height: 290px">
+                                            <td valign="top">
+                                                <!--Vùng grid-->
+                                        <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtUserDept" value="#{userDetailBean.userDeptDetailDataModel}"
+                                                     paginator="true" rows="100" scrollable="true"
+                                                     scrollHeight="220"
+                                                     selection="#{userDetailBean.selectedUserDept}"
+                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="100" widgetVar="dtUserDept" paginatorPosition="bottom" >
+                                            <p:column selectionMode="multiple" width="45" style="text-align: center;"/>
+                                            <p:column headerText="Trạm biến áp" width="150">
+                                                <h:outputText value="#{s.sDept.deptdesc}"/>
+                                            </p:column>
+                                            <p:column headerText="#{userProp.lblNote}" style="width: #{settingsProp.MainDlgWidth/2-200-120}px">
+                                                <p:inputText value="#{s.note}" style="width:100%" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="bottom">
+                                        <h:panelGroup  rendered="#{userDetailBean.renderedFuncEdit('01.01')}">
+                                            <p:commandButton icon="addnew" value="#{userProp.btnAddDept}" update="msgInfo pnlContent tbrHeader"
+                                                             disabled="#{userDetailBean.disableBtnAddUserDept}"
+                                                             onclick="return OpenSelectDept();" style="width:80px"/>
+                                            <p:commandButton icon="save" value="#{commonMessages.btnSave}" update="msgInfo pnlContent tbrHeader"
+                                                             disabled="#{userDetailBean.disableBtnDeleteUserDept}"
+                                                             actionListener="#{userDetailBean.onSaveUserDept}" style="width:80px"/>
+                                            <p:commandButton icon="delete" value="#{userProp.btnDeleteDept}" update="msgInfo confirmDelContent pnlContent tbrHeader"
+                                                             disabled="#{userDetailBean.disableBtnDeleteUserDept}"
+                                                             actionListener="#{userDetailBean.onDeleteUserDeptStart}"
+                                                             oncomplete="handleCmdComplete(xhr, status, args)" style="width:80px"/>
+                                        </h:panelGroup>
+                                        </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                                <!--</p:fieldset>-->
+                            </td>
+                            <td valign="top">
+                               <!--<p:fieldset id="fsRole" toggleable="true" legend="#{userProp.lblListRole}" style="margin-top: 5px;height: 360px">-->
+                                <fieldset>
+                                    <legend>#{userProp.lblListRole}</legend>
+                                    <table>
+                                        <tr style="height: 290px">
+                                            <td valign="top">
+                                                <!--Vùng grid-->
+                                        <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtUserRole" value="#{userDetailBean.userRoleDataModel}"
+                                                     paginator="true" rows="100"
+                                                     scrollable="true"
+                                                     selection="#{userDetailBean.selectedUserRole}"
+                                                     scrollHeight="220"
+                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="100" widgetVar="dtUserRole" paginatorPosition="bottom">
+                                            <p:column selectionMode="multiple" width="45" style="text-align: center;"/>
+                                            <p:column headerText="#{userProp.lblRole}" width="150">
+                                                <h:outputText value="#{s.qrole.roledesc}"/>
+                                            </p:column>
+                                            <p:column headerText="#{userProp.lblEnable}" width="70">
+                                                <h:selectBooleanCheckbox value="#{s.enable}"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td valign="bottom">
+                                        <h:panelGroup  rendered="#{userDetailBean.renderedFuncEdit('01.01')}">
+                                            <p:commandButton icon="addnew" value="#{userProp.btnAddRole}" update="msgInfo pnlContent tbrHeader"
+                                                             disabled="#{userDetailBean.disableBtnAddUserRole}"
+                                                             onclick="return OpenSelectRole();" style="width:80px"/>
+                                            <p:commandButton icon="save" value="#{commonMessages.btnSave}" update="msgInfo pnlContent tbrHeader"
+                                                             disabled="#{userDetailBean.disableBtnDeleteUserRole}"
+                                                             actionListener="#{userDetailBean.onSaveUserRole}" style="width:80px"/>
+                                            <p:commandButton icon="delete" value="#{userProp.btnDeleteRole}" update="msgInfo confirmDelContent pnlContent tbrHeader"
+                                                             disabled="#{userDetailBean.disableBtnDeleteUserRole}"
+                                                             actionListener="#{userDetailBean.onDeleteUserRoleStart}"
+                                                             oncomplete="handleCmdComplete(xhr, status, args)" style="width:80px"/>
+                                        </h:panelGroup>
+                                        </td>
+                                        </tr>
+                                    </table>
+                                </fieldset>
+                                <!-- </p:fieldset> -->
+                            </td>
+                        </tr>
+                    </table>
+                </p:outputPanel>
+
+                <!-- Dialog-->
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgSelectDept" widgetVar="dlgSelectDept"
+                          width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                          header="#{commonMessages.headerDlgSelectDept}">
+                    <p:ajax event="close" listener="#{userDetailBean.onCancelChooseDeptClick}" />
+                    <iframe id="ifrSelectDept" scrolling="auto"
+                            frameborder="true" width="100%" height="#{settingsProp.NormalDlgIFrameHeight}"
+                            style="border: none">
+                    </iframe>
+                    <div align="left">
+                        <h:panelGroup>
+                            <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}"
+                                             actionListener="#{userDetailBean.onAcceptChooseDeptClick}"
+                                             update="msgInfo pnlContent tbrHeader" oncomplete="PF('dlgSelectDept').hide();"/>
+                            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgSelectDept').hide();" />
+                        </h:panelGroup>
+                    </div>
+                </p:dialog>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgSelectRole" widgetVar="dlgSelectRole"
+                          width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                          header="#{commonMessages.headerDlgSelectRole}">
+                    <p:ajax event="close" listener="#{userDetailBean.onCancelChooseRoleClick}"/>
+                    <iframe id="ifrSelectRole" scrolling="auto"
+                            frameborder="true" width="100%" height="#{settingsProp.NormalDlgIFrameHeight}"
+                            style="border: none">
+                    </iframe>
+                    <div align="left">
+                        <h:panelGroup>
+                            <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}"
+                                             actionListener="#{userDetailBean.onAcceptChooseRoleClick}"
+                                             update="msgInfo pnlContent tbrHeader" oncomplete="PF('dlgSelectRole').hide();"/>
+                            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgSelectRole').hide();" />
+                        </h:panelGroup>
+                    </div>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function OpenSelectDept(filterValue) {
+                        var f = document.getElementById('ifrSelectDept');
+                        if (f) {
+                            f.src = "../dialog/dlgDept.jsf?display=many";
+                            PF('dlgSelectDept').show();
+                        }
+                        return false
+                    }
+
+                    function OpenSelectRole(filterValue) {
+                        var f = document.getElementById('ifrSelectRole');
+                        if (f) {
+                            f.src = "../dialog/dlgRole.jsf?display=many";
+                            PF('dlgSelectRole').show();
+                        }
+                        return false
+                    }
+
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'DeleteUserDept':
+                                    PF('confirmDel').show();
+                                    break;
+                                case 'DeleteUserRole':
+                                    PF('confirmDel').show();
+                                    break;
+                            }
+                        }
+                    }
+                </script>
+                <style type="text/css">
+                    .attrGroup {
+                        font-weight: bold;
+                        background-color: #eeeeee !important;
+                        background-image: none !important;
+                    }
+                    .scroll_box{
+                        width: 600px;
+                        overflow:auto;
+                    }
+                </style>
+                <!--</div>-->
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

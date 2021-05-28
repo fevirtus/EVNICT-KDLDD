@@ -1,0 +1,396 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package diemdo.web.bean;
+
+import diemdo.ADiemdo;
+import diemdo.ADiemdoAx;
+import diemdo.ADiemdoAxPK;
+import diemdo.remote.IDiemDoRemote;
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import main.ContextResources.EjbContext;
+import main.entity.shared.system.S_Assets;
+import main.web.common.bean.BasePageCommon;
+import main.web.common.bean.WorkingContext;
+import org.apache.commons.lang3.SerializationUtils;
+import org.primefaces.PrimeFaces;
+
+/**
+ *
+ * @author TUYEN EVN
+ */
+@ManagedBean
+@ViewScoped
+public class DiemDo_AXBean extends BasePageCommon implements Serializable {
+
+    private IDiemDoRemote iDiemDoRemote;
+    private boolean modeSwitch = false;         //value of InputSwitch
+    private boolean lockInput = true;           //disable orgidRef, maDiemdoRef, ngay
+    private boolean lockOther = false;          //disable moTa, ngayKt
+    private boolean disableSwitch = false;      //disable InputSwitch
+    private boolean manyNewest = false;         //when oldEnd=newStart=newEnd
+
+    private ADiemdo diemDo;
+    private ADiemdoAx Ax;                       //cloned from selectAx, store original value of object
+    private ADiemdoAx selectAx;                 //object Ax had been selected from datatable
+    private ADiemdoAx temp_Ax;                  //cloned from selectAx, store fixed value of object
+    private List<ADiemdoAx> listAx = new ArrayList<>();
+    private List<ADiemdo> listDiemdo = new ArrayList<>();
+    private List<S_Assets> listOrganization = new ArrayList<>();
+
+    public DiemDo_AXBean() {
+        try {
+            //get maDD of diemdoSelected from diemdo_details.xhtml            
+            String maDD = WorkingContext.getRequestQueryString("maDD");
+            if (maDD != null) {
+                diemDo = getIDiemDoRemote().getDiemDoByID(maDD);
+            }
+
+            //prepare data for dialog
+            listDiemdo = getIDiemDoRemote().getAllDiemDo();
+            listAx = getIDiemDoRemote().getAllAxByMaDD(maDD);
+            listOrganization = getIDiemDoRemote().getAllOganization();
+            //fake data to temp_Ax not null
+            temp_Ax = new ADiemdoAx(diemDo.getMaDiemdo(), null, listOrganization.get(0).getOrgid(), BigInteger.ZERO);
+
+            //set status input
+            if (listAx.isEmpty()) {
+                lockInput = false;
+                lockOther = false;
+                modeSwitch = true;
+                disableSwitch = true;
+            } else {
+                if (isDoned()) {
+                    lockInput = false;
+                    modeSwitch = true;
+                } else {
+                    lockInput = true;
+                    modeSwitch = true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //change status and variable when select item on datatable
+    public void onRowSelected() {
+        try {
+            //create 2 clone from selectAx
+            temp_Ax = (ADiemdoAx) SerializationUtils.clone(selectAx);
+            Ax = (ADiemdoAx) SerializationUtils.clone(selectAx);
+
+            if (selectNewestAx().getNgayKt() != null) {
+                if (Ax.getNgayKt().compareTo(selectNewestAx().getNgayKt()) != 0) {
+                    lockInput = true;
+                    lockOther = true;
+                    modeSwitch = false;
+                    disableSwitch = true;
+                } else {
+                    if (manyNewest && Ax.getNgayKt().compareTo(Ax.getNgay()) != 0) {
+                        lockInput = true;
+                        lockOther = true;
+                        modeSwitch = false;
+                        disableSwitch = true;
+                    } else {
+                        lockInput = false;
+                        lockOther = false;
+                        modeSwitch = true;
+                        disableSwitch = true;
+                    }
+                }
+            } else {
+                if (Ax.getNgayKt() != null) {
+                    lockInput = true;
+                    lockOther = true;
+                    modeSwitch = false;
+                    disableSwitch = true;
+                } else {
+                    lockInput = true;
+                    lockOther = false;
+                    modeSwitch = false;
+                    disableSwitch = false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Check day when user input
+    public boolean checkDay(Date oldStart, Date oldEnd, Date newStart, Date newEnd) {
+        boolean checkNewStart = true;
+        boolean checkNewEnd = true;
+
+        try {
+            //start date must nearer than end date of old Ax
+            if (oldEnd == null) {
+                checkNewStart = newStart.compareTo(oldStart) > 0;
+            } else {
+                checkNewStart = newStart.compareTo(oldEnd) > 0;
+            }
+
+            //end date (if have) must nearer than start date of one Ax
+            if (newEnd == null) {
+                checkNewEnd = true;
+            } else {
+                checkNewEnd = newEnd.compareTo(newStart) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return checkNewStart == checkNewEnd == true;
+    }
+
+    //Add new AX when Diemdo dont have Ax
+    public void addListEmptyOrDone() {
+        try {
+            temp_Ax.setUserCrId(WorkingContext.getUserName());
+            temp_Ax.setUserCrTime(new Date(System.currentTimeMillis()));
+            temp_Ax.setUserMdfId(WorkingContext.getUserName());
+            temp_Ax.setUserMdfTime(new Date(System.currentTimeMillis()));
+            temp_Ax.setADiemdoAxPK(new ADiemdoAxPK(temp_Ax.getADiemdoAxPK().getMaDiemdo(), temp_Ax.getADiemdoAxPK().getMaDiemdoRef(), temp_Ax.getADiemdoAxPK().getOrgidRef(), new BigInteger(new SimpleDateFormat("yyyymmdd").format(temp_Ax.getNgay()))));
+            getIDiemDoRemote().insert(temp_Ax);
+
+            if (temp_Ax.getNgayKt() == null) {
+                diemDo.setOrgidRef(temp_Ax.getADiemdoAxPK().getOrgidRef());
+                diemDo.setMaDiemdoRef(temp_Ax.getADiemdoAxPK().getMaDiemdoRef());
+            } else {
+                diemDo.setOrgidRef(null);
+                diemDo.setMaDiemdoRef(null);
+            }
+            getIDiemDoRemote().update(diemDo);
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Thêm mới ánh xạ thành công"));
+            PrimeFaces.current().ajax().update("AXForm:messages");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Add new AX when Diemdo still have Ax
+    public void addContinue() {
+        try {
+            if (modeSwitch) {
+                temp_Ax.setUserCrId(WorkingContext.getUserName());
+                temp_Ax.setUserCrTime(new Date(System.currentTimeMillis()));
+                temp_Ax.setUserMdfId(WorkingContext.getUserName());
+                temp_Ax.setUserMdfTime(new Date(System.currentTimeMillis()));
+                temp_Ax.setADiemdoAxPK(new ADiemdoAxPK(temp_Ax.getADiemdoAxPK().getMaDiemdo(), temp_Ax.getADiemdoAxPK().getMaDiemdoRef(), temp_Ax.getADiemdoAxPK().getOrgidRef(), new BigInteger(new SimpleDateFormat("yyyymmdd").format(temp_Ax.getNgay()))));
+                getIDiemDoRemote().insert(temp_Ax);
+
+                Ax.setNgayKt(temp_Ax.getNgay());
+                getIDiemDoRemote().update(Ax);
+
+                if (temp_Ax.getNgayKt() == null) {
+                    diemDo.setOrgidRef(temp_Ax.getADiemdoAxPK().getOrgidRef());
+                    diemDo.setMaDiemdoRef(temp_Ax.getADiemdoAxPK().getMaDiemdoRef());
+                } else {
+                    diemDo.setOrgidRef(null);
+                    diemDo.setMaDiemdoRef(null);
+                }
+                getIDiemDoRemote().update(diemDo);
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Thêm mới ánh xạ thành công"));
+                PrimeFaces.current().ajax().update("AXForm:messages");
+            } else {
+                temp_Ax.setUserMdfId(WorkingContext.getUserName());
+                temp_Ax.setUserMdfTime(new Date(System.currentTimeMillis()));
+                temp_Ax.setADiemdoAxPK(new ADiemdoAxPK(temp_Ax.getADiemdoAxPK().getMaDiemdo(), temp_Ax.getADiemdoAxPK().getMaDiemdoRef(), temp_Ax.getADiemdoAxPK().getOrgidRef(), new BigInteger(new SimpleDateFormat("yyyymmdd").format(temp_Ax.getNgay()))));
+                getIDiemDoRemote().update(temp_Ax);
+
+                diemDo.setOrgidRef(null);
+                diemDo.setMaDiemdoRef(null);
+                getIDiemDoRemote().update(diemDo);
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Thêm mới ánh xạ thành công"));
+                PrimeFaces.current().ajax().update("AXForm:messages");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    //Save change when click button Save
+    public void saveChange() {
+        try {
+            if (listAx.isEmpty()) {
+                addListEmptyOrDone();
+            } else if (isDoned()) {
+                if (checkDay(Ax.getNgay(), Ax.getNgayKt(), temp_Ax.getNgay(), temp_Ax.getNgayKt())) {
+                    addListEmptyOrDone();
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Ngày bắt đầu ánh xạ mới phải sau ngày kết thúc của ánh xạ cũ!"));
+                    PrimeFaces.current().ajax().update("AXForm:messages");
+                }
+            } else {
+                if (checkDay(Ax.getNgay(), Ax.getNgayKt(), temp_Ax.getNgay(), temp_Ax.getNgayKt())) {
+                    addContinue();
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Ngày bắt đầu ánh xạ mới phải sau ngày kết thúc của ánh xạ cũ!"));
+                    PrimeFaces.current().ajax().update("AXForm:messages");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Chọn ánh xạ mới nhất để tiếp tục thao tác"));
+            PrimeFaces.current().ajax().update("AXForm:messages");
+        }
+    }
+
+    //change status component when switch input
+    public void onSwitch() {
+        lockInput = !modeSwitch;
+    }
+
+    //check ngayKt = null to select type of Add function
+    public boolean isDoned() {
+        return listAx.stream().noneMatch((item) -> (item.getNgayKt() == null));
+    }
+
+    //select Anh xa have ngayKt is newest
+    public ADiemdoAx selectNewestAx() {
+        ADiemdoAx ax = new ADiemdoAx();
+        try {
+            ax = listAx.get(0);
+            for (ADiemdoAx item : listAx) {
+                if (item.getNgayKt() == null) {
+                    ax = item;
+                    return ax;
+                }
+                if (item.getNgayKt().compareTo(ax.getNgayKt()) > 0) {
+                    ax = item;
+                }
+            }
+
+            //when oldEnd=newStart=newEnd
+            int count = 0;
+            for (ADiemdoAx item1 : listAx) {
+                if (item1.getNgayKt().compareTo(ax.getNgayKt()) == 0) {
+                    count++;
+                }
+            }
+            if (count > 1) {
+                manyNewest = true;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ax;
+    }
+
+    public List<S_Assets> getListOrganization() {
+        return listOrganization;
+    }
+
+    public void setListOrganization(List<S_Assets> listOrganization) {
+        this.listOrganization = listOrganization;
+    }
+
+    public ADiemdoAx getSelectAx() {
+        return selectAx;
+    }
+
+    public void setSelectAx(ADiemdoAx selectAx) {
+        this.selectAx = selectAx;
+    }
+
+    public boolean isLockOther() {
+        return lockOther;
+    }
+
+    public void setLockOther(boolean lockOther) {
+        this.lockOther = lockOther;
+    }
+
+    public boolean isDisableSwitch() {
+        return disableSwitch;
+    }
+
+    public void setDisableSwitch(boolean disableSwitch) {
+        this.disableSwitch = disableSwitch;
+    }
+
+    public ADiemdoAx getTemp_Ax() {
+        return temp_Ax;
+    }
+
+    public void setTemp_Ax(ADiemdoAx temp_Ax) {
+        this.temp_Ax = temp_Ax;
+    }
+
+    public boolean isModeSwitch() {
+        return modeSwitch;
+    }
+
+    public void setModeSwitch(boolean modeSwitch) {
+        this.modeSwitch = modeSwitch;
+    }
+
+    public boolean isLockInput() {
+        return lockInput;
+    }
+
+    public void setLockInput(boolean lockInput) {
+        this.lockInput = lockInput;
+    }
+
+    public ADiemdoAx getAx() {
+        return Ax;
+    }
+
+    public void setAx(ADiemdoAx Ax) {
+        this.Ax = Ax;
+    }
+
+    public List<ADiemdoAx> getListAx() {
+        return listAx;
+    }
+
+    public void setListAx(List<ADiemdoAx> listAx) {
+        this.listAx = listAx;
+    }
+
+    public List<ADiemdo> getListDiemdo() {
+        return listDiemdo;
+    }
+
+    public void setListDiemdo(List<ADiemdo> listDiemdo) {
+        this.listDiemdo = listDiemdo;
+    }
+
+    public ADiemdo getDiemDo() {
+        return diemDo;
+    }
+
+    public void setDiemDo(ADiemdo diemDo) {
+        this.diemDo = diemDo;
+    }
+
+    public IDiemDoRemote getIDiemDoRemote() {
+        try {
+            if (iDiemDoRemote == null) {
+                iDiemDoRemote = (IDiemDoRemote) EjbContext.getLocalEJBRemote(IDiemDoRemote.class
+                        .getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iDiemDoRemote;
+    }
+}

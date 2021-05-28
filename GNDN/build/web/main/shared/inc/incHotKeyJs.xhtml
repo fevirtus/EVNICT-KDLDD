@@ -1,0 +1,67 @@
+<!--
+Bổ sung thêm xử lý phím tắt
+    //Ctrl+Shift+N: Thêm mới        Keycode: 14(IE); 78, 110 (Firefox && Other có trả ascii: tính có và không caplock)
+    //Ctrl+Shift+F: Thêm mới        Keycode: 6(IE); 70, 102 (Firefox && Other có trả ascii: tính có và không caplock)
+    //Ctrl+Shift+Y: Xóa             Keycode: 25; 89, 121
+    //Ctrl+Shift+D: Xóa             Keycode: 4; 68, 100
+
+    Ctrl+Shift+M: Thêm mới          Keycode: 13 (IE, Chrome); 77, 109 (Firefox && Other có trả ascii: tính có và không caplock)
+    Ctrl+Shift+S: Sửa hoặc ghi      Keycode: 19; 83, 115
+    Ctrl+Shift+X: Xóa               Keycode: 24; 88, 120
+    Ctrl+Shift+Z: Đổi trạng thái    Keycode: 26; 90, 122
+Đã bổ sung disable enter key
+Hướng dẫn tích hợp:
+- Đặt id cho các nút tương ứng với các phím tắt, lần lượt là btnNew, btnUpdate, btnDel, btnChangeStatus. Các nút này có kiểu đầu ra html là button, dùng p:commandButton
+- Include file này vào
+    <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+- Kiểm tra lại các nút được đặt trong form với id hoặc là formDlg,formMain. Nếu id form khác thì phải thêm script cập nhật lại các biến btnNewId, btnUpdateId,...
+- Ngoài ra, trên các dialog, để thấy được trạng thái khi chạy ajax cần thêm lênh bên dưới (tham khảo một chức năng mẫu), lồng vào vị trí toolbar
+    <ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<script type="text/javascript">
+var btnNewId=":formDlg:btnNew", btnNewId2="formMain:btnNew";
+var btnUpdateId=":formDlg:btnUpdate", btnUpdateId2="formMain:btnUpdate";
+var btnDelId=":formDlg:btnDel", btnDelId2="formMain:btnDel";
+var btnChangeStatusId=":formDlg:btnChangeStatus", btnChangeStatusId2="formMain:btnChangeStatus";
+
+function detectHotKey(evt){
+//var evtobj=window.event? event : evt
+//if (evtobj.altKey || evtobj.ctrlKey || evtobj.shiftKey)
+  var evtobj = (evt) ? evt : ((event) ? event : null);
+  var node = (evtobj.target) ? evtobj.target : ((evtobj.srcElement) ? evtobj.srcElement : null);
+  var code=(evtobj.charCode)?evtobj.charCode: evtobj.keyCode;
+  var btn;
+  //alert("you pressed one of the key, code:" + code);
+  //if (evtobj.altKey || evtobj.ctrlKey || evtobj.shiftKey) {
+
+  if (evtobj.ctrlKey) {
+    //alert("you pressed one of the 'Ctrl+Shift+' key code:" + code);
+    switch (code)
+    {
+        case 13: case 77: case 109: //new
+            btn=document.getElementById(btnNewId); if (!btn) btn=document.getElementById(btnNewId2);
+            break;
+        case 19: case 83: case 115: //update
+            btn=document.getElementById(btnUpdateId); if (!btn) btn=document.getElementById(btnUpdateId2);
+            break;
+        case 24: case 88: case 120: //xóa
+            btn=document.getElementById(btnDelId);  if (!btn) btn=document.getElementById(btnDelId2);
+            break;
+        case 26: case 90: case 122: //new
+            btn=document.getElementById(btnChangeStatusId); if (!btn) btn=document.getElementById(btnChangeStatusId2);
+            break;
+    }
+    
+    if (btn) { btn.click(); return false;}
+  }
+
+  //Disable Enter Key để không submit form khi đang ở text box
+  //if ((code == 13) &amp;&amp; (node.type=="text"))  {return false;}
+
+}
+
+document.onkeydown=detectHotKey;
+//document.onkeypress=detectHotKey; //Dùng để test hiện mã phím
+</script>
+</ui:composition>

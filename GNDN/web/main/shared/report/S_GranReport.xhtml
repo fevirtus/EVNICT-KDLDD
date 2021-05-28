@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.Func/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.Func/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="messages" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <fieldset>
+                    <legend>
+                        <h:outputLabel value="Quyền truy cập người dùng"/>
+                    </legend>
+                    <p:dataTable emptyMessage="Không có dữ liệu" id="reportGrantUser"
+                                 value="#{reportGrantBean.lsQPqRePortUserModel}" var="item"
+                                 scrollHeight="220"
+                                 scrollable="true"
+                                 paginatorPosition="bottom">
+                        <p:column headerText="Người dùng" width="230" filterStyle="width:95%;height: 26px" filterBy="#{item.q_user.username}" filterMatchMode="contains">  
+                            <h:outputText value="#{item.q_user.username} (#{item.q_user.userid})"/>
+                        </p:column>
+                        <p:column headerText="Kế thừa">
+                            <center>
+                                <p:selectBooleanCheckbox value="#{item.inherit}" disabled="#{!reportGrantBean.isGrant}"/>
+                            </center>
+                        </p:column>
+                        <p:column headerText="Gán quyền">
+                            <center>
+                                <p:selectBooleanCheckbox value="#{item.RGrant}" disabled="#{!reportGrantBean.isGrant}"/>
+                            </center>
+                        </p:column>
+                        <p:column headerText="Xem">
+                            <center>
+                                <p:selectBooleanCheckbox value="#{item.RView}" disabled="#{!reportGrantBean.isGrant}"/>
+                            </center>
+                        </p:column>  
+                    </p:dataTable>
+                </fieldset>
+                
+                <fieldset>
+                    <legend>
+                        <h:outputLabel value="Quyền truy cập nhóm người dùng"/>
+                    </legend>
+                    <p:dataTable emptyMessage="Không có dữ liệu" id="reportGrantRole"
+                                 value="#{reportGrantBean.lsQPqReportRoleModel}" var="item"
+                                 scrollHeight="210"
+                                 scrollable="true"
+                                 paginatorPosition="bottom">
+                        <p:column headerText="Nhóm người dùng" width="230">
+                            <h:outputText value="#{item.q_role.roledesc} (#{item.q_role.roleid})"/>
+                        </p:column>
+                        <p:column headerText="Kế thừa">
+                            <center>
+                                <p:selectBooleanCheckbox value="#{item.inherit}" disabled="#{!reportGrantBean.isGrant}"/>
+                            </center>
+                        </p:column>
+                        <p:column headerText="Gán quyền">
+                            <center>
+                                <p:selectBooleanCheckbox value="#{item.RGrant}" disabled="#{!reportGrantBean.isGrant}"/>
+                            </center>
+                        </p:column>
+                        <p:column headerText="Xem">
+                            <center>
+                                <p:selectBooleanCheckbox value="#{item.RView}" disabled="#{!reportGrantBean.isGrant}"/>
+                            </center>
+                        </p:column>
+                    </p:dataTable>
+                </fieldset>
+                <br/>
+                <center>
+                    <p:commandButton value="Áp dụng" actionListener="#{reportGrantBean.onSave}" disabled="#{!reportGrantBean.isGrant}" update="msgInfo reportGrantUser reportGrantRole"/>
+                </center>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

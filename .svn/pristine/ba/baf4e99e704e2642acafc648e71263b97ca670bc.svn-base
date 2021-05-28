@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{logHisDtBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                
+                <f:loadBundle var="userProp" basename="main.web.shared.admin.prop.UserProp"/>
+                #{logHisDtBean.assertFuncRight('01.05')}
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{userProp.lblTitleLogHisDT}" />
+                </h:panelGroup>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                </p:outputPanel>
+                <table style="width: 715">
+                    <tr>
+                        <td align="right" width="75">
+                            <h:outputText value="Người dùng" />
+                        </td>
+                        <td align="left" width="180">
+                            <p:selectOneMenu id="cbUser" value="#{logHisDtBean.selectedUser}"
+                                             style="width: 100%">
+                                <f:selectItems value="#{logHisDtBean.dsUserForCombo}"
+                                               var="a" itemLabel="#{a.userid} - #{a.username}"
+                                               itemValue="#{a.userid}"/>
+                            </p:selectOneMenu>
+                        </td>
+                        <td align="right" width="70">
+                            Từ ngày
+                        </td>
+                        <td align="right" width="80">
+                            <p:calendar size="10" value="#{logHisDtBean.m_fromDt}" pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </td>
+                        <td align="right" width="70">
+                            Đến ngày
+                        </td>
+                        <td align="right" width="80">
+                            <p:calendar size="10" value="#{logHisDtBean.m_toDt}" pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </td>
+                        <td align="right" width="80">
+                            <p:commandButton id="btnChoose" value="#{commonMessages.btnChoonse}" style="width: 70px"
+                                             update="dtUser"
+                                             actionListener="#{logHisDtBean.onChooseUser}"/>
+                        </td>
+                        <td align="right" width="80">
+                            <p:commandButton id="btnDeleteUser" value="#{commonMessages.btnDelete}" style="width: 70px"
+                                             onclick="OpenDlgDeleteLogHis();"/>
+                        </td>
+                    </tr>
+                </table>
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtUser" paginator="true" 
+                             value="#{logHisDtBean.loginHisDTDataModel}"  rows="10"
+                             selection="#{logHisDtBean.arrSelectedLoginHis}"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15,20" widgetVar="dtUser" paginatorPosition="bottom">
+                    <p:column selectionMode="multiple" style="text-align: center;"/>
+                    <p:column sortBy="#{s.userid}" id="cmid" headerText="#{commonTMSProp.ColID}"
+                              filterBy="#{s.userid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.userid}"/>
+                    </p:column>
+                    <p:column sortBy="#{s.username}" headerText="#{commonTMSProp.ColDesc}"
+                              filterBy="#{s.username}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.username}"/>
+                    </p:column>                               
+                    <p:column sortBy="#{s.logintime}" headerText="#{userProp.lblLoginTime}" style="text-align: center;">
+                        <h:outputText value="#{s.logintime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column sortBy="#{s.lastaccesstime}" headerText="#{userProp.lblLastAccessTime}" style="text-align: center;">
+                        <h:outputText value="#{s.lastaccesstime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column sortBy="#{s.logouttime}" headerText="#{userProp.lblLogoutTime}" style="text-align: center;">
+                        <h:outputText value="#{s.logouttime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p style="text-align: left">
+                            <h:outputText value="#{commonMessages.msgRecordNum}: #{logHisDtBean.logRecordCount}"/>
+                        </p>
+                    </f:facet>
+                </p:dataTable>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenDlgLogHis" widgetVar="dlgOpenDlgLogHis" header="Xóa các bản ghi lịch sử"
+                          width="300" height="120"
+                          closable="true" modal="true" resizable="false">
+                        <p:ajax event="close" listener="#{logHisDtBean.onCloseDlgLogHis}" update="dtUser"/>
+                    <!--                    <iframe id="frCheckMailConfig" scrolling="yes"
+                                                frameborder="0" width="100%" height="95%">
+                                        </iframe>-->
+                    <h:panelGrid id="pnDetail" columns="1" cellpadding="4" width="100%">
+                        <h:panelGroup>
+                            <table style="width: 100%">
+                                <tr>
+                                    <td>
+                                        Người dùng
+                                    </td>
+                                    <td>
+                                        <p:selectOneMenu id="cbUser_del" value="#{logHisDtBean.selectedUser_Del}"
+                                                         style="width: 100%">
+                                            <f:selectItems value="#{logHisDtBean.dsUserForCombo}"
+                                                           var="a" itemLabel="#{a.userid} - #{a.username}"
+                                                           itemValue="#{a.userid}"/>
+                                        </p:selectOneMenu>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Từ ngày
+                                    </td>
+                                    <td>
+                                        <p:calendar size="12" value="#{logHisDtBean.m_from}" pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Đến ngày
+                                    </td>
+                                    <td>
+                                        <p:calendar size="12" value="#{logHisDtBean.m_to}" pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </h:panelGroup>
+                        <p:commandButton value="#{commonMessages.btnDelete}" update="dtUser"
+                                         onclick="return window.confirm('#{commonMessages.msgDeleteLogHis}');"
+                                         actionListener="#{logHisDtBean.onDeleteLogHis}"/>
+                    </h:panelGrid>
+                </p:dialog>
+                <br/>
+                <script type="text/javascript">
+                    function OpenDlgDeleteLogHis () {
+                        PF('dlgOpenDlgLogHis').show();
+                    }
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

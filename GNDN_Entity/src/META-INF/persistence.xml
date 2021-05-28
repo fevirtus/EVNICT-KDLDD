@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="Entity_SharedPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>diemdo.ADiemdoTariff</class>
+    <class>diemdo.ADiemdoTariffMix</class>
+    <class>diemdo.ADiemdoTariffMix2</class>
+    <class>dulieuthuthap.MHistoryChiso</class>
+    <class>dulieuthuthap.MHistorySanluong</class>
+    <class>dulieuthuthap.countThuThap</class>
+    <class>dulieuthuthap.MHistorySanluongMix</class>
+    <class>dulieuthuthap.MHistoryBddd</class>
+    <class>dulieuthuthap.ALstLoaiCso</class>
+    <class>dulieuthuthap.MHistoryBdddMix</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://10.0.0.82:1433;databaseName=PMIS"/>
+      <property name="javax.persistence.jdbc.user" value="sa"/>
+      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="javax.persistence.jdbc.password" value="Pmis2013pmis"/>
+    </properties>
+  </persistence-unit>
+</persistence>

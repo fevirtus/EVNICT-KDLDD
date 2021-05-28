@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template_GNDN.xhtml">
+    <ui:define name="head">
+
+    </ui:define>            
+    <ui:define name="content">     
+        <h:form id="frmUser">
+            <p:outputPanel id="msgInfo">
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>  
+            </p:outputPanel>
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                <h:panelGrid id="confirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">                    
+                </h:panelGrid>
+                <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                 actionListener="#{userBean.onDeleteUserEnd}" update="dtUser msgInfo" />
+                <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+            </p:dialog>
+            <!-- Vùng Grid--> 
+            <div class="p-grid">                
+                <div class="p-col-12 p-md-3">
+                    <p:tree id="treeDonVi" style="height: auto;border: 0px"
+                            value="#{userBean.rootTreeNodeOrg}" var="node"
+                            dynamic="true" cache="false"                        
+                            selectionMode="single" selection="#{userBean.selectedTreeNodeOrg}">
+                        <p:ajax event="select" listener="#{userBean.onChangeOrg}" 
+                                oncomplete="PF('dtUser').clearFilters();"
+                                process="@this"
+                                update="frmUser:dtUser,frmUser:toolBar"/>                    
+                        <p:treeNode collapsedIcon="ui-icon-bookmark" expandedIcon="ui-icon-bookmark">
+                            <h:outputText value="#{node.orgdesc}" />                                
+                        </p:treeNode>
+                    </p:tree>
+                </div>
+                <div class="p-col-12 p-md-9">
+                    <div>
+                        <p:toolbar id="toolBar" style="margin-bottom: 5px;">
+                            <p:toolbarGroup align="left">
+                                <p:commandButton styleClass="p-mr-2 p-mb-2" icon="pi pi-plus" title="#{commonMessages.btnAddNew}"
+                                                 value="Thêm mới"
+                                                 onclick="OpenUserDetail('', '#{userBean.curOrgIdSelect}');"/>
+                                <p:commandButton styleClass="warning-button p-mr-2 p-mb-2" icon="pi pi-pencil" title="#{commonMessages.btnViewUpdate}"
+                                                 value="Sửa"
+                                                 actionListener="#{userBean.onEditUser}"
+                                                 update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                <p:commandButton styleClass="danger-button p-mr-2 p-mb-2" icon="pi pi-trash" title="#{commonMessages.btnDelete}"
+                                                 value="Xóa"
+                                                 update="msgInfo confirmDelContent" actionListener="#{userBean.onDeleteUsertart}"
+                                                 oncomplete="handleCmdComplete(xhr, status, args)"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <div class="card">
+                            <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtUser" paginator="true"
+                                         value="#{userBean.userDataModel}"
+                                         rows="10"                                  
+                                         scrollable="true"
+                                         selection="#{userBean.selectionUser}"
+                                         rowKey="#{s.userid}"
+                                         reflow="true"
+                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,50,100,150,200" widgetVar="dtUser" paginatorPosition="bottom">
+                                <f:facet name="header">
+                                    <div class="customers-table-header">
+                                        <span style="font-weight: bold">DANH SÁCH NGƯỜI DÙNG</span>
+                                        <span class="ui-input-icon-left filter-container">
+                                            <i class="pi pi-search"></i>
+                                            <p:inputText id="globalFilter" onkeyup="PF('dtUser').filter()" placeholder="Search"/>
+                                        </span>
+                                    </div>
+                                </f:facet>
+                                <p:column selectionMode="multiple" width="45" style="text-align: center;"/>
+                                <p:column style="text-align: center;" width="50">
+                                    <p:commandButton styleClass="btnHeight" icon="edit" title="#{userProp.headerDlgUserDetail}"
+                                                     onclick="OpenUserDetail('#{s.userid}');"/>
+                                </p:column>
+                                <p:column id="cmid" headerText="Tên đăng nhập" sortBy="#{s.userid}"
+                                          filterBy="#{s.userid}">
+                                    <h:outputText value="#{s.userid}"/>
+                                </p:column>
+                                <p:column headerText="Tên đầy đủ" sortBy="#{s.username}"
+                                          filterBy="#{s.username}">
+                                    <h:outputText value="#{s.username}"/>
+                                </p:column>                               
+                                <p:column headerText="#{userProp.lblTel}" width="100" sortBy="#{s.tel}"
+                                          filterBy="#{s.tel}" filterMatchMode="contains" filterStyle="width:90%">
+                                    <h:outputText value="#{s.tel}"/>
+                                </p:column>
+                                <p:column headerText="#{userProp.lblDescript}" sortBy="#{s.descript}"
+                                          filterBy="#{s.descript}" filterMatchMode="contains" filterStyle="width:90%">
+                                    <h:outputText value="#{s.descript}"/>
+                                </p:column>                                
+                                <p:column headerText="#{userProp.lblEnable}" width="100" style="text-align: center;" sortBy="#{s.enable}">
+                                    <h:selectBooleanCheckbox value="#{s.enable}" disabled="true"/>
+                                </p:column>
+                            </p:dataTable>  
+                        </div>
+                    </div>
+                </div>
+            </div>          
+
+            <!-- Vùng dialog-->
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenUserDetail" widgetVar="dlgOpenUserDetail" header="#{userProp.headerDlgUserDetail}"
+                      width="1024" height="640"
+                      closable="true" modal="true" resizable="false">
+                <p:ajax event="close" listener="#{userBean.onCloseUserDetail}" update="dtUser"/>
+                <iframe id="frUserDetail" scrolling="auto"
+                        frameborder="0" width="100%" height="99%">
+                </iframe>
+            </p:dialog>
+
+
+            <script type="text/javascript">
+                function handleCmdComplete(xhr, status, args) {
+                    if (args.Method)
+                    {
+                        switch (args.Method)
+                        {
+                            case 'Edit':
+                                OpenUserDetail(args.id);
+                                break;
+                            case 'Delete':
+                                PF('confirmDel').show();
+                                break;
+                        }
+                    }
+                }
+                function OpenUserDetail(cmid, orgid) {
+                    var f = document.getElementById('frUserDetail');
+                    if (cmid)
+                        f.src = "../admin/user_detail.jsf?ID=" + cmid;
+                    else
+                        f.src = "../admin/user_detail.jsf?orgId=" + orgid;
+                    PF('dlgOpenUserDetail').show();
+                }
+            </script>
+        </h:form>
+    </ui:define> 
+</ui:composition>   
+

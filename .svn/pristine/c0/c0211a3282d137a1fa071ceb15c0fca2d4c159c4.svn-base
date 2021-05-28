@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <h:form>
+        <div class="layout-rightpanel">
+            <div class="rightpanel-wrapper">
+                <div class="rightpanel-header">
+                    <div class="profile">                        
+                        <span class="profile-name">#{organizationBean.curUserName}</span>
+                        <span><i class="pi pi-map-pin"></i> #{organizationBean.m_S_OrganizationDesc}</span>                        
+                    </div>
+                </div>
+                <div class="rightpanel-actions">
+                    <div class="actions">
+                        <div class="action-buttons">
+                            <div class="p-grid">                            
+                                <div class="p-col-6 p-md-4">
+                                    <div class="action">
+                                        <span><i class="pi pi-briefcase" ></i>Thay đổi mật khẩu</span>
+                                    </div>
+                                </div>
+                                <div class="p-col-6 p-md-4">
+                                    <div class="action" onclick="onLogOut()">
+                                        <span onclick="">
+                                            <i class="pi pi-power-off">                                            
+                                            </i>                                     
+                                            Đăng xuất
+                                        </span>                                                                             
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="rightpanel-chat">
+                    <p:tree id="treeDonVi" style="width:350px;height: auto;border: 0px"
+                            value="#{chonDonViQuanLyInlineBean.rootTreeNode}" var="node"
+                            dynamic="true" cache="false"                        
+                            selectionMode="single" selection="#{chonDonViQuanLyInlineBean.selectedTreeNode}">
+                        <p:ajax event="select" listener="#{chonDonViQuanLyInlineBean.onChangeOrg}"
+                                oncomplete="handleMainSelectOrg(xhr, status, args)"/>                    
+                        <p:treeNode collapsedIcon="ui-icon-bookmark" expandedIcon="ui-icon-bookmark">
+                            <h:outputText value="#{node.orgdesc}" />                                
+                        </p:treeNode>
+                    </p:tree>
+                </div>
+            </div>
+        </div>
+        <p:remoteCommand name="rcLogOut" 
+                         actionListener="#{loginBean.logout()}"/>
+        <script type="text/javascript">
+            function handleMainSelectOrg(xhr, status, args) {
+                //alert(args.Method);
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'reload':
+                            location.reload();
+                            break;
+                    }
+                }
+            }
+
+            function onLogOut()
+            {
+                alert('Đăng xuất khỏi hệ thống');
+                rcLogOut();
+            }
+        </script>
+    </h:form>
+
+</ui:composition>

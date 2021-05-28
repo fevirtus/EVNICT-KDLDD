@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+   <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+   <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAddShortcut" header="#{propSM_BB.SMLblSCEdit}" widgetVar="dlgAddShortcut" width="500" height="250" modal="true"
+              onHide="document.getElementById('ifrDlgAddShortcut').src='';">
+        <iframe id="ifrDlgAddShortcut" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none">
+        </iframe>
+    </p:dialog>
+   <p:remoteCommand name="addShortcutUrl" onsuccess="showDlgAddShortcutByUrlCurrentRun()">
+        <f:setPropertyActionListener value="#{null}"
+                                     target="#{infoBean.shortcutUrl}" />
+    </p:remoteCommand>
+
+    <script type="text/javascript">
+           function showDlgAddShortcut(appID, funcID) {
+                var f = document.getElementById('ifrDlgAddShortcut');
+                f.src = "#{settingsBean.webRootPath}/shared/portletmng/dlgShortcutDt.jsf?sm=new&amp;Appfunctionid=" + appID + "&amp;functionid=" + funcID;
+                PF('dlgAddShortcut').show();
+           }
+
+           var urlAppID, urlName;
+           function showDlgAddShortcutByUrlCurrent(appID, name) {
+               urlAppID=appID; urlName=name;
+               addShortcutUrl(); //Gọi lệnh ghi url vào session
+           }
+
+           function showDlgAddShortcutByUrlCurrentRun()
+           {
+                var f = document.getElementById('ifrDlgAddShortcut');
+                f.src = "#{settingsBean.webRootPath}/shared/portletmng/dlgShortcutDt.jsf?sm=new&amp;Appfunctionid=" + urlAppID +"&amp;urlname=" + urlName;
+                PF('dlgAddShortcut').show();
+           }
+
+            function closeDlgShortcutDt()
+            {
+                PF('dlgAddShortcut').hide();
+            }
+     </script>
+</ui:composition>

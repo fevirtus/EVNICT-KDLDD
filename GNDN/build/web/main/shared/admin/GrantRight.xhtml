@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="this" basename="main.web.shared.admin.prop.GrantRightProp"/>
+            </ui:define>
+            <ui:define name="content">
+                <table>
+                    <tr>
+                        <td width="300px" valign="top">          
+                            <p:outputPanel id="msgInfo">
+                                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                            </p:outputPanel>
+                            <div style="width: 315px;height: 300px;overflow: auto">
+                                <p:tree id="treeDonVi" style="width:350px;height: auto;border: 0px"
+                                        value="#{grantRight.rootTreeNodeOrg}" var="node"
+                                        dynamic="true" cache="false"                        
+                                        selectionMode="single" selection="#{grantRight.selectedTreeNodeOrg}">
+                                    <p:ajax event="select" listener="#{grantRight.onChangeOrg}"                                             
+                                            update="@this,@id(msgInfo),@id(cbUserRole),@id(ttGrantFnc),@id(ttGrantOrg),@id(ttGrantDept),@id(btnCopy)"/>                    
+                                    <p:treeNode collapsedIcon="ui-icon-bookmark" expandedIcon="ui-icon-bookmark">
+                                        <h:outputText value="#{node.orgdesc}" />                                
+                                    </p:treeNode>
+                                </p:tree>
+                            </div>
+                            <p:selectOneRadio value="#{grantRight.m_optUserRole}"
+                                              valueChangeListener="#{grantRight.onOptUserRoleChange}">
+                                <f:selectItem itemLabel="#{this.optByRole}" itemValue="optByRole"/>
+                                <f:selectItem itemLabel="#{this.optByUser}" itemValue="optByUser"/>
+                                <p:ajax event="valueChange" listener="#{grantRight.onOptUserRoleChange}" 
+                                        update="@id(cbUserRole),@id(ttGrantFnc),@id(ttGrantOrg),@id(ttGrantDept),@id(btnCopy)"/>
+                            </p:selectOneRadio>                                
+                            <p:selectOneListbox id="cbUserRole" 
+                                                widgetVar="cbUserRole" 
+                                                value="#{grantRight.m_userRoleID}" 
+                                                filterMatchMode="contains" filter="true" 
+                                                style="width: 300px" scrollHeight="350">
+                                <f:selectItems value="#{grantRight.dsUserRole}"/>
+                                <p:ajax event="valueChange" listener="#{grantRight.onUserRoleChange}" 
+                                        update="@id(msgInfo),@id(cbUserRole),@id(ttGrantFnc),@id(ttGrantOrg),@id(ttGrantDept),@id(btnCopy)"/>
+                            </p:selectOneListbox>
+                        </td>
+                        <td valign="top">
+                            <p:commandButton id="btnCopy" icon="copy" 
+                                             title="Copy quyền" 
+                                             onclick="openCopyGrant('#{grantRight.m_userRoleID}')"/>
+                            <p:tabView id="tabViewAll" activeIndex="#{grantRight.m_iActiveTab}" >
+                                <p:ajax event="tabChange" listener="#{grantRight.onTabChange}"/>
+                                <p:tab title="#{this.grantFnc}">
+                                    <!--<div style="width: 100%;height: 500px;overflow: auto"> -->
+                                    <!-- grid cây chức năng -->
+                                    <p:dataTable emptyMessage="Không có dữ liệu" 
+                                                 scrollable="true"
+                                                 scrollHeight="550"
+                                                 id="ttGrantFnc" var="dt"                                                 
+                                                 value="#{grantRight.lstFunc}"  
+                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+                                        <p:column style="width: 500px" id="funcid"
+                                                  filterBy="#{dt.functionname}" 
+                                                  filterMatchMode="contains" 
+                                                  filterStyle="width:90%;">
+                                            <f:facet name="header">
+                                                <h:selectBooleanCheckbox value="#{grantRight.m_bFncGrantAll}">
+                                                    <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantAllFnc}" update="ttGrantFnc">
+                                                    </p:ajax>
+                                                </h:selectBooleanCheckbox>
+                                                <h:outputText value="#{this.colFName}"/>
+                                            </f:facet>
+                                            <h:outputText style="padding-left: #{dt.paddingLeft}px;"/>
+                                            <h:selectBooleanCheckbox value="#{dt.grant}" >
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantFnc}" update="ttGrantFnc">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                            <h:outputText value="#{dt.functionname}" />
+                                            <h:inputHidden id="hfFuncId" value="#{dt.functionid}"/>
+                                        </p:column>
+                                        <p:column style="width:50px;text-align: center;" headerText="Xem" rendered="false">                                
+                                            <h:selectBooleanCheckbox value="#{dt.rView}">
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column style="width:50px;text-align: center;" headerText="Thêm">                                
+                                            <h:selectBooleanCheckbox value="#{dt.rCreator}" >
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantCreator}" update="ttGrantFnc">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column style="width:50px;text-align: center;" headerText="Sửa">                                
+                                            <h:selectBooleanCheckbox value="#{dt.rEdit}" >
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantEdit}" update="ttGrantFnc">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column style="width:50px;text-align: center;" headerText="Xóa">                                
+                                            <h:selectBooleanCheckbox value="#{dt.rDelete}" >
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantDelete}" update="ttGrantFnc">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column style="width:100px;text-align: center;" headerText="Dùng nội bộ">                                
+                                            <h:selectBooleanCheckbox value="#{dt.authLocal}" >
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantAuthLocal}" update="ttGrantFnc">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column style="width:100px;text-align: center;" headerText="Dùng Internet">                                
+                                            <h:selectBooleanCheckbox value="#{dt.authInternet}" >
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckGrantAuthInternet}" update="ttGrantFnc">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column style="width:50px;text-align: center;" headerText="">                                
+                                            <p:commandButton onclick="openGrantWflow('#{grantRight.m_optUserRole}', '#{grantRight.m_userRoleID}', '#{dt.functionid}')" icon="edit" rendered="#{dt.isFlow &amp;&amp; dt.grant}"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <center>
+                                        <p:commandButton value="#{commonMessages.btnSave} #{this.grantFnc}" actionListener="#{grantRight.onSaveFunc}" icon="edit"  update="@id(msgInfo)"/>
+                                    </center>
+                                </p:tab>
+                                <p:tab title="#{this.grantOrg}">
+                                    <!--
+                                    <div style="width: 100%;height: 500px;overflow: auto">
+                                    </div>
+                                    -->
+                                    <table width="100%" cellpadding="0" cellspacing="5">
+                                        <tr>
+                                            <td width="50%" valign="top">
+                                                <p:layout id="layout1" style="height:400px;" >
+                                                    <p:layoutUnit id="layoutUnit1" gutter="1" position="west" size="400" resizable="true" collapsible="true">
+                                                        <p:tree id="treeOrg" style="width:1000px;height: auto;border: 0px"
+                                                                value="#{grantRight.rootTreeNodeOrg}" var="node"
+                                                                dynamic="true" cache="false"
+                                                                selectionMode="single" selection="#{grantRight.selectedNodeOrg}">
+                                                            <p:ajax event="expand" />  
+                                                            <p:ajax event="collapse" /> 
+                                                            <p:ajax event="select"/>
+                                                            <p:treeNode collapsedIcon="ui-icon-note" expandedIcon="ui-icon-note">
+                                                                <h:outputText value="[#{node.orgcode}] #{node.orgdesc}" />                                
+                                                            </p:treeNode>
+                                                        </p:tree>
+                                                    </p:layoutUnit>                
+                                                    <p:layoutUnit id="layoutUnit2" gutter="1" position="center" collapsible="true" style="width:100px;">
+                                                        <p:dataTable emptyMessage="Không có dữ liệu" id="ttGrantOrg"
+                                                                     var="dt" value="#{grantRight.lstOrg}"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                     scrollHeight="300"
+                                                                     scrollable="true"
+                                                                     paginator="true" paginatorAlwaysVisible="false" rows="50" 
+                                                                     rowsPerPageTemplate="50,100,150,200">
+                                                            <p:column id="orgid"
+                                                                      filterBy="#{dt.orgdesc}" 
+                                                                      filterMatchMode="contains" 
+                                                                      filterStyle="width:99%;">                                                    
+                                                                <h:selectBooleanCheckbox value="#{dt.grant}">                                                        
+                                                                </h:selectBooleanCheckbox>
+                                                                <h:outputText value="#{dt.orgdesc} (#{dt.orgid})" escape="false"/>
+                                                            </p:column>                                                
+                                                        </p:dataTable>
+                                                    </p:layoutUnit>
+                                                </p:layout>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <center>
+                                        <p:commandButton value="#{commonMessages.btnSave} #{this.grantOrg}" actionListener="#{grantRight.onSaveOrg}" icon="save" update="@id(msgInfo),@id(ttGrantOrg)"/>
+                                        <p:commandButton value="#{commonMessages.btnDelete} #{this.grantOrg}" actionListener="#{grantRight.onDeleteOrg}" icon="delete" update="@id(msgInfo),@id(ttGrantOrg)"/>
+                                    </center>
+                                </p:tab>
+                                <p:tab title="Trạm biến áp">
+                                    <p:dataTable emptyMessage="Không có dữ liệu" id="ttGrantDept" var="dt"
+                                                 value="#{grantRight.lstDept}"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">                                                 
+                                        <p:column style="width: 500px" >
+                                            <f:facet name="header">
+                                                <h:outputText value="Trạm biến áp"/>
+                                            </f:facet>
+                                            <h:outputText style="padding-left: #{dt.plevel * 30}px;"/>
+                                            <h:outputText value="#{dt.deptdesc}" />
+                                        </p:column>
+                                        <p:column rendered="false" style="width:80px;text-align: left;">
+                                            <f:facet name="header">
+                                                <h:selectBooleanCheckbox value="#{grantRight.m_bDeptReadAssAll}">
+                                                    <p:ajax event="valueChange" listener="#{grantRight.onCheckReadOnlyAssAllDept}" update="ttGrantDept">
+                                                    </p:ajax>
+                                                </h:selectBooleanCheckbox>
+                                                <h:outputText value="Thiết bị"/>
+                                            </f:facet>
+                                            <h:selectBooleanCheckbox value="#{dt.updateAssetid}">
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckReadOnlyDept}" update="ttGrantDept">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                        <p:column rendered="false" style="width:80px;text-align: left;">
+                                            <f:facet name="header">
+                                                <h:selectBooleanCheckbox value="#{grantRight.m_bDeptReadProAll}">
+                                                    <p:ajax event="valueChange" listener="#{grantRight.onCheckReadOnlyProAllDept}" update="ttGrantDept">
+                                                    </p:ajax>
+                                                </h:selectBooleanCheckbox>
+                                                <h:outputText value="Sự cố"/>
+                                            </f:facet>
+                                            <h:selectBooleanCheckbox value="#{dt.updateProblemid}">
+                                                <p:ajax event="valueChange" listener="#{grantRight.onCheckReadOnlyDept}" update="ttGrantDept">
+                                                </p:ajax>
+                                            </h:selectBooleanCheckbox>
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <p:commandButton value="#{commonMessages.btnSave} Trạm biến áp" actionListener="#{grantRight.onSaveDept}" icon="save"  update="@id(msgInfo)"/>
+                                </p:tab>
+                            </p:tabView>  
+                        </td>
+                    </tr>
+                </table>   
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgGrantWflow" widgetVar="dlgGrantWflow"
+                          width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                          header="Phân quyền luồng nghiệp vụ">                    
+                    <iframe id="ifrGrantWflow" scrolling="auto"
+                            frameborder="true" width="100%" 
+                            height="#{settingsProp.NormalDlgIFrameHeight}"
+                            style="border: none">
+                    </iframe>
+                </p:dialog>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="ifrGrantCopy" widgetVar="ifrGrantCopy"
+                          width="650" height="420" closable="true"
+                          header="Sao chép phân quyền">
+                    <iframe id="ifrGrantCopy" scrolling="auto"
+                            frameborder="true" width="100%" 
+                            height="80%"
+                            style="border: none">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function openCopyGrant(userCopy) {
+                        var f = document.getElementById('ifrGrantCopy');
+                        if (f)
+                        {
+                            var url = "../../eam/admin/GrantRightCopy.jsf";
+                            var temp = "?";
+                            url = url + temp + "userCopy=" + userCopy;
+                            f.src = url;
+                            PF('ifrGrantCopy').show();
+                        }
+                    }
+                    function openGrantWflow(grantMode, ruId, functionId)
+                    {
+                        var f = document.getElementById('ifrGrantWflow');
+                        if (f)
+                        {
+                            var url = "../admin/GrantRightWflow.jsf";
+                            var temp = "?";
+                            url = url + temp + "grantMode=" + grantMode;
+                            temp = '&amp;';
+                            url = url + temp + "ruId=" + ruId;
+                            temp = '&amp;';
+                            url = url + temp + "functionId=" + functionId;
+                            f.src = url;
+                            PF('dlgGrantWflow').show();
+                        }
+                    }
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case '':
+                                    break;
+                            }
+                        }
+                    }
+
+                    //Hàm xử lý đánh dấu cột phân quyền cha/con trên cây
+                    function onCheckFuncRight(obj, funcid, postId)
+                    {
+                        //var chk = document.getElementById();
+                        //alert("objid = " + obj.id + ", funcid = " + funcid);
+                        var objid = obj.id;
+                        var arr = objid.split(":");
+                        var iId = parseInt(arr[3]), sCheck = obj.checked;
+                        funcid = funcid + ".";
+                        while (true)
+                        {
+                            iId++; //Duyệt các hàng trong grid
+                            objid = 'formMain:tabViewAll:ttGrantFnc:' + iId + ':hfFuncId';
+                            var hf = document.getElementById(objid);
+                            if (!hf)
+                                break;
+                            var s = hf.value;
+                            if (s.indexOf(funcid) == 0) //Nếu là chức năng con: id bắt đầu funcid
+                            {
+                                objid = 'formMain:tabViewAll:ttGrantFnc:' + iId + ':' + postId;
+                                var chk = document.getElementById(objid);
+                                if (chk)
+                                    chk.checked = sCheck;
+                            }
+                            else
+                                break;
+                        }
+                        //alert('iID=' + iId + ', value=' + sCheck);
+
+                        //alert("objid = " + obj.id + ", funcid = " + funcid);
+                    }
+
+                    function hideDlgChangeStatus() {
+                        PF('ifrGrantCopy').hide();
+                    }
+
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

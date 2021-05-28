@@ -1,0 +1,254 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"                
+                xmlns:c="http://java.sun.com/jsp/jstl/core">
+    <f:loadBundle var="msgs" basename="main.web.shared.system.prop.MeterViewProp"/>
+    <p:panel id="pMeterView" style="border: 0px !important;">
+        <p:outputPanel id="msgInfo">
+            <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+        </p:outputPanel>        
+        <h:panelGrid columns="2" width="100%">
+            <h:panelGroup>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <table>
+                                <tr>                                
+
+                                    <td>
+                                        <p:calendar id="calFrom" locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}" 
+                                                    style="width: 70px;"
+                                                    timeZone="#{settingsBean.timeZone}" converterMessage="#{commonMessages.msgDateInvalid}"
+                                                    value="#{meterViewBean.dfrom}"/>
+                                    </td>
+                                    <td>
+                                        <p:calendar id="calTo" locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}"
+                                                    timeZone="#{settingsBean.timeZone}" converterMessage="#{commonMessages.msgDateInvalid}"
+                                                    value="#{meterViewBean.dto}"/>
+                                    </td> 
+                                    <td>
+                                        <p:selectOneMenu id="viewtype" value="#{meterViewBean.viewtype}" style="width:160px;" >
+                                            <f:selectItems value="#{meterViewBean.dsTabviewtypeForCombo}"
+                                                           var="s"
+                                                           itemLabel="#{s.tabviewtypedesc}"
+                                                           itemValue="#{s.tabviewtype}" />
+                                            <p:ajax event="valueChange" listener="#{meterViewBean.onChangeTabviewtypeCombo}" update="pnlContent"/>
+                                        </p:selectOneMenu>                                    
+                                    </td>                                    
+                                    <td>
+                                        <p:commandButton ajax="true" styleClass="btnHeight" icon="open"
+                                                         style="float:left;margin-left: 15px;"
+                                                         process="calFrom calTo viewtype @this"
+                                                         update="pnlContent pnlNavigator"
+                                                         actionListener="#{meterViewBean.onOpenMeterTab}"/>                                    
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td align="right">
+                            <p:outputPanel id="pnlNavigator">
+                                <h:panelGrid columns="5">
+                                    <p:commandButton styleClass="btnHeight" style="width:37px;"
+                                                     icon="resultset_first"
+                                                     process="calFrom calTo viewtype @this"
+                                                     update="lblFromCurrent pnlNavigator pnlContent" title="#{commonMessages.btnFirst}"
+                                                     disabled="#{meterViewBean.m_bFirst}"
+                                                     actionListener="#{meterViewBean.onNavigatorFirst_}"/>
+                                    <p:commandButton styleClass="btnHeight" style="width:37px;"
+                                                     disabled="#{meterViewBean.m_bPrevious}"
+                                                     process="calFrom calTo viewtype @this"
+                                                     icon="resultset_previous" update="lblFromCurrent pnlNavigator pnlContent" title="#{commonMessages.btnPrevious}"
+                                                     actionListener="#{meterViewBean.onNavigatorPrevious_}"/>
+                                    <h:outputText id="lblFromCurrent" style="font-weight: bold;color: #0000FF" value="#{meterViewBean.dFrom_Current}">
+                                    </h:outputText>
+                                    <p:commandButton styleClass="btnHeight" style="width:37px;"
+                                                     disabled="#{meterViewBean.m_bNext}"
+                                                     process="calFrom calTo viewtype @this"
+                                                     icon="resultset_next" update="lblFromCurrent pnlNavigator pnlContent" title="#{commonMessages.btnNext}"
+                                                     actionListener="#{meterViewBean.onNavigatorNext_}"/>
+                                    <p:commandButton styleClass="btnHeight" style="width:37px;"
+                                                     disabled="#{meterViewBean.m_bLast}"
+                                                     process="calFrom calTo viewtype @this"
+                                                     icon="resultset_last" update="lblFromCurrent pnlNavigator pnlContent" title="#{commonMessages.btnLast}"
+                                                     actionListener="#{meterViewBean.onNavigatorLast_}"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </td>                                    
+                    </tr>
+                </table>
+
+
+            </h:panelGroup>                   
+        </h:panelGrid>
+        <p:ajaxStatus>
+            <f:facet name="default">
+            </f:facet>
+            <f:facet name="start">
+                <center>
+                    <h:outputText value="Đang thực hiện..." style="color: red"/>
+                </center>
+            </f:facet>
+            <f:facet name="complete">
+            </f:facet>
+        </p:ajaxStatus>
+        <p:outputPanel id="pnlContent" style="height: 450px;overflow: auto">            
+                <p:dataTable var="s" id="dtTimeMeter"                             
+                             value="#{meterViewBean.dsTimeMeterGridInfo}"
+                             style="width: #{50*meterViewBean.m_LengthColumn}px"
+                             emptyMessage="" rendered="#{meterViewBean.render_GridTimeMeter}"                
+                             widgetVar="dtMeterTab">
+                    <p:columnGroup type="header">
+                        <p:row>                                
+                            <p:column rowspan="3" style="min-width: 100px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#{msgs.tbl_grd_LblTime} " />
+                                    <p:commandLink value="[+]" style="color: #0000FF !important;"
+                                                   rendered="#{meterViewBean.dynamicTime}"
+                                                   actionListener="#{meterViewBean.onAddTimeMeterColumn}" 
+                                                   update=":#{p:component('msgInfo')} :#{p:component('dtTimeMeter')}"/>
+                                </f:facet>
+                            </p:column>
+                            <c:forEach var="lstCol1" items="#{meterViewBean.meterGroupName}"  varStatus="s1">
+                                <p:column headerText="#{lstCol1}" rendered="#{meterViewBean.renderedGTM_Group(s1.index)}" colspan="#{meterViewBean.meterGroupColspan[s1.index]}"/>
+                            </c:forEach>                
+                        </p:row>
+
+                        <p:row>
+                            <c:forEach var="lstCol2" items="#{meterViewBean.meterName}" varStatus="s2">
+                                <p:column headerText="#{lstCol2}" rendered="#{meterViewBean.renderedGTM_Meter(s2.index)}"/>
+                            </c:forEach>
+                        </p:row>
+
+                        <p:row>
+                            <c:forEach var="lstCol3" items="#{meterViewBean.uomName}" varStatus="s3">
+                                <p:column headerText="#{lstCol3}" rendered="#{meterViewBean.renderedGTM_Meter(s3.index)}"/>
+                            </c:forEach>
+                        </p:row>
+                    </p:columnGroup>
+                    <p:column style="min-width: 100px;text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="#{msgs.tbl_grd_LblTime}" />                                
+                        </f:facet>
+                        <h:outputLabel value="#{s.strTime}"
+                                       rendered="#{!meterViewBean.dynamicTime}"/>
+                        <p:commandLink value="#{s.strTime}" style="color: #0000FF !important;"
+                                       rendered="#{s.strTime!='' and meterViewBean.dynamicTime}"
+                                       actionListener="#{meterViewBean.onAddTimeMeterColumn}" 
+                                       update=":#{p:component('msgInfo')} :#{p:component('dtTimeMeter')}"/>                    
+                    </p:column>
+                    <!--Tu dong-->        
+                    <c:forEach var="lstCol4" items="#{meterViewBean.meterName}" varStatus="t">
+                        <p:column style="min-width: 150px;">
+                            <f:facet name="header">
+                                <h:outputText value="#{meterViewBean.meterName[t.index]}"/></f:facet>  
+                            <center>
+                                <h:outputText value="#{s.columns[t.index].objValue}" style="background-color:#{s.columns[t.index].violationStyle};"
+                                              rendered="#{meterViewBean.isViewMode and s.columns[t.index].valtypeid!='NUM' and s.columns[t.index].valtypeid!='DATE'?true:false}"/>
+                                <h:outputText value="#{s.columns[t.index].objValue}" style="background-color:#{s.columns[t.index].violationStyle};float:right;"
+                                              rendered="#{meterViewBean.isViewMode and s.columns[t.index].valtypeid=='NUM'?true:false}">
+                                    <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                                </h:outputText>
+                                <h:outputText value="#{s.columns[t.index].objValue}" style="background-color:#{s.columns[t.index].violationStyle};"
+                                              rendered="#{meterViewBean.isViewMode and s.columns[t.index].valtypeid=='DATE'?true:false}">
+                                    <f:convertDateTime locale="#{settingsBean.dateLocale}"
+                                                       pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                                </h:outputText>                            
+                            </center>
+                        </p:column>
+                    </c:forEach>           
+                </p:dataTable>
+                <p:dataTable var="s" id="dtMeterTime"
+                             value="#{meterViewBean.dsMeterTimeGridInfo}"
+                             emptyMessage=""
+                             style="width: #{60*meterViewBean.m_LengthColumn}px"
+                             rendered="#{meterViewBean.render_GridMeterTime}"              
+                             widgetVar="dtMeterTab">                        
+                    <p:column rendered="false" width="100">
+                        <f:facet name="header" >
+                            <h:outputText value="#{msgs.tbl_grd_AssetID}" />
+                        </f:facet>                            
+                        <h:outputText value="#{s.meterDyn.asset.assetidOrg}" rendered="#{!s.isGroupAsset}"/>                            
+                    </p:column>
+                    <p:column style="white-space: nowrap;">
+                        <f:facet name="header">
+                            <h:outputText value="#{msgs.tbl_grd_Meter} " />
+                            <p:commandLink value="[+]" style="color: #0000FF !important;"
+                                           rendered="#{meterViewBean.dynamicTime}"
+                                           actionListener="#{meterViewBean.onAddMeterTimeColumn}" update=":#{p:component('msgInfo')} :#{p:component('dtMeterTime')}"/>
+                        </f:facet>
+                        <div align="center">
+                            <h:commandLink value="#{s.meterDyn.asset.assetdesc}"
+                                           style="font-weight: bold;"                                              
+                                           rendered="#{s.isGroupAsset}" onclick="wlmOpenDlgAssetParameter('#{s.meterDyn.asset.assetid}')"/>                            
+                        </div>
+                        <div align="right">
+                            <h:outputLabel value="#{s.meterDyn.ameter.meterdesc} [#{s.maxValue}-#{s.minValue}]" rendered="#{!s.isGroupAsset}" style="text-align: right"/>                                
+                            <h:outputLabel value=" (#{s.meterDyn.ameter.uomid})" rendered="#{!s.isGroupAsset and s.meterDyn.ameter.uomid!=null}"/>
+                        </div>
+                    </p:column>
+                    <!--Các cột thời gian-->
+                    <c:forEach var="lstCol1" items="#{meterViewBean.meterName}" varStatus="t">                            
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputLabel value="#{meterViewBean.columnsGrid[t.index].name}"
+                                               rendered="#{!meterViewBean.dynamicTime}"/>                                    
+                                <p:commandLink value="#{meterViewBean.columnsGrid[t.index].name}" style="color: #0000FF !important;"
+                                               rendered="#{meterViewBean.columnsGrid[t.index].name!='' and meterViewBean.dynamicTime}"
+                                               actionListener="#{meterViewBean.onAddMeterTimeColumn}" update=":#{p:component('msgInfo')} :#{p:component('dtMeterTime')}"/>                                                                
+                            </f:facet>
+                            <h:outputText value="#{s.columns[t.index].objValue}" style="background-color:#{s.columns[t.index].violationStyle};"
+                                          rendered="#{!s.isGroupAsset and meterViewBean.isViewMode and s.valtypeid!='NUM' and s.valtypeid!='DATE' and s.columns[t.index].objValue!=null?true:false}"/>
+                            <h:outputText value="#{s.columns[t.index].objValue}" style="background-color:#{s.columns[t.index].violationStyle};float:right;"
+                                          rendered="#{!s.isGroupAsset and meterViewBean.isViewMode and s.valtypeid=='NUM' and s.columns[t.index].objValue!=null?true:false}">
+                                <f:convertNumber minFractionDigits="0" maxFractionDigits="2"/>
+                            </h:outputText>
+                            <h:outputText value="#{s.columns[t.index].objValue}" style="background-color:#{s.columns[t.index].violationStyle};"
+                                          rendered="#{!s.isGroupAsset and meterViewBean.isViewMode and s.valtypeid=='DATE' and s.columns[t.index].objValue!=null?true:false}">
+                                <f:convertDateTime locale="#{settingsBean.dateLocale}"
+                                                   pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                            </h:outputText>
+                        </p:column>                            
+                    </c:forEach>
+                </p:dataTable>                
+        </p:outputPanel>                        
+        <table style="margin-top: 10px;">
+            <tr style="height: 25px">
+                <td colspan="3">
+                    <h:outputText value="#{msgs.lblNote}" style="#{settingsProp.StyleNote_Italic_Underline}"/>
+                    <p:spacer width="10"/>
+                    <h:outputText value="#{msgs.lblViolation1}: #{meterViewBean.violationLevel1}"
+                                  style="background-color: #fad42e;"/>
+                    <p:spacer width="10"/>
+                    <h:outputText value="#{msgs.lblViolation2}: #{meterViewBean.violationLevel2}"
+                                  style="background-color: crimson;"/>
+                </td>
+            </tr>
+        </table>
+        <style type="text/css">
+            .hasDatepicker {
+                width: 80px;
+            }
+            .txtInput {
+                width:60%!important;
+                text-align: right !important;
+                min-width: 20px !important;
+            }
+            .txtInputArea {
+                width:93%!important;
+            }
+            .txtInputMask{
+                width: 55px;
+            }
+            .formatColumn{
+                white-space: nowrap;
+            }
+            .excel {
+                background-image: url(../../images/File/page_excel.png) !important;
+                width: 20px;height:20px;
+            }
+        </style>
+    </p:panel>    
+</ui:composition>

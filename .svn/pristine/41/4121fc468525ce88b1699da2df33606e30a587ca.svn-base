@@ -1,0 +1,142 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:ajaxStatus style="width:16px;height:16px;">
+                    <f:facet name="start">
+                        <h:graphicImage value="/images/ajaxloading.gif" />
+                    </f:facet>
+
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogProp"
+                              var="dlgProp" />
+                <p:dataTable emptyMessage="Không có dữ liệu" var="uom" id="dtUom" value="#{uomDialog.dsS_UomForGrid}"
+                              paginator="true" rows="10"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" widgetVar="dtUom">
+                    <p:column headerText="Chọn" style="text-align: center;">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{uomDialog.bCheckAll}" rendered="#{uomDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{uomDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{uom.bChecked}">
+                            <p:ajax listener="#{uomDialog.updateUom}" />
+                            <!--                            <p:ajax event="valueChange" listener="{uomDialog.updateUom}" update=":formDlg:dtUom"/>
+                                                        <f:param name="uomid" value="{uom.uomid}"/>-->
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="uomid" headerText="#{dlgProp.uomid}" 
+                              filterBy="#{uom.uomid}" 
+                              filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{uom.uomid}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="#{dlgProp.desc}" 
+                              filterBy="#{uom.uomdesc}" 
+                              filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{uom.uomdesc}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+      function  init()
+       {
+           if(!#{uomDialog.isPostBack})
+           {
+               if ("#{uomDialog.initFilter}" != "")
+               {
+                   var oFilter;
+                   oFilter=document.getElementById('formDlg:dtUom:uomid_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtUom:test');
+                   if (oFilter){
+                       oFilter.value= '#{uomDialog.initFilter}';
+                       oTest.value= '#{uomDialog.initFilter}';
+                       dtUom.filter();
+                   }
+//                   oFilter.onkeyup = null;
+//                   oFilter.onkeydown = function(event) {return EnterFilter(event); };
+//                   oDesc.onkeyup = null;
+//                   oDesc.onkeydown = function(event) {return EnterFilter(event); };
+               };
+           }
+       }
+       function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtUom:uomid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtUom:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtUom.update = "chk rowIndexVar";
+                dtUom.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtUom:desc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtUom:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtUom.update = "chk rowIndexVar";
+                dtUom.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+       function EnterFilter(event){
+             if (event.keyCode == 13){
+                 dtUom.filter();
+                 return false;
+             }
+             return true;
+       }
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtOrganization:orgid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

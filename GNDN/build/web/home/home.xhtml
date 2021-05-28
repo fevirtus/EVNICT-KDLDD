@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:po="http://primefaces.org/rain" 
+                template="/WEB-INF/template_GNDN.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="title">Dashboard</ui:define>
+    <ui:define name="viewname">
+        <li>Hệ thống</li>
+        <li><i class="pi pi-chevron-right"></i></li>
+        <li>
+            <p:link outcome="/home/home">Trang chủ</p:link>
+        </li>
+    </ui:define>
+    <ui:define name="head">                
+        <script>           
+        </script>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="layout-dashboard">
+            <p:outputPanel id="opPNMain" deferredMode="visible" style="display: block !important;">
+                <p:remoteCommand async="true" update="panelLeft" name="updatePanelLeft" />
+                <p:remoteCommand async="true" update="panelTop" name="updatePanelTop" />
+                <p:remoteCommand async="true" update="panelBottom" name="updatePanelBottom" />
+                <p:remoteCommand async="true" update="panelRight" name="updatePanelRight" />
+                <p:remoteCommand async="true" update="panelCenter" name="updatePanelCenter" />
+                <table style="width: 100%" class="table-content">
+                    <tr>
+                        <td rowspan="3" style="max-width: 25%;min-width: 25%" valign="top">
+                            <p:outputPanel id="panelLeft">
+                                <c:forEach var="item" items="#{homeBean.m_arrInclLeft}">                            
+                                    <ui:include src="/main#{item.split('#')[1]}">                                
+                                        <ui:param name="portletId" value="#{item.split('#')[0]}"/>
+                                        <ui:param name="url" value="#{settingsBean.webRootPath}#{item.split('#')[2]}"/>                               
+                                    </ui:include>                            
+                                </c:forEach>                            
+                            </p:outputPanel>
+                        </td>
+                        <td colspan="2" valign="top">
+                            <p:outputPanel id="panelTop" >
+                                <c:forEach var="item" items="#{homeBean.m_arrInclTop}">
+                                    <ui:include src="/main#{item.split('#')[1]}">                                
+                                        <ui:param name="portletId" value="#{item.split('#')[0]}"/>
+                                        <ui:param name="url" value="#{settingsBean.webRootPath}#{item.split('#')[2]}"/>
+                                    </ui:include>             
+                                </c:forEach>
+                            </p:outputPanel>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top" style="min-width: 550px !important;">
+                            <p:outputPanel id="panelCenter" >
+                                <c:forEach var="item" items="#{homeBean.m_arrInclCenter}">
+                                    <ui:include src="/main#{item.split('#')[1]}">                                
+                                        <ui:param name="portletId" value="#{item.split('#')[0]}"/>
+                                        <ui:param name="url" value="#{settingsBean.webRootPath}#{item.split('#')[2]}"/>
+                                    </ui:include>              
+                                </c:forEach>
+                            </p:outputPanel>
+                        </td>
+                        <td valign="top" style="max-width: 25%;min-width: 25%;">
+                            <p:outputPanel id="panelRight" >
+                                <c:forEach var="item" items="#{homeBean.m_arrInclRight}">
+                                    <ui:include src="/main#{item.split('#')[1]}">                                
+                                        <ui:param name="portletId" value="#{item.split('#')[0]}"/>
+                                        <ui:param name="url" value="#{settingsBean.webRootPath}#{item.split('#')[2]}"/>
+                                    </ui:include>              
+                                </c:forEach> 
+                            </p:outputPanel>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <p:outputPanel id="panelBottom" >                                
+                                <c:forEach var="item" items="#{homeBean.m_arrInclBottom}">
+                                    <ui:include   src="/main#{item.split('#')[1]}">                                
+                                        <ui:param name="portletId" value="#{item.split('#')[0]}"/>
+                                        <ui:param name="url" value="#{settingsBean.webRootPath}#{item.split('#')[2]}"/>
+                                    </ui:include>              
+                                </c:forEach>                                           
+                            </p:outputPanel>
+                        </td>
+                    </tr>
+                </table>                        
+            </p:outputPanel>
+        </div>
+    </ui:define>
+</ui:composition>

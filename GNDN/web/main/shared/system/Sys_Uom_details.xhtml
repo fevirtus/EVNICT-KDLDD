@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+            #{sys_Uom_Details.assertFuncRight('02.13')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{sys_Uom_Details.renderedFuncEdit('02.13')}">
+                        <p:commandButton id="btnNew" disabled="#{sys_Uom_Details.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" ajax="false" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         actionListener="#{sys_Uom_Details.onAddNewUom}" />
+                        <p:commandButton id="btnUpdate" disabled="#{sys_Uom_Details.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Uom_Details.onSaveUom}" />
+                        <p:commandButton id="btnDel" disabled="#{sys_Uom_Details.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete" ajax="false" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDeleteUomDetail}');"
+                                         actionListener="#{sys_Uom_Details.onDeleteUom}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                                 disabled="#{sys_Uom_Details.m_bFirst}"
+                                                 actionListener="#{sys_Uom_Details.onNavigatorFirst}"/>
+                                <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{sys_Uom_Details.m_bPrevious}"
+                                                 icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{sys_Uom_Details.onNavigatorPrevious}"/>
+                                <p:commandButton id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{sys_Uom_Details.m_bNext}"
+                                                 icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                                 actionListener="#{sys_Uom_Details.onNavigatorNext}"/>
+                                <p:commandButton id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{sys_Uom_Details.m_bLast}"
+                                                 icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                                 actionListener="#{sys_Uom_Details.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlContent">
+                        <p:focus for="txtUomID"/>
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="Mã đơn vị tính*"
+                                          styleClass="#{sys_Uom_Details.style_TxtCMID}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtUomID" style="width: 180px;"
+                                         readonly="#{sys_Uom_Details.txtCMIDReadOnly}"
+                                         value="#{sys_Uom_Details.uom.uomid}"/>
+                            </td>                                                                                             
+                            </tr>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="Mô tả đơn vị tính*"
+                                          styleClass="#{sys_Uom_Details.style_TxtMeterID}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtUomDesc" style="width: 350px;"
+                                         value="#{sys_Uom_Details.uom.uomdesc}"/>
+                            </td>
+                            </tr>
+                        </table>
+
+                    </p:outputPanel>
+
+                </div>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

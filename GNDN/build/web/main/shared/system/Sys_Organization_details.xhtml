@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+            #{sys_OrganizationBean.assertFuncRight('02.01')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{sys_OrganizationBean.renderedFuncEdit('02.01')}">
+                        <p:commandButton id="btnNew" disabled="#{sys_Organization_Details.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" ajax="false" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         actionListener="#{sys_Organization_Details.onAddNewOrganization}" />
+                        <p:commandButton id="btnUpdate" disabled="#{sys_Organization_Details.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Organization_Details.onSaveOrganization}" />
+                        <p:commandButton id="btnDel" disabled="#{sys_Organization_Details.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete" ajax="false" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDeleteOrgDetail}');"
+                                         actionListener="#{sys_Organization_Details.onDeleteOrganization}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                                 disabled="#{sys_Organization_Details.m_bFirst}"
+                                                 actionListener="#{sys_Organization_Details.onNavigatorFirst}"/>
+                                <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{sys_Organization_Details.m_bPrevious}"
+                                                 icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{sys_Organization_Details.onNavigatorPrevious}"/>
+                                <p:commandButton id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{sys_Organization_Details.m_bNext}"
+                                                 icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                                 actionListener="#{sys_Organization_Details.onNavigatorNext}"/>
+                                <p:commandButton id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{sys_Organization_Details.m_bLast}"
+                                                 icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                                 actionListener="#{sys_Organization_Details.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlContent">
+                        <p:focus for="txtOrganizationID"/>
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="110px" align="right">
+                            <h:outputText value="#{msgs.detail_LblOrganization}*"
+                                          styleClass="#{sys_Organization_Details.style_TxtCMID}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtOrganizationID" style="width: 180px;"
+                                         readonly="#{sys_Organization_Details.txtCMIDReadOnly}"
+                                         value="#{sys_Organization_Details.organization.orgid}"/>
+                            </td>
+                            <td/>
+                            <td>
+                            <h:inputText id="txtOrganizationDesc" style="width: 350px;"
+                                         value="#{sys_Organization_Details.organization.orgdesc}"/>
+                            </td>
+                            <td width="110px" align="right" valign="middle">
+                            <h:outputText value="#{msgs.main_grd_active} " style="color: blue;"/>
+                            <h:selectBooleanCheckbox id="chbActive" value="#{sys_Organization_Details.organization.active}"/>
+                            </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputText value="#{msgs.detail_LblOrgCode}*" styleClass="#{sys_Organization_Details.style_TxtAssetID}"/>
+                            </td>
+                            <td>
+                            <h:inputText id="txtOrgCode" style="width: 180px;"
+                                         value="#{sys_Organization_Details.organization.orgcode}"/>
+                            </td>
+                            <td/>
+                            <td align="left">
+                            </td>                                                               
+                            </tr>
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputText value="#{msgs.detail_LblOrgIDParent}" styleClass="#{sys_Organization_Details.style_TxtMeterID}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtOrgIDParent" style="width: 180px;"
+                                         value="#{sys_Organization_Details.parent.orgid}"
+                                         onkeydown="return KeyEnterSelectOrg(event,this);"/>
+                            </td>
+                            <td align="center">
+<!--                            <p:commandButton styleClass="btnHeight"
+                                             icon="ui-icon ui-icon-search" onclick="OpenOrgDialog()">
+                            </p:commandButton>-->
+                            <a href="javascript:void(0)"><h:graphicImage title="#{commonMessages.btnOpen}" url="/images/find.gif" onclick="OpenOrgDialog()"/></a>
+                            </td>
+                            <td >
+                            <h:inputText id="txtOrgParentDesc" style="width: 350px;" readonly="true"
+                                         value="#{sys_Organization_Details.parent.orgdesc}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="STT"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <h:inputText id="txtSTT" style="width: 80px;" value="#{sys_Organization_Details.organization.orgord}"/>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Vận hành"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <h:selectBooleanCheckbox value="#{sys_Organization_Details.organization.isop}"/>
+                            </td>
+                            </tr>
+                            
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Sửa chữa"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <h:selectBooleanCheckbox value="#{sys_Organization_Details.organization.ispm}"/>
+                            </td>
+                            </tr>
+                            
+                            <tr>
+                                <td align="right">
+                            <h:outputText value="Thí nghiệm"/>
+                            </td>
+                            <td align="left" colspan="3">
+                            <h:selectBooleanCheckbox value="#{sys_Organization_Details.organization.islab}"/>
+                            </td>
+                            </tr>
+                            
+                            
+                            
+                        </table>
+
+                    </p:outputPanel>
+                    <!-- Dialog-->                    
+
+
+                    <script type="text/javascript">
+                        function OpenOrgDialog() {
+                            var f = document.getElementById('browserContent2');
+                            f.src = "./../../shared/dialog/dlgOrganization.jsf?display=one";
+                            PF('dlgOpenOrgDialog').show();
+                        }
+                        function KeyEnterSelectAsset(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == ":formDlg:txtAssetID_Org"){
+                                    OpenSelectAsset(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function KeyEnterSelectOrg(event, control){
+                            if (event.keyCode == 13){
+                                if(control.id == ":formDlg:txtOrgIDParent"){
+                                    OpenSelectOrg(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                        function OpenSelectOrg(filterValue) {
+                            var f = document.getElementById('browserContent2');
+                            if(f){
+                                var url = "./../../shared/dialog/dlgOrganization.jsf";
+                                var temp = "?";
+                                url = url + temp + "display=one";
+                                temp = '&amp;' ;
+                                if(filterValue)
+                                    url = url + temp + "id=" + filterValue;
+                                f.src = url;
+                                PF('dlgOpenOrgDialog').show();
+                            }
+                            return false
+                        }
+                    </script>
+                </div>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenOrgDialog" widgetVar="dlgOpenOrgDialog"
+                          width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" closable="true"
+                          resizable="true" modal="true" header="Chọn đơn vị">
+                    <iframe id="browserContent2" scrolling="auto"
+                            frameborder="true"
+                            width="100%" height="#{settingsProp.L3DlgHeight-50}"
+                            style="border: none">
+                    </iframe>
+                    <div style="padding-top: 10px">
+                        <p:commandButton icon="accept" value="Đồng ý" actionListener="#{sys_Organization_Details.onAcceptOrganizationClick}" 
+                                         oncomplete="PF('dlgOpenOrgDialog').hide();" update="txtOrgIDParent txtOrgParentDesc"/>
+                        <p:commandButton icon="cancel" value="Hủy bỏ" onclick="PF('dlgOpenOrgDialog').hide();" />
+                    </div>
+                </p:dialog>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

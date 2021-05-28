@@ -1,0 +1,243 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <title>#{prop.SMTitle}</title>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+    </h:head>
+    <h:body>
+        <h:form onsubmit="return false" id="formDlg">
+        <p:toolbar>
+            <p:toolbarGroup align="left">
+                <p:commandButton icon="addnewgroup" title="#{commonMessages.btnAddGroup}" styleClass="btnHeight"
+                                 actionListener="#{PltShortcutMng.onAddShorcutGroupClick}" update="dlgSCGroup msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="editgroup" title="#{commonMessages.btnViewUpdateGroup}" styleClass="btnHeight"
+                                 actionListener="#{PltShortcutMng.onEditShortcutGroupClick}" update="dlgSCGroup msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="deletegroup" title="#{commonMessages.btnDeleteGroup}" styleClass="btnHeight"
+                                 actionListener="#{PltShortcutMng.onDeleteShorcutGroupBegin}" update="msgInfo confirmDel" oncomplete="handleCmdDelete(xhr, status, args)"/>
+                <p:separator/>
+                <p:commandButton icon="addnew" title="#{propSM_BB.SMShortcutNew}" styleClass="btnHeight"
+                                 actionListener="#{PltShortcutMng.onAddShorcutClick}" update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="edit" title="#{propSM_BB.SMShortcutViewUp}" styleClass="btnHeight"
+                                 actionListener="#{PltShortcutMng.onEditShorcutClick}" update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="delete" title="#{propSM_BB.SMShortcutDel}" styleClass="btnHeight"
+                                 actionListener="#{PltShortcutMng.onDeleteShorcutBegin}" update="msgInfo confirmDel" oncomplete="handleCmdDelete(xhr, status, args)"/>
+            </p:toolbarGroup>
+        </p:toolbar>
+            <!-- Bỏ div đi vì trên IE hiện xấu
+            <div style="height: #{settingsProp.NormalDlgContentHeight}px;overflow:auto; margin-top: 5px;margin-bottom: 5px">
+            -->
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+                <!--Dùng confirmDialog bị lỗi hiển thị nên chuyển sang dialog -->
+            </p:outputPanel>
+           <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDelDlg" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel">
+               <h:panelGrid id="confirmDel" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                    <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{PltShortcutMng.m_sDeleteMsg}"/>
+                </h:panelGrid>
+                <p:commandButton value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                 actionListener="#{PltShortcutMng.onDeleteEnd}" update=":formDlg:loSC @([id$=msgInfo])" />
+                <p:commandButton value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()" type="button" />
+             </p:dialog>
+
+            <h:panelGrid columns="3">
+                <h:outputText value="#{commonMessages.lblUser}"/>
+                <p:selectOneMenu value="#{PltShortcutMng.m_UserID}">
+                    <f:selectItems value="#{PltShortcutMng.dsUserWithCheckAdmin}" />
+                </p:selectOneMenu>
+                <p:commandButton value="#{commonMessages.btnChoonse}" actionListener="#{PltShortcutMng.onAcceptChooseClick}" update=":formDlg:loSC" />
+            </h:panelGrid>
+                <p:layout id="loSC" style="height:#{settingsProp.NormalDlgContentHeight-60}px; width: #{settingsProp.NormalDlgWidth-35}px">
+                    <p:layoutUnit position="west" resizable="true" minSize="100" maxSize="400" gutter="1" size="200">
+                     <h:panelGrid columns="1" width="98%" cellspacing="3">
+                         <h:outputText value="#{propSM_BB.SMGroup} " style="#{settingsProp.StyleNote_Bold}"/>
+                           <h:selectOneListbox id="lstSCGrp" style="width: 100%;height:200px" value="#{PltShortcutMng.m_shortcutGrpIDCurrent}" >
+                            <f:selectItems value="#{PltShortcutMng.dsShortcutGroup}"/>
+                            <!--<p:ajax listener="{PltShortcutMng.onShortcutGrpChangeAjax}" render=":formDlg:pnSC :formDlg:pnSCGrpMoveCmd" />-->
+                            <p:ajax event="valueChange"  listener="#{PltShortcutMng.onShortcutGrpChangeAjax}" update=":formDlg:pnSC :formDlg:pnSCGrpMoveCmd" />
+                           </h:selectOneListbox>
+                        <h:panelGroup>
+                        <p:outputPanel id="pnSCGrpMoveCmd">
+                            <p:commandButton icon="moverow_first" title="#{commonMessages.btnMoveFirst}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcutGroup_MoveFirst}" update=":formDlg:lstSCGrp @([id$=msgInfo]) :formDlg:pnSCGrpMoveCmd" disabled="#{PltShortcutMng.scGrpMoveUp_Disabled}"/>
+                            <p:commandButton icon="moverow_up" title="#{commonMessages.btnUp}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcutGroup_MoveUp}" update=":formDlg:lstSCGrp @([id$=msgInfo]) :formDlg:pnSCGrpMoveCmd" disabled="#{PltShortcutMng.scGrpMoveUp_Disabled}"/>
+                            <p:commandButton icon="moverow_down" title="#{commonMessages.btnDown}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcutGroup_MoveDown}" update=":formDlg:lstSCGrp @([id$=msgInfo]) :formDlg:pnSCGrpMoveCmd" disabled="#{PltShortcutMng.scGrpMoveDown_Disabled}"/>
+                            <p:commandButton icon="moverow_last" title="#{commonMessages.btnMoveLast}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcutGroup_MoveLast}" update=":formDlg:lstSCGrp @([id$=msgInfo]) :formDlg:pnSCGrpMoveCmd" disabled="#{PltShortcutMng.scGrpMoveDown_Disabled}"/>
+                        </p:outputPanel>
+                        </h:panelGroup>
+                     </h:panelGrid>
+                 </p:layoutUnit>
+                 <p:layoutUnit position="center" resizable="true" gutter="1">
+                     <h:panelGrid id="pnSC" columns="1" width="100%" cellspacing="3">
+                         <h:outputText id="shortcutGrpDescCurrent" value="#{PltShortcutMng.shortcutGrpDescCurrent}" style="#{settingsProp.StyleNote_Bold}"/>
+                         <p:dataTable emptyMessage="Không có dữ liệu" id="grdShortcut" var="sc" value="#{PltShortcutMng.dsShortcut}" selectionMode="single" selection="#{PltShortcutMng.m_shortcutCurrent}"
+                                      scrollHeight="210" scrollable="true">
+                             <p:ajax event="rowSelect" update=":formDlg:pnMoveSC"/>
+                            <p:column headerText="Chọn" style="text-align: center; width: 20px">
+                                <f:facet name="header">
+                                    <p:selectBooleanCheckbox id="chkCheckAll" value="#{PltShortcutMng.m_bCheckAllShortcut}">
+                                        <p:ajax listener="#{PltShortcutMng.onCheckAllShortcut}" />
+                                    </p:selectBooleanCheckbox>
+                                </f:facet>
+                                <p:selectBooleanCheckbox value="#{sc.bChecked}">
+                                     <p:ajax listener="#{PltShortcutMng.onCheckShortcut}" immediate="true"/>
+                                </p:selectBooleanCheckbox>
+                            </p:column>
+                             <p:column headerText="#{propSM_BB.SMColID}" style="width: 60px">
+                                 <h:outputText value="#{sc.shortcutid}" />
+                             </p:column>
+                             <p:column headerText="#{propSM_BB.SMColDesc}" style="width: 170px">
+                                 <h:outputText value="#{sc.shortcutdesc}" />
+                             </p:column>
+                             <p:column headerText="#{propSM_BB.SMColIsFunc}" style="text-align: center; width: 70px">
+                                 <p:selectBooleanCheckbox value="#{sc.functionid != null?true:false}" disabled="true"/>
+                             </p:column>
+                             <p:column headerText="#{propSM_BB.SMURL}" style="width: 30px">
+                                 <h:outputText value="#{sc.url==null?'':'URL'}" title="#{sc.url}" />
+                             </p:column>
+                         </p:dataTable>
+                        <h:panelGroup id="pnMoveSC">
+                            <p:commandButton icon="moverow_first" title="#{commonMessages.btnMoveFirst}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcut_MoveFirst}" update=":formDlg:grdShortcut @([id$=msgInfo]) :formDlg:pnMoveSC" disabled="#{PltShortcutMng.scMoveUp_Disabled}"/>
+                            <p:commandButton icon="moverow_up" title="#{commonMessages.btnUp}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcut_MoveUp}" update=":formDlg:grdShortcut @([id$=msgInfo]) :formDlg:pnMoveSC" disabled="#{PltShortcutMng.scMoveUp_Disabled}"/>
+                            <p:commandButton icon="moverow_down" title="#{commonMessages.btnDown}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcut_MoveDown}" update=":formDlg:grdShortcut @([id$=msgInfo]) :formDlg:pnMoveSC" disabled="#{PltShortcutMng.scMoveDown_Disabled}"/>
+                            <p:commandButton icon="moverow_last" title="#{commonMessages.btnMoveLast}" styleClass="btnHeight"
+                                             actionListener="#{PltShortcutMng.onShorcut_MoveLast}" update=":formDlg:grdShortcut @([id$=msgInfo]) :formDlg:pnMoveSC" disabled="#{PltShortcutMng.scMoveDown_Disabled}"/>
+                        </h:panelGroup>
+                     </h:panelGrid>
+                 </p:layoutUnit>
+             </p:layout>
+        <!--
+        </div>
+        -->
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgSCGroupDlg" header="#{propSM_BB.SMLblGroupEdit}" widgetVar="dlgSCGroup" width="400" modal="true" onHide="onHideDlgSCGroup();">
+                <p:outputPanel id="dlgSCGroup">
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <h:outputText value="#{propSM_BB.SMGroupDT_Group}"/>
+                        </td>
+                        <td>
+                            <h:inputText size="10" disabled="true" value="#{PltShortcutMng.dlgShortcutGroup.shortcutgrpid}"/>
+                            <h:inputText size="30" value="#{PltShortcutMng.dlgShortcutGroup.shortcutgrpdesc}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><h:outputText value="#{propSM_BB.SMLblSTT}" /></td>
+                        <td>
+                            <h:inputText id="scgord" size="5" value="#{PltShortcutMng.dlgShortcutGroup.shortcutgrpord}" converterMessage="#{propSM_BB.SMValidate_STT}">
+                                <f:convertNumber integerOnly="true" />
+                            </h:inputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:commandButton value="#{commonMessages.btnSave}" icon="save" actionListener="#{PltShortcutMng.onDlgSave}" update=":formDlg:loSC @([id$=msgInfo])"
+                                             oncomplete="handleDlgComplete(xhr, status, args);"/>&nbsp;
+                            <p:commandButton value="#{commonMessages.btnClose}" icon="cancel" onclick="PF('dlgSCGroup').hide();return false;"/>
+                        </td>
+                    </tr>
+                </table>
+                </p:outputPanel>
+            </p:dialog>
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgCommon" header="#{propSM_BB.SMLblSCEdit}" widgetVar="dlgCommon" width="500" height="250" modal="true"
+                      >
+                <p:ajax event="close" listener="#{PltShortcutMng.onCloseDlgFunc}" update=":formDlg:pnSC"/>
+                <iframe id="ifrDlgCommon" scrolling="auto"
+                        frameborder="true"
+                        width="100%" height="99%"
+                        style="border: none">
+                </iframe>
+            </p:dialog>
+
+        </h:form>
+
+        <script type="text/javascript">
+           function handleCmdComplete(xhr, status, args) {
+             if (args.Method)
+             {
+                switch (args.Method)
+                {
+                    case 'AddShortcutGroup':
+                        PF('dlgSCGroup').show();
+                        break;
+                    case 'EditShortcutGroup':
+                        PF('dlgSCGroup').show();
+                        break;
+                    case 'AddShortcut':
+                        var f = document.getElementById('ifrDlgCommon');
+                        f.src = "dlgShortcutDt.jsf?sm=new&amp;Appfunctionid=" + args.Appfunctionid + "&amp;Userid=" + args.Userid + "&amp;Groupid=" + args.Groupid;
+                        PF('dlgCommon').show();
+                        break;
+                    case 'EditShortcut':
+                        var f = document.getElementById('ifrDlgCommon');
+                        f.src = "dlgShortcutDt.jsf?sm=edit&amp;smid=" + args.smid + "&amp;appid=" + args.Appfunctionid;
+                        PF('dlgCommon').show();
+                        break;
+                }
+             }
+            }
+            function handleDlgComplete(xhr, status, args) {
+              //alert(args.dlgId + ':' + args.result);
+              //if(args.validationFailed) {
+              //   alert("Validation Failed");
+              //   return;
+              //}
+              if (args.result)
+              {
+                switch (args.dlgId)
+                {
+                    case 'dlgSCGroup':
+                        PF('dlgSCGroup').hide();
+                        break;
+                    case 'dlgSC':
+                        PF('dlgCommon').hide();
+                        break;
+
+                }
+              }
+            }
+
+            function onHideDlgSCGroup()
+            {
+                //Xóa dữ liệu một số trường có khả năng bị lỗi validate trước khi đóng dialog
+                document.getElementById('formDlg:scgord').value='';
+
+            }
+
+           function handleCmdDelete(xhr, status, args) {
+             if (args.Method)
+             {
+                //alert(args.Method);
+                switch (args.Method)
+                {
+                    case 'DelShortcut':
+                    case 'DelShortcutGroup':
+                          PF('confirmDel').show();
+                        //alert('Delete');
+                        break;
+                }
+             }
+            }
+
+            function closeDlgShortcutDt()
+            {
+                PF('dlgCommon').hide();
+            }
+        </script>
+    </h:body>
+</html>
+

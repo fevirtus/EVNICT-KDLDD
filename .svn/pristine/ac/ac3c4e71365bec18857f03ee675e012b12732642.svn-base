@@ -1,0 +1,275 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package diemdo.web;
+
+import diemdo.ADiemdo;
+import diemdo.ADiemdoNhom;
+import diemdo.ALstLoaiDd;
+import diemdo.ALstTcDd;
+import diemdo.ALstUlevel;
+import diemdo.remote.IDiemDoRemote;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import main.ContextResources.EjbContext;
+import main.web.common.bean.BasePageCommon;
+import main.web.common.bean.WorkingContext;
+import org.primefaces.PrimeFaces;
+
+/**
+ *
+ * @author TUYEN EVN
+ */
+@ManagedBean
+@ViewScoped
+public class Dialog_nhomDiemDoBean extends BasePageCommon implements Serializable {
+
+    private ADiemdo diemDo;
+    private IDiemDoRemote iDiemDoRemote;
+    private ADiemdoNhom nhomDDSelected;
+    private ALstLoaiDd loaiDDSelected;
+    private ALstTcDd TcDDSelected;
+    private ALstUlevel UlevelSelected;
+    List<ADiemdoNhom> ListTenAndMaDD = new ArrayList<>();
+    List<ALstLoaiDd> listLoaiDD = new ArrayList<>();
+    List<ALstTcDd> listTcDD = new ArrayList<>();
+    List<ALstUlevel> listUlevel = new ArrayList<>();
+    //false = edit mode
+    private boolean isAdd = true;
+
+    public Dialog_nhomDiemDoBean() {
+        try {
+            //prepare data for dialog
+            diemDo = new ADiemdo();
+            nhomDDSelected = new ADiemdoNhom();
+            loaiDDSelected = new ALstLoaiDd();
+            TcDDSelected = new ALstTcDd();
+            UlevelSelected = new ALstUlevel();
+            getAllListTenAndMaDD();
+            listLoaiDD = getIDiemDoRemote().getAllLoaiDD();
+            listTcDD = getIDiemDoRemote().getAllTcDD();
+            listUlevel = getIDiemDoRemote().getAllUlevel();
+
+            //set default for combobox
+            loaiDDSelected = listLoaiDD.get(0);
+            TcDDSelected = listTcDD.get(0);
+            UlevelSelected = listUlevel.get(0);
+
+            //get maDD of diemdoSelected from diemdo.xhtml            
+            String maDD = WorkingContext.getRequestQueryString("maDD");
+            if (maDD != null) {
+                //switch to edit mode
+                isAdd = false;
+                diemDo = getIDiemDoRemote().getDiemDoByID(maDD);
+                nhomDDSelected = new ADiemdoNhom(diemDo.getMaNhomDd().getMaNhomDd(),
+                        diemDo.getMaNhomDd().getTenNhomDd());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ALstUlevel getUlevelSelected() {
+        return UlevelSelected;
+    }
+
+    public void setUlevelSelected(ALstUlevel UlevelSelected) {
+        this.UlevelSelected = UlevelSelected;
+    }
+
+    public List<ALstUlevel> getListUlevel() {
+        return listUlevel;
+    }
+
+    public void setListUlevel(List<ALstUlevel> listUlevel) {
+        this.listUlevel = listUlevel;
+    }
+
+    public ALstTcDd getTcDDSelected() {
+        return TcDDSelected;
+    }
+
+    public void setTcDDSelected(ALstTcDd TcDDSelected) {
+        this.TcDDSelected = TcDDSelected;
+    }
+
+    public List<ALstTcDd> getListTcDD() {
+        return listTcDD;
+    }
+
+    public void setListTcDD(List<ALstTcDd> listTcDD) {
+        this.listTcDD = listTcDD;
+    }
+
+    public ALstLoaiDd getLoaiDDSelected() {
+        return loaiDDSelected;
+    }
+
+    public void setLoaiDDSelected(ALstLoaiDd loaiDDSelected) {
+        this.loaiDDSelected = loaiDDSelected;
+    }
+
+    public List<ALstLoaiDd> getListLoaiDD() {
+        return listLoaiDD;
+    }
+
+    public void setListLoaiDD(List<ALstLoaiDd> listLoaiDD) {
+        this.listLoaiDD = listLoaiDD;
+    }
+
+    public List<ADiemdoNhom> getListTenAndMaDD() {
+        return ListTenAndMaDD;
+    }
+
+    public void setListTenAndMaDD(List<ADiemdoNhom> ListTenAndMaDD) {
+        this.ListTenAndMaDD = ListTenAndMaDD;
+    }
+
+    public ADiemdoNhom getNhomDDSelected() {
+        return nhomDDSelected;
+    }
+
+    public void setNhomDDSelected(ADiemdoNhom nhomDDSelected) {
+        this.nhomDDSelected = nhomDDSelected;
+    }
+
+    public ADiemdo getDiemDo() {
+        return diemDo;
+    }
+
+    public void setDiemDo(ADiemdo diemDo) {
+        this.diemDo = diemDo;
+    }
+
+    public boolean isIsAdd() {
+        return isAdd;
+    }
+
+    public void setIsAdd(boolean isAdd) {
+        this.isAdd = isAdd;
+    }
+
+    public IDiemDoRemote getIDiemDoRemote() {
+        try {
+            if (iDiemDoRemote == null) {
+                iDiemDoRemote = (IDiemDoRemote) EjbContext.getLocalEJBRemote(IDiemDoRemote.class.getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iDiemDoRemote;
+    }
+
+    //event when click button Save
+    public void onSaveDiemdo() {
+        try {
+            if (isAdd) {
+                AddNewDD();
+            } else {
+                //Set attribute for edit
+                diemDo.setUlevelid(UlevelSelected.getUlevelid());
+                diemDo.setMaTcDd(TcDDSelected.getMaTcDd());
+                diemDo.setMaLoaiDd(loaiDDSelected.getMaLoaiDd());
+                diemDo.setMaNhomDd(new ADiemdoNhom(nhomDDSelected.getMaNhomDd(), nhomDDSelected.getTenNhomDd()));
+                diemDo.setUserMdfDtime(new Date(System.currentTimeMillis()));
+                //update to db
+                getIDiemDoRemote().update(diemDo);
+                //alert
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Chỉnh sửa thành công"));
+                PrimeFaces.current().ajax().update("CreateForm:messages");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //set attribute for new object DiemDo then update to database
+    public void AddNewDD() {
+        try {
+            //set attributes in combobox
+            diemDo.setUlevelid(UlevelSelected.getUlevelid());
+            diemDo.setMaTcDd(TcDDSelected.getMaTcDd());
+            diemDo.setMaLoaiDd(loaiDDSelected.getMaLoaiDd());
+            if (checkInput()) {
+                //set other attributes
+                diemDo.setOrgid(WorkingContext.getOrganizationCurrent());
+                diemDo.setUserCrId(WorkingContext.getUserName());
+                diemDo.setUserCrDtime(new Date(System.currentTimeMillis()));
+                diemDo.setUserMdfDtime(new Date(System.currentTimeMillis()));
+                diemDo.setMaNhomDd(new ADiemdoNhom(nhomDDSelected.getMaNhomDd(), nhomDDSelected.getTenNhomDd()));
+                //update to DB
+                getIDiemDoRemote().insert(diemDo);
+                //alert
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Thêm moiws thành công"));
+                PrimeFaces.current().ajax().update("CreateForm:messages");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Check input before save changing to db
+    public boolean checkInput() {
+        if (diemDo.getMaDiemdo() == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Mã điểm đo không được để trống!"));
+            PrimeFaces.current().ajax().update("CreateForm:messages");
+            return false;
+        }
+        if (diemDo.getMaLoaiDd() == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Loại điểm đo không được để trống!"));
+            PrimeFaces.current().ajax().update("CreateForm:messages");
+            return false;
+        }
+        if (diemDo.getNgayVh() == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Ngày hiệu lực không được để trống!"));
+            PrimeFaces.current().ajax().update("CreateForm:messages");
+            return false;
+        }
+        if (IsMaDiemDoIsExits()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Mã điểm đo đã tồn tại!"));
+            PrimeFaces.current().ajax().update("CreateForm:messages");
+            return false;
+        }
+        return true;
+    }
+
+    //check duplicate ma nhom diem do
+    public boolean IsMaDiemDoIsExits() {
+        try {
+            List<ADiemdo> list = getIDiemDoRemote().getAllDiemDo();
+            return list.stream().anyMatch((item) -> (diemDo.getMaDiemdo().equals(item.getMaDiemdo())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //do something I don't know
+    public void onMaDDChange() {
+        //do nothing
+    }
+
+    //get name and maDD for combobox
+    public void getAllListTenAndMaDD() {
+        try {
+            List<ADiemdoNhom> listDiemDoNhom = getIDiemDoRemote().getAllDiemDoNhom();
+            for (ADiemdoNhom item : listDiemDoNhom) {
+                String tenNhomDD = item.getTenNhomDd();
+                String maNhomDD = item.getMaNhomDd();
+                ListTenAndMaDD.add(new ADiemdoNhom(maNhomDD, tenNhomDD));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

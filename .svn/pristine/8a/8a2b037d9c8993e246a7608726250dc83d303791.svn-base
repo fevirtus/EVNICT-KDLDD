@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+            <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+        </h:head>
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #f4f7f9; margin: 15px;">
+            <h:form onsubmit="return false" id="CreateForm">
+                <div class="card">
+                    <p:growl id="messages" showDetail="true" />   
+                    <p:outputPanel id="manage-content" class="ui-fluid">
+                        <div class="p-grid">
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="maDiemdo">Mã điểm đo</p:outputLabel>
+                                <p:inputText id="maDiemdo" readonly="#{!diemDo_DiemDoDetailBean.isAdd}"
+                                             value="#{diemDo_DiemDoDetailBean.diemDo.maDiemdo}" disabled="#{diemDo_DiemDoDetailBean.disableInput}"/>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="orgidRef">Đơn vị quản lý</p:outputLabel>
+                                <p:selectOneMenu id="orgidRef" value="#{diemDo_DiemDoDetailBean.orgidRefSelected.orgid}" 
+                                                 style="" filterMatchMode="contains" filter="true" disabled="#{diemDo_DiemDoDetailBean.disableInput}">
+                                    <f:selectItems value="#{diemDo_DiemDoDetailBean.listOrganization}"
+                                                   var="a" itemLabel="#{a.orgdesc}" itemValue="#{a.orgid}"/>
+                                </p:selectOneMenu> 
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="tenDiemdo">Tên điểm đo</p:outputLabel>
+                                <p:inputText id="tenDiemdo" value="#{diemDo_DiemDoDetailBean.diemDo.tenDiemdo}"/>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="NhomDD">Nhóm</p:outputLabel>
+                                <br/>
+                                <p:selectOneMenu id="NhomDD" value="#{diemDo_DiemDoDetailBean.nhomDDSelected.maNhomDd}" 
+                                                 style="" filterMatchMode="contains" filter="true">
+                                    <f:selectItems value="#{diemDo_DiemDoDetailBean.listTenAndMaDD}"
+                                                   var="a" itemLabel="#{a.tenNhomDd}" itemValue="#{a.maNhomDd}"/>
+                                </p:selectOneMenu>  
+                            </div>                            
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="maLoaiDd">Loại điểm đo</p:outputLabel>
+                                <br/>
+                                <p:selectOneMenu id="maLoaiDd" value="#{diemDo_DiemDoDetailBean.loaiDDSelected.maLoaiDd}" 
+                                                 style="" filterMatchMode="contains" filter="true">
+                                    <f:selectItems value="#{diemDo_DiemDoDetailBean.listLoaiDD}"
+                                                   var="b" itemLabel="#{b.tenLoaiDd}" itemValue="#{b.maLoaiDd}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="maTcDd">Tính chất</p:outputLabel>
+                                <br/>
+                                <p:selectOneMenu id="maTcDd" value="#{diemDo_DiemDoDetailBean.tcDDSelected.maTcDd}" 
+                                                 style="" filterMatchMode="contains" filter="true">
+                                    <f:selectItems value="#{diemDo_DiemDoDetailBean.listTcDD}"
+                                                   var="c" itemLabel="#{c.tenTcDd}" itemValue="#{c.maTcDd}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="ulevelid">Cấp điện áp</p:outputLabel>
+                                <br/>
+                                <p:selectOneMenu id="ulevelid" value="#{diemDo_DiemDoDetailBean.ulevelSelected.ulevelid}" 
+                                                 style="" filterMatchMode="contains" filter="true">
+                                    <f:selectItems value="#{diemDo_DiemDoDetailBean.listUlevel}"
+                                                   var="d" itemLabel="#{d.uleveldesc}" itemValue="#{d.ulevelid}"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="ngayVh">Ngày hiệu lực</p:outputLabel>
+                                <p:calendar id="ngayVh" value="#{diemDo_DiemDoDetailBean.diemDo.ngayVh}"
+                                            showOn="button" showButtonPanel="true" required="true"/>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="itVh">Ít vận hành</p:outputLabel>
+                                <p:selectBooleanCheckbox id="itVh" value="#{diemDo_DiemDoDetailBean.diemDo.itVhToBoolean}">
+                                    <f:selectItem itemLabel="Ít vận hành" itemValue="true"/>
+                                </p:selectBooleanCheckbox>
+                            </div>
+                            <div class="p-field p-col-6">
+                                <p:outputLabel for="trangThai">Trạng thái</p:outputLabel>
+                                <p:selectBooleanCheckbox id="trangThai" value="#{diemDo_DiemDoDetailBean.diemDo.trangThaiToBoolean}">
+                                    <f:selectItem itemLabel="Trạng thái" itemValue="true"/>
+                                </p:selectBooleanCheckbox>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                    <p:toolbar id="tlBar" style="border: none; padding: 0; background: #ffffff;">
+                        <f:facet name="right">
+                            <p:commandButton value="Lưu" icon="pi pi-check" 
+                                             actionListener ="#{diemDo_DiemDoDetailBean.onSaveDiemdo}"/>
+                        </f:facet>
+                    </p:toolbar>       
+                </div>
+            </h:form>
+            <style type="text/css">
+                .p-field {
+
+                    color: #4B576F;
+                    font-weight: 700;
+                    margin-bottom: 0;
+                }
+
+            </style>
+        </h:body>
+    </f:view>
+</html>

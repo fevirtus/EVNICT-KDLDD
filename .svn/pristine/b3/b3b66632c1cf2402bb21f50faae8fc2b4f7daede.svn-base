@@ -1,0 +1,17 @@
+    <!--
+    Cụm hiển thị trạng thái ajax trong dialog
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+        <p:ajaxStatus style="width:90px;height:16px;" id="ajaxStatusPanel">
+            <f:facet name="start">
+                <h:graphicImage value="/images/ajaxloading1.gif" alt="#{commonMessages.headerDlgAjaxStatus}"/>
+            </f:facet>
+            <f:facet name="complete">
+                <h:outputText value="" />
+            </f:facet>
+        </p:ajaxStatus>
+</ui:composition>

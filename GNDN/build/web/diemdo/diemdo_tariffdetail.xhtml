@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+        </h:head>
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #f4f7f9; margin: 15px;">
+            <h:form onsubmit="return false" id="tariffForm">
+                <p:growl id="messages" showDetail="true" />  
+
+                <div class="grid-demo" >  
+                    <div class="p-grid p-dir-col"> 
+
+                        <div class="p-col" style="height: 175px">
+                            <div class="card grid-item">
+                                <h5>Điểm đo</h5>
+                                <div class="p-grid">
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="tenDiemdo">Tên điểm đo</p:outputLabel>
+                                        <p:selectOneMenu id="tenDiemdo" value="#{diemDo_TariffDetailBean.tariff.ADiemdoTariffPK.maDiemdo}" 
+                                                         style="width: 100%;" filterMatchMode="contains" filter="true"
+                                                         disabled="#{diemDo_TariffDetailBean.lockTenDD}">
+                                            <f:selectItems value="#{diemDo_TariffDetailBean.listDiemdo}"
+                                                           var="a" itemLabel="#{a.tenDiemdo}" itemValue="#{a.maDiemdo}">
+                                            </f:selectItems>
+                                            <p:ajax listener="#{diemDo_TariffDetailBean.onTenDDChange}"/>
+                                        </p:selectOneMenu> 
+                                    </div>
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="tuNgay">Từ ngày</p:outputLabel>
+                                        <div>
+                                            <p:calendar id="tuNgay" disabled="#{diemDo_TariffDetailBean.lockTuNgay}"
+                                                        style="width: 100%;" placeholder="#{diemDo_TariffDetailBean.placeholder}"
+                                                        value="#{diemDo_TariffDetailBean.tariff.tuNgay}" inputStyle="width: 85%;"
+                                                        showOn="button" showButtonPanel="true" required="true"/>
+                                        </div>                                        
+                                    </div>
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="denNgay">Đến ngày</p:outputLabel>
+                                        <div>
+                                            <p:calendar id="denNgay" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                        style="width: 100%;" inputStyle="width: 85%;"
+                                                        value="#{diemDo_TariffDetailBean.tariff.denNgay}"
+                                                        showOn="button" showButtonPanel="true" required="true"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-col">
+                            <div class="card grid-item">
+                                <h5>Ngày thường</h5>
+                                <div class="p-grid">
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="FBt">Bình thường</p:outputLabel>
+                                        <p:inputText id="FBt" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                     style="width: 100%;"
+                                                     value="#{diemDo_TariffDetailBean.tariff.FBt}"/>
+                                    </div>
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="FCd">Cao điểm</p:outputLabel>
+                                        <p:inputText id="FCd" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                     style="width: 100%;"
+                                                     value="#{diemDo_TariffDetailBean.tariff.FCd}"/>
+                                    </div>
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="FTd">Thấp điểm</p:outputLabel>
+                                        <p:inputText id="FTd" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                     style="width: 100%;"
+                                                     value="#{diemDo_TariffDetailBean.tariff.FTd}"/>
+                                    </div>
+                                </div>
+                            </div>                         
+                        </div>
+
+                        <div class="p-col" >
+                            <div class="card grid-item">
+                                <h5>Chủ nhật</h5>
+                                <div class="p-grid">
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="FBtSunday">Bình thường</p:outputLabel>
+                                        <p:inputText id="FBtSunday" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                     style="width: 100%;"
+                                                     value="#{diemDo_TariffDetailBean.tariff.FBtSunday}"/>
+                                    </div>
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="FCdSunday">Cao điểm</p:outputLabel>
+                                        <p:inputText id="FCdSunday" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                     style="width: 100%;"
+                                                     value="#{diemDo_TariffDetailBean.tariff.FCdSunday}"/>
+                                    </div>
+                                    <div class="p-col grid-item p-field" style="margin-bottom: 0;">
+                                        <p:outputLabel for="FTdSunday">Thấp điểm</p:outputLabel>
+                                        <p:inputText id="FTdSunday" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                                     style="width: 100%;"
+                                                     value="#{diemDo_TariffDetailBean.tariff.FTdSunday}"/>
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+                <p:toolbar id="tlBar" style="border: none; padding: 0;">
+                    <f:facet name="right">
+                        <p:commandButton value="Lưu" icon="pi pi-check" disabled="#{diemDo_TariffDetailBean.lockAllInput}"
+                                         actionListener ="#{diemDo_TariffDetailBean.onSaveDiemdo}"/>
+                    </f:facet>
+                </p:toolbar>
+            </h:form>
+            <style type="text/css">
+                .p-field {
+                    color: #4B576F;
+                }
+            </style>
+        </h:body>
+    </f:view>
+</html>

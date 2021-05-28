@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{logHisBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                
+                <f:loadBundle var="userProp" basename="main.web.shared.admin.prop.UserProp"/>
+                #{logHisBean.assertFuncRight('01.05')}
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{userProp.lblTitleLogHis}" />
+                </h:panelGroup>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                </p:outputPanel>
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtUser" paginator="true" 
+                             value="#{logHisBean.m_LstUser}"  rows="10"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15,20" widgetVar="dtUser" paginatorPosition="bottom">
+                    <!--                    <p:column selectionMode="multiple" style="text-align: center;"/>-->
+                    <p:column style="text-align: center;">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{userProp.headerDlgUserDetail}"
+                                         onclick="OpenUserDetail('#{s.userid}');"/>
+                    </p:column>
+                    <p:column sortBy="#{s.userid}" id="cmid" headerText="#{commonTMSProp.ColID}"
+                              filterBy="#{s.userid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.userid}"/>
+                    </p:column>
+                    <p:column sortBy="#{s.username}" headerText="#{commonTMSProp.ColDesc}"
+                              filterBy="#{s.username}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.username}"/>
+                    </p:column>                               
+                    <p:column sortBy="#{s.lastaccesstime}" headerText="#{userProp.lblLastAccessTime}" style="text-align: center;">
+                        <h:outputText value="#{s.lastaccesstime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column sortBy="#{s.countLogInWeek}" headerText="#{userProp.lblLogHisInWeek}" style="text-align: center;">
+                        <h:outputText value="#{s.countLogInWeek}"/>
+                    </p:column>
+                    <p:column sortBy="#{s.countLogInMonth}" headerText="#{userProp.lblLogHisInMonth}" style="text-align: center;">
+                        <h:outputText value="#{s.countLogInMonth}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <script type="text/javascript">
+                    function OpenUserDetail(userid) {
+                        showNewWindow('#{settingsBean.webRootPath}/shared/admin/logHisDT.jsf?userid='+userid);
+                    }
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+<!--
+    Thông tin đăng ký sử dụng: chỉ có dialog
+-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+     <f:loadBundle basename="main.web.shared.dialog.prop.DialogLicRegProp" var="dlgProp" />
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgRegInfo" header="#{dlgProp.lrlblDlgHeader}" widgetVar="dlgRegInfo" width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" modal="true"
+                  onHide="document.getElementById('ifrdlgRegInfo').src='';">
+            <iframe id="ifrdlgRegInfo" scrolling="auto"
+                    frameborder="true"
+                    width="100%" height="99%"
+                    style="border: none;background: transparent !important;">
+            </iframe>
+        </p:dialog>
+        <script type="text/javascript">
+           function showDlgRegInfo() {
+                var f = document.getElementById('ifrdlgRegInfo');
+                f.src = "#{settingsBean.webRootPath}/shared/dialog/dlgLicReg.jsf";
+                PF('dlgRegInfo').show();
+            }
+        </script>
+</ui:composition>

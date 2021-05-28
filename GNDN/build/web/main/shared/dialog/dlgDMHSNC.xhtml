@@ -1,0 +1,222 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:ajaxStatus style="width:16px;height:16px;">
+                    <f:facet name="start">
+                        <h:graphicImage value="/images/ajaxloading.gif" />
+                    </f:facet>
+
+                    <f:facet name="complete">
+                        <h:outputText value="" />
+                    </f:facet>
+                </p:ajaxStatus>
+<!--                <f:loadBundle basename="evnit.tms.web.eam.dialog.prop.DialogProp"
+                                var="dlgProp" />-->
+                <p:dataTable emptyMessage="Không có dữ liệu" var="asset" id="dtDMHSNC" value="#{dMHSNCDialog.lazyModel}" lazy="true"
+                              paginator="true" rows="#{dMHSNCDialog.pageSize}"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15" widgetVar="dtDMHSNC">
+                    <p:column headerText="Chọn" style="text-align: center;">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{dMHSNCDialog.bCheckAll}" rendered="#{dMHSNCDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{dMHSNCDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{asset.bChecked}">
+                            <p:ajax listener="#{dMHSNCDialog.updateHSNC}"  />
+<!--                            <p:ajax event="valueChange" listener="{assetDialog.updateAsset}" update=":formDlg:dtAsset"/>
+                            <f:param name="assetid" value="{asset.assetid}"/>-->
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                     <p:column id="ma_hsnc" headerText="Mã HSNC" filterBy="#{asset.maHesoNc}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                         <f:facet name="header">
+                            <h:outputText value="Mã HSNC"/><br/>
+                            <h:inputText id="test" onkeydown="return press(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{asset.maHesoNc}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="Tên HSNC" filterBy="#{asset.tenHeSo}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Tên HSNC"/><br/>
+                            <h:inputText id="test1" onkeydown="return press1(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{asset.tenHeSo}" />
+                    </p:column>
+                    <p:column id="nhomnc" headerText="Nhóm NC" filterBy="#{asset.sNhomNc.tenNhomNc}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Nhóm NC"/><br/>
+                            <h:inputText id="test2" onkeydown="return press2(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{asset.sNhomNc.tenNhomNc}" />
+                    </p:column>
+                    <p:column id="bangnc" headerText="Bảng NC" filterBy="#{asset.sBangNc.tenBangNc}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Bảng NC"/><br/>
+                            <h:inputText id="test3" onkeydown="return press3(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{asset.sBangNc.tenBangNc}" />
+                    </p:column>
+                    <p:column id="heso" headerText="Hệ số" filterBy="#{asset.heSo}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Hệ số"/><br/>
+                            <h:inputText id="test4" onkeydown="return press4(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{asset.heSo}" />
+                    </p:column>
+                    <p:column id="stt" headerText="STT" filterBy="#{asset.soTT}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="STT"/><br/>
+                            <h:inputText id="test5" onkeydown="return press5(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{asset.soTT}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+         function  init()
+       {
+           if(!#{dMHSNCDialog.isPostBack})
+           {
+               if ("#{dMHSNCDialog.initFilter}" != "")
+               {
+                   var oFilter;
+                   var oTest;
+                   oFilter=document.getElementById('formDlg:dtDMHSNC:ma_hsnc_filter');
+                   oTest=document.getElementById('formDlg:dtDMHSNC:test');
+                   if (oFilter)
+                   {
+                       oFilter.value= '#{dMHSNCDialog.initFilter}';
+                       oTest.value= '#{dMHSNCDialog.initFilter}';
+                       dtDMHSNC.filter();
+                   }
+               }
+           }
+       }
+       function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMHSNC:ma_hsnc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMHSNC:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMHSNC.update = "chk rowIndexVar";
+                dtDMHSNC.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMHSNC:desc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMHSNC:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMHSNC.update = "chk rowIndexVar";
+                dtDMHSNC.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMHSNC:nhomnc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMHSNC:test2');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMHSNC.update = "chk rowIndexVar";
+                dtDMHSNC.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press3(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMHSNC:bangnc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMHSNC:test3');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMHSNC.update = "chk rowIndexVar";
+                dtDMHSNC.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press4(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMHSNC:heso_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMHSNC:test4');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMHSNC.update = "chk rowIndexVar";
+                dtDMHSNC.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+
+        function press5(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMHSNC:stt_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMHSNC:test5');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMHSNC.update = "chk rowIndexVar";
+                dtDMHSNC.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtAsset:assetid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

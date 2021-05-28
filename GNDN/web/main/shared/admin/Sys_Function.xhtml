@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/WEB-INF/template_GNDN.xhtml" xmlns="http://www.w3.org/1999/xhtml"                
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="head">
+        <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/> 
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <f:loadBundle var="msgs" basename="main.web.shared.admin.prop.FunctionProp"/>
+    </ui:define>    
+    <ui:define name="content">
+        
+            <p:outputPanel id="msgInfo">
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+            </p:outputPanel>
+            <p:layout id="layout1"  >
+                <p:layoutUnit id="layoutUnit1" gutter="1" position="west" size="300" resizable="true" collapsible="true">
+                    <p:tree id="treeFunction" style="width:1000px;height: auto;border: 0px"
+                            value="#{sys_FunctionBean.rootFunction}" var="node"
+                            dynamic="true" cache="false"
+                            selectionMode="single" selection="#{sys_FunctionBean.selectedNodeFunction}">
+                        <p:ajax event="expand" />  
+                        <p:ajax event="collapse" /> 
+                        <p:ajax event="select" process="treeFunction" listener="#{sys_FunctionBean.onNodeFunctionSelect}"
+                                update="@this,:dtFunction"/>
+                        <p:treeNode collapsedIcon="ui-icon-note" expandedIcon="ui-icon-note">
+                            <h:outputText value="#{node.functionname} [#{node.functionid}]" />                                
+                        </p:treeNode>
+                    </p:tree>
+                </p:layoutUnit>                
+                <p:layoutUnit id="layoutUnit2" gutter="1" position="center" collapsible="true" style="width:100px;">
+                    <p:toolbar style="margin-bottom: 5px;background: #ffffff;">
+                        <p:toolbarGroup align="left">
+                            <p:commandButton actionListener="#{sys_FunctionBean.onAddNewFunction}"
+                                             oncomplete="handleCmdComplete(xhr, status, args)" process="@this" icon="pi pi-plus" /> 
+                            <p:commandButton ajax="true" id="btnUpdate" widgetVar="btnUpdate" styleClass="p-mr-2 p-mb-2" icon="pi pi-pencil" title="#{commonMessages.btnViewUpdate} #{commonMessages.hkUpdate}"
+                                             actionListener="#{sys_FunctionBean.onEditFunction}"
+                                             update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                            <p:commandButton ajax="true" id="btnDel" widgetVar="btnDel" styleClass="p-mr-2 p-mb-2" icon="pi pi-trash" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                             update="msgInfo confirmDel" actionListener="#{sys_FunctionBean.onDeleteFunctionStart}"
+                                             oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        </p:toolbarGroup>                    
+                    </p:toolbar>
+                    <!-- Vùng Grid-->                
+                    <p:dataTable paginatorPosition="bottom" filterEvent="enter" 
+                                 emptyMessage="Không có dữ liệu" var="s" id="dtFunction"                                  
+                                 value="#{sys_FunctionBean.q_FunctionDataModel}"
+                                 selection="#{sys_FunctionBean.arrSelectFunction}"                                         
+                                 scrollable="true"                     
+                                 widgetVar="dtFunction">
+                        <p:column selectionMode="multiple" style="text-align: center;" width="30"/>
+                        <p:column style="text-align: center;" width="30">
+                            <p:commandButton ajax="true" styleClass="p-mr-2 p-mb-2" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                             actionListener="#{sys_FunctionBean.onOpenOrgCmdClick}" oncomplete="OpenFunctionDetail('#{s.functionid}','');"/>
+                        </p:column>
+                        <p:column id="cmid" headerText="#{msgs.main_grd_function_id}" width="80"
+                                  filterBy="#{s.functionid}" filterMatchMode="contains" filterStyle="width:95%">
+                            <h:outputText value="#{s.functionid}"/>
+                        </p:column>
+                        <p:column   width="220"
+                                    headerText="#{msgs.main_grd_function_name}"
+                                    filterBy="#{s.functionname}" filterMatchMode="contains" filterStyle="width:95%">
+                            <h:outputText value="#{s.functionname}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.main_grd_function_url}" width="180"
+                                  filterBy="#{s.url}" filterMatchMode="contains" filterStyle="width:95%">
+                            <h:outputText value="#{s.url}"/>
+                        </p:column>
+                        <p:column headerText="#{msgs.main_grd_function_active}" style="text-align: center;" width="80"
+                                  filterBy="#{s.enable}" filterMatchMode="contains" filterStyle="width:95%">
+                            <h:selectBooleanCheckbox value="#{s.enable}" disabled="true"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:layoutUnit>
+            </p:layout>
+
+
+
+            <p:dialog appendTo="@(body)" closeOnEscape="true"  id="confirmDel" modal="false" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                    <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{sys_FunctionBean.m_sDeleteMsg}"/>
+                </h:panelGrid>
+                <p:commandButton ajax="true" icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                 actionListener="#{sys_FunctionBean.onDeleteFunctionEnd}" update=":dtFunction msgInfo" />
+                <p:commandButton ajax="true" icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+            </p:dialog>
+
+            <br/>                
+            <!-- Vùng dialog-->
+            <p:dialog appendTo="@(body)" closeOnEscape="true"  id="dlgOpenFunctionDetail"
+                      widgetVar="dlgOpenFunctionDetail" header="#{msgs.detail_function_Header}"
+                      width="860" height="550"
+                      onHide="document.getElementById('frFunctionDetail').src=''"
+                      closable="true"  modal="false" resizable="false">
+                <p:ajax event="close" listener="#{sys_FunctionBean.onCloseFunctionDetail}" update=":dtFunction"/>
+                <iframe id="frFunctionDetail" scrolling="no"
+                        frameborder="0" width="100%" height="99%">
+                </iframe>
+            </p:dialog>
+            <p:dialog appendTo="@(body)" closeOnEscape="true"   id="dlgOpenFlowDialog" widgetVar="dlgOpenFlowDialog"
+                        width="1024" height="640" closable="true"
+                        resizable="true" modal="false" header="Luồng công việc">
+                  <iframe id="browserContent3" scrolling="auto"
+                          frameborder="true"
+                          width="100%" height="635"
+                          style="border: none">
+                  </iframe>
+              </p:dialog>
+
+            <script type="text/javascript">
+                function OpenFlowDialog(funid) {
+                    var f = document.getElementById('browserContent3');
+                    f.src = "./../../shared/admin/Sys_Function_Flow.jsf?id=" + funid;
+                    PF('dlgOpenFlowDialog').show();
+                }
+                function handleCmdComplete(xhr, status, args) {
+                    if (args.Method)
+                    {
+                        switch (args.Method)
+                        {
+                            case 'Edit':
+                                OpenFunctionDetail(args.orgid, '');
+                                break;
+                            case 'Delete':
+                                  PF('confirmDel').show();
+                                break;
+                            case 'AddNewFunction':
+                                OpenFunctionDetail('', args.id2);
+                                break;
+                        }
+                    }
+                }
+                function OpenFunctionDetail(orgid, id2) {
+                    var f = document.getElementById('frFunctionDetail');
+                    if (orgid)
+                        f.src = "../admin/Sys_Function_details.jsf?FuncID=" + orgid;
+                    else
+                    {
+                        f.src = "../admin/Sys_Function_details.jsf";
+                        if (id2)
+                        {
+                            var temp = "?";
+                            f.src = f.src + temp + "FunctionIDParent=" + id2;
+                        }
+                    }
+
+                    PF('dlgOpenFunctionDetail').show();
+                }
+            </script>
+            <style type="text/css">
+                .hasDatepicker {
+                    width: 100px;
+                }
+            </style>
+    </ui:define>
+</ui:composition>

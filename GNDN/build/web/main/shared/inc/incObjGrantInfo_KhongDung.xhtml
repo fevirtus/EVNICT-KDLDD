@@ -1,0 +1,25 @@
+<!--
+Hiện thông tin quyền của đổi tượng
+Cách sử dụng:
+1. Inlude cụm này vào file xhtml
+    <h:inputHidden id="hfObjTypeId" value="Mã kiểu đối tượng trong S_LST_OBJ"/>
+    <h:inputHidden id="hfObjId" value="Gán mã của đối tượng từ bean"/>
+    <ui:include src="..\..\shared\inc\incObjGrantInfo.xhtml"/>
+
+   Chú ý: tạo property get/set riêng cho gán hfObjId mà không dùng cùng hàm get/set của Obj vì có thể conflict, trong đó get thì link vào hàm lấy ra id, còn set thì không làm cả.
+2. Để cập nhật lại thông tin quyền khi gọi cửa sổ gán quyền, thêm phần update cho id pnObjRightInfo
+
+3. Tham khảo cách dùng: eam\work\dlgWorderDt.xhtml
+-->
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+     <f:loadBundle var="this" basename="main.web.shared.admin.prop.ObjGrantProp"/>
+     <h:panelGrid columns="2" id="pnObjRightInfo">
+         <h:outputText value="#{this.arlbAsignRightInfo}"/>
+         <h:outputText value="#{objGrantInfoBean.objGrantInfo}" style="color: blue"/>
+     </h:panelGrid>
+</ui:composition>

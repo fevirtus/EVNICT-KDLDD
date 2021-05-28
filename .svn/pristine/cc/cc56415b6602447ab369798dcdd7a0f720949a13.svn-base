@@ -1,0 +1,124 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    <style>
+        .ui-treetable-scrollable-header
+        {
+            display: none !important;
+        }
+        .ui-treetable-scrollable-footer
+        {
+            display: none !important;
+        }
+        .ui-treetable tbody td
+        {
+            border-style: none !important;
+        }
+        .ui-treetable table
+        {
+            border-collapse: inherit !important;
+        }
+        .wrapword{
+            white-space: -moz-pre-wrap !important;  
+            white-space: -webkit-pre-wrap;              
+            white-space: -o-pre-wrap;    
+            white-space: pre-wrap;       
+
+            word-break: break-all;
+            white-space: normal;
+        }
+    </style>
+    <p:panel id="pConversation" style="width: 100%;border: 1px solid #DBE9F5 !important;">
+        <table style="min-width: 100%;min-height: 100%">
+            <tr>
+                <td> 
+                    <p:treeTable scrollHeight="#{conversationBean.height}" scrollable="true"
+                                 style="width: 100% important;"                                 
+                                 emptyMessage="Không có dữ liệu"                                 
+                                 value="#{conversationBean.m_lstConversation}" 
+                                 selectionMode="single" selection="#{conversationBean.selectedConversation}"
+                                 var="cItem">
+                        <p:column>
+                            <span>
+                                <table style="border-bottom: 1px solid #DBE9F5 !important;width: 100%;" cellpadding="0" cellspacing="0">
+                                    <tr>
+                                        <td style="word-wrap: break-word; white-space: normal;">
+                                            <h:outputText style="padding: 2px !important;margin: 2px !important;border-radius: 3px !important;background-color: #FFB442 !important;color: white !important;" 
+                                                          value="Xác nhận"
+                                                          rendered="#{conversationBean.showConfirm(cItem.conversationDataDesc)}" />
+                                            <p:outputLabel escape="false" value="#{conversationBean.showDataDesc(cItem.conversationDataDesc)}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>                                            
+                                            <table cellpadding="0" cellspacing="0" style="width: 100%!important;">
+                                                <tr>
+                                                    <td style="width: 26px;">
+                                                        <img src="#{request.contextPath}/images/no-user.jpg" style="width: 25px;height: 25px"/>
+                                                    </td>
+                                                    <td style="width: 150px;">
+                                                        <h:outputText value="#{cItem.userCrId}" style="font-weight: bold !important;"/>
+                                                        <h:outputText value="-" />
+                                                        <h:outputText value="#{cItem.userCrDtime}" style="color: #959595 !important;">
+                                                            <f:convertDateTime pattern="d/M/yyyy HH:mm" timeZone="#{settingsBean.timeZone}"/>
+                                                        </h:outputText>
+                                                    </td>
+                                                    <td>
+                                                        <p:commandButton icon="ui-icon-extlink" actionListener="#{conversationBean.onShowInputConversation}"
+                                                                         style="margin: 5px !important;color: #0000FF!important;border: none !important;" 
+                                                                         update=":#{p:component('pConversation')}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr style="display: #{cItem.bShow==true?'run-in':'none'}">
+                                                    <td colspan="3">                                                        
+                                                        <p:inputTextarea style="width: 95%;" value="#{cItem.tempDesc}" 
+                                                                         autoResize="false"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>                                                    
+                                                    <td colspan="3" align="left" style="display: #{cItem.bShow==true?'run-in':'none'}">
+                                                        <p:commandButton value="Gửi" actionListener="#{conversationBean.onInsertConversation}"
+                                                                         update=":#{p:component('pConversation')}"/>
+                                                    </td>
+                                                </tr>
+                                            </table>                                            
+                                        </td>
+                                    </tr>
+                                </table>
+                            </span>
+                        </p:column>
+                    </p:treeTable>                        
+                </td>
+            </tr>
+            <tr>
+                <td style="margin: 0px;padding: 0px !important;">
+                    <table cellpadding="0" cellspacing="0" style="border: none;width: 100%">
+                        <tr>
+                            <td colspan="2">                                
+                                <p:inputTextarea id="txtConversationDesc" value="#{conversationBean.strConversationDesc}" style="width: 100%" autoResize="false"/>                                            
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: top;">
+                                <h:selectBooleanCheckbox id="optConfirm"
+                                                         value="#{conversationBean.checkConfirm}"/>
+                                <p:spacer width="2"/>
+                                <h:outputLabel value="Xác nhận"/>                                
+                            </td>
+                            <td align="right" valign="center">
+                                <p:commandButton id="cmdSendConversation" value="Gửi" 
+                                                 style="margin-right: -2px !important;"
+                                                 actionListener="#{conversationBean.onInsertConversationRoot}"
+                                                 update=":#{p:component('pConversation')},:#{p:component('txtConversationDesc')},:#{p:component('optConfirm')}"/>
+                            </td>
+                        </tr>                        
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+    </p:panel>    
+</ui:composition>

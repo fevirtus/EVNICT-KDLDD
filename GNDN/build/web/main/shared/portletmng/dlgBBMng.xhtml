@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="./../../templates/tplEAM_Main.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="head">
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <title>#{prop.BBTitle}</title>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+        <style type="text/css">
+            .hasDatepicker {
+                width: 80px;
+            }
+        </style>    
+    </ui:define>    
+    <ui:define name="content">
+        <p:toolbar>
+            <p:toolbarGroup align="left" rendered="#{pltBBMng.renderedFuncEdit('02.31')}">
+                <p:commandButton icon="addnew" title="#{propSM_BB.BBAddNew}" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onBBAddNew}" update="@([id$=msgInfo])" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="edit" title="#{propSM_BB.BBEdit}" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onBBEditToolbar}" update="@([id$=msgInfo])" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="delete" title="#{propSM_BB.BBDel}" styleClass="btnHeight"
+                                 actionListener="#{pltBBMng.onBBDeleteStart}" update="@([id$=msgInfo]) confirmDel" oncomplete="handleCmdDelete(xhr, status, args)"/>
+            </p:toolbarGroup>
+
+            <p:toolbarGroup align="left">
+                <p:separator rendered="#{pltBBMng.renderedFuncEdit('02.31')}"/>
+                <p:menuButton value="#{commonMessages.btnOtherAction}">
+                    <p:menuitem value="#{propSM_BB.BBDlgVisibleHeader}" actionListener="#{pltBBMng.onShowDlgVisibleBB}" update="@([id$=msgInfo])" oncomplete="handleCmdComplete(xhr, status, args)" rendered="#{pltBBMng.renderedFuncEdit('02.31')}"/>
+                    <p:menuitem value="#{propSM_BB.BBDlgEffDayHeader}" actionListener="#{pltBBMng.onShowDlgEffDay}" update="@([id$=msgInfo])" oncomplete="handleCmdComplete(xhr, status, args)" rendered="#{pltBBMng.renderedFuncEdit('02.31')}"/>
+                    <p:menuitem value="#{propSM_BB.BBDlgReadLogHeader}" actionListener="#{pltBBMng.onShowDlgReadLog}" update="@([id$=msgInfo])" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                </p:menuButton>
+            </p:toolbarGroup>
+        </p:toolbar>        
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+            </p:outputPanel>
+            <!--Dùng confirmDialog bị lỗi hiển thị nên chuyển sang dialog -->
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDelDlg"  modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel">
+                <h:panelGrid id="confirmDel" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                    <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{pltBBMng.m_sDeleteMsg}"/>
+                </h:panelGrid>
+                <p:commandButton value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                 actionListener="#{pltBBMng.onBBDeleteEnd}" update="grdBB @([id$=msgInfo])" />
+                <p:commandButton value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()" type="button" />
+            </p:dialog>
+            <table cellpadding="2" cellspacing="2">
+                <tr>
+                    <td style="width: 80px" align="right"><h:outputText value="#{propSM_BB.BBSender}"/></td>
+                    <td><p:selectOneMenu value="#{pltBBMng.m_UserID}" >
+                            <f:selectItems value="#{pltBBMng.dsUserWithCheckAdmin}"/>
+                        </p:selectOneMenu>
+                    </td>
+                    <td/>
+                    <td><h:outputText value="#{propSM_BB.BBDue}"/></td>
+                    <td><h:selectOneRadio value="#{pltBBMng.m_sOptValid}">
+                            <f:selectItems value="#{pltBBMng.dsValidOpt}"/>
+                        </h:selectOneRadio>
+                    </td>
+                    <td style="padding-left: 5px">
+                        <p:commandButton value="#{commonMessages.btnChoonse}" actionListener="#{pltBBMng.onChooseClick}" update="grdBB @([id$=msgInfo])"/>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <p:dataTable emptyMessage="Không có dữ liệu" id="grdBB" var="dt" 
+                         value="#{pltBBMng.pltBBMngDataModel}" selection="#{pltBBMng.m_lstBBChoose}"
+                         scrollHeight="470"
+                         scrollable="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         paginator="true" paginatorPosition="bottom" rows="10" rowsPerPageTemplate="5,10,15,20">
+                <p:column width="45" selectionMode="multiple" style="text-align: center;"/>
+                <p:column width="45">
+                    <p:commandButton icon="edit" title="#{propSM_BB.BBEdit}" styleClass="btnHeight"
+                                     actionListener="#{pltBBMng.onBBEdit}" update="@([id$=msgInfo])" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                </p:column>
+                <p:column headerText="#{propSM_BB.BBColID}" width="100">
+                    <h:outputText value="#{dt.bbmid}" />
+                    <h:graphicImage url="#{dt.htmlEnableImg}"/>
+                </p:column>
+                <p:column headerText="#{propSM_BB.BBColSum}">
+                    <h:outputText value="#{dt.bbmsum}"/>
+                </p:column>
+                <p:column headerText="#{propSM_BB.BBColDayStart}" width="100">
+                    <h:outputText value="#{dt.edfrom}">
+                        <f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{propSM_BB.BBColDayFinish}" width="100">
+                    <h:outputText value="#{dt.edto}">
+                        <f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="#{propSM_BB.BBColAttach}" width="100">
+                    <h:outputText value="#{dt.attachCount}"/>
+                </p:column>
+            </p:dataTable>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgCommon" header="#{propSM_BB.BBEdit}" widgetVar="dlgCommon" width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight+150}" modal="true"
+                  onHide="document.getElementById('ifrDlgCommon').src='';">
+            <p:ajax event="close" listener="#{pltBBMng.onCloseDlgFunc}" update="grdBB"/>
+            <iframe id="ifrDlgCommon" scrolling="auto"
+                    frameborder="true"
+                    width="100%" height="99%"
+                    style="border: none;background: transparent !important;">
+            </iframe>
+        </p:dialog>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgCommon2" header="#{propSM_BB.BBDlgReadLogHeader}" widgetVar="dlgCommon2" width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" modal="true"
+                  onHide="document.getElementById('ifrDlgCommon2').src='';">
+            <iframe id="ifrDlgCommon2" scrolling="auto"
+                    frameborder="true"
+                    width="100%" height="99%"
+                    style="border: none;background: transparent !important;">
+            </iframe>
+        </p:dialog>       
+
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgVisible" header="#{propSM_BB.BBDlgVisibleHeader}" widgetVar="dlgVisible" modal="true"
+                  >
+            <p:ajax event="close" update="grdBB"/>
+            <h:panelGrid columns="1">
+                <h:outputText value="#{pltBBMng.msgBBCount}"/>
+                <h:panelGroup>
+                    <h:selectOneRadio value="#{pltBBMng.m_DlgVisible_Set}">
+                        <f:selectItem itemValue="true" itemLabel="#{propSM_BB.BBDlgVisibleYes}"/>
+                        <f:selectItem itemValue="false" itemLabel="#{propSM_BB.BBDlgVisibleNo}"/>
+                    </h:selectOneRadio>
+                </h:panelGroup>
+            </h:panelGrid>
+            <p:commandButton value="#{commonMessages.btnAccept}" actionListener="#{pltBBMng.onAcceptDlgVisibleBB}" icon="accept" oncomplete="PF('dlgVisible').hide();" />
+            <p:commandButton value="#{commonMessages.btnCancel}" icon="cancel" oncomplete="PF('dlgVisible').hide();" />
+        </p:dialog>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgEffDay" header="#{propSM_BB.BBDlgEffDayHeader}" widgetVar="dlgEffDay" modal="true" width="400" height="150"
+                  >
+            <p:ajax event="close" update="grdBB"/>
+            <h:outputText value="#{pltBBMng.msgBBCount}"/>
+            <table width="100%" cellpadding="2" cellspacing="2" style="margin-bottom: 10px;">
+                <tr>
+                    <td>
+                        <h:outputText value="#{propSM_BB.BBDTDayValid}"/>
+                    </td>
+                    <td>
+                        <p:selectBooleanCheckbox value="#{pltBBMng.m_DlgEffDay_bEFrom}">
+                            <p:ajax event="valueChange" update="m_DlgEffDay_dEFrom" />
+                        </p:selectBooleanCheckbox>
+                        <p:calendar id="m_DlgEffDay_dEFrom" locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}" value="#{pltBBMng.m_DlgEffDay_dEFrom}"
+                                    disabled="#{!pltBBMng.m_DlgEffDay_bEFrom}"  style="width: 90px;" converterMessage="#{commonMessages.msgDateInvalid}"/>
+                        <h:outputLabel value=" - "/>
+                        <p:selectBooleanCheckbox value="#{pltBBMng.m_DlgEffDay_bETo}">
+                            <p:ajax event="valueChange" update="m_DlgEffDay_dETo" />
+                        </p:selectBooleanCheckbox>
+                        <p:calendar id="m_DlgEffDay_dETo" locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}" value="#{pltBBMng.m_DlgEffDay_dETo}" 
+                                    disabled="#{!pltBBMng.m_DlgEffDay_bETo}" style="width: 90px;" converterMessage="#{commonMessages.msgDateInvalid}"/>
+                    </td>
+                </tr>
+            </table>
+            <p:commandButton value="#{commonMessages.btnAccept}" actionListener="#{pltBBMng.onAcceptDlgEffDay}" icon="accept" 
+                             oncomplete="handleCmdComplete(xhr, status, args)" update="@([id$=msgInfo])"/>
+            <p:commandButton value="#{commonMessages.btnCancel}" icon="cancel" oncomplete="PF('dlgEffDay').hide();" />
+        </p:dialog>
+        <script type="text/javascript">
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'BBAddNew':
+                            var f = document.getElementById('ifrDlgCommon');
+                            f.src = "dlgBBMngDT.jsf?method=BBAddNew";
+                            PF('dlgCommon').show();
+                            break;
+                        case 'BBEdit':
+                            var f = document.getElementById('ifrDlgCommon');
+                            f.src = "dlgBBMngDT.jsf?method=BBEdit&amp;bbid=" + args.bbid;
+                            PF('dlgCommon').show();
+                            break;
+                        case 'ShowDlgVisibleBB':
+                            PF('dlgVisible').show();
+                            break;
+                        case 'ShowDlgEffDay':
+                            PF('dlgEffDay').show();
+                            break;
+                        case 'CloseDlgEffDay':
+                            PF('dlgEffDay').hide();
+                            break;
+                        case 'ShowDlgReadLog':
+                            var f = document.getElementById('ifrDlgCommon2');
+                            f.src = "dlgBBMngReadLog.jsf?method=ShowDlgReadLog&amp;bbid=" + args.bbid;
+                            ;
+                            PF('dlgCommon2').show();
+                            break;
+                    }
+                }
+            }
+            function handleDlgComplete(xhr, status, args) {
+                //alert(args.dlgId + ':' + args.result);
+                //if(args.validationFailed) {
+                //   alert("Validation Failed");
+                //   return;
+                //}
+                if (args.result)
+                {
+                    switch (args.dlgId)
+                    {
+                        case '':
+                            PF('dlgCommon').hide();
+                            break;
+
+                    }
+                }
+            }
+
+            function handleCmdDelete(xhr, status, args) {
+                if (args.Method)
+                {
+                    //alert(args.Method);
+                    switch (args.Method)
+                    {
+                        case 'DelBB':
+                              PF('confirmDel').show();
+                            //alert('Delete');
+                            break;
+                    }
+                }
+            }
+
+            function showdlgNormalTopModal1(url) {
+                parent.showdlgNormalTopModal1(url)
+            }
+
+            function dlgNormalTopModal1_closed()
+            {
+                return parent.dlgNormalTopModal1_closed();
+            }
+            function showdlgMainTopModal1(url) {
+                parent.showdlgMainTopModal1(url)
+            }
+
+            function dlgMainTopModal1_closed()
+            {
+                return parent.dlgMainTopModal1_closed();
+            }
+
+        </script>
+    </ui:define>
+</ui:composition>

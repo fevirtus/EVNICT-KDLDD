@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.Func/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.Func/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        </h:head>
+        <h:body>
+            <h:form onsubmit="false" id="formFFL">
+                <h:inputHidden value="#{sysFunctionFlowBean.funidd}" />
+                <h:inputHidden value="#{sysFunctionFlowBean.isAddFlow}" />
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:layout id="layout1" style="height:610px;" >
+                    <p:layoutUnit id="ly1" gutter="1" position="west" size="350" resizable="true" collapsible="true">     
+                        <p:panel id="menuTree" style="display: none;">
+                            <p:contextMenu for="treeFlow">  
+                                <p:menuitem value="Copy" actionListener="#{sysFunctionFlowBean.btnCopyFlow}"
+                                            oncomplete="handleCmdComplete(xhr, status, args)" process="@this" icon="ui-icon-document" disabled="#{sysFunctionFlowBean.l_copyflow}" update=":#{p:component('msgInfo')} :#{p:component('treeFlow')} :#{p:component('dtParam')} :#{p:component('ctParam')}"/>  
+                                <p:separator></p:separator>
+                                <p:menuitem value="Thêm mới" actionListener="#{sysFunctionFlowBean.btnAddFlow}"
+                                            oncomplete="handleCmdComplete(xhr, status, args)" process="@this" icon="ui-icon-document" update=":#{p:component('msgInfo')} :#{p:component('treeFlow')} :#{p:component('dtParam')} :#{p:component('ctParam')}"/>  
+                                <p:menuitem value="Sửa" actionListener="#{sysFunctionFlowBean.btnEditFlow}"
+                                            update=":#{p:component('msgInfo')} :#{p:component('treeFlow')} :#{p:component('dtParam')} :#{p:component('ctParam')}" 
+                                            oncomplete="handleCmdComplete(xhr, status, args)" 
+                                            process="@this" icon="ui-icon-wrench"/>
+                                <p:menuitem value="Xóa" process="@this" actionListener="#{sysFunctionFlowBean.btnDelFlow}" update=":#{p:component('msgInfo')} :#{p:component('treeFlow')} :#{p:component('dtParam')} :#{p:component('ctParam')}"
+                                            icon="ui-icon-close" disabled="#{sysFunctionFlowBean.l_delflow}"/>  
+                            </p:contextMenu>
+                        </p:panel>
+                        <p:tree id="treeFlow" widgetVar="treeFlow" style="border: 0px; overflow: auto; width: 1000px; height: auto;"
+                                value="#{sysFunctionFlowBean.rootFlow}" var="node"                                
+                                dynamic="true" cache="false"
+                                selectionMode="single" selection="#{sysFunctionFlowBean.selectedNodeFlow}">                            
+                            <p:ajax event="expand" listener="#{sysFunctionFlowBean.onNodeFlowExpand}"/>
+                            <p:ajax event="select" listener="#{sysFunctionFlowBean.onNodeFlowSelect}"
+                                    process="@this"  update=":#{p:component('treeFlow')} :#{p:component('dtParam')} :#{p:component('ctParam')} :#{p:component('menuTree')} :#{p:component('tbrHeader')}"/>
+                            <p:treeNode>
+                                <h:outputText value="#{node.wflowDesc}"/>                             
+                            </p:treeNode>
+                        </p:tree>
+                    </p:layoutUnit>
+                    <p:layoutUnit id="ly2" gutter="1" position="center" collapsible="true" style="width:100px;">
+                        <fieldset>
+                            <legend>Tham số</legend>
+                            <p:dataTable id="dtParam" 
+                                        value="#{sysFunctionFlowBean.lsParam}" 
+                                        rowKey="#{paramx.wflowdataid}"
+                                        var="paramx"
+                                        scrollHeight="320" scrollable="true"                                        
+                                        widgetVar="dtParam"
+                                        selection="#{sysFunctionFlowBean.selectedParam}"
+                                        selectionMode="single">
+                                <p:ajax event="rowSelect" listener="#{sysFunctionFlowBean.onRowParamSelect}"  update=":#{p:component('ctParam')}"/>                                                                
+                               <p:column style="width: 20px;">
+                                  <h:outputText value="#{paramx.dataord}"/>
+                               </p:column>
+                               <p:column>
+                                  <f:facet name="header">
+                                      <h:outputText value="Param Name" />
+                                  </f:facet>
+                                  <h:outputText value="#{paramx.dataname}"/>
+                               </p:column>
+                               <p:column style="width: 30px;">
+                                  <f:facet name="header">
+                                      <h:outputText value="Type" />
+                                  </f:facet>
+                                  <h:outputText value="#{paramx.type}"/>
+                               </p:column>
+                               <p:column>
+                                  <f:facet name="header">
+                                      <h:outputText value="Value" />
+                                  </f:facet>
+                                  <h:outputText value="#{paramx.value}"/>
+                               </p:column>
+                           </p:dataTable>
+                        </fieldset>                        
+                         <p:toolbar id="tbrHeader" style="background: #ffffff;">
+                            <p:toolbarGroup align="left">
+                                <p:commandButton id="btnAddParam" widgetVar="btnAddParam" styleClass="btnHeight"
+                                                 icon="addnew" disabled="#{sysFunctionFlowBean.l_addparam}"  title="Thêm mới Param" actionListener="#{sysFunctionFlowBean.btnAddNewParamClick}" update="ctParam"/>
+                                <p:commandButton ajax="true" id="btnEditParam" widgetVar="btnEditParam" styleClass="btnHeight"
+                                                 icon="save" title="Sửa Param" disabled="#{sysFunctionFlowBean.l_editparam}" actionListener="#{sysFunctionFlowBean.btnSaveNewParamClick}" update=":#{p:component('msgInfo')} :#{p:component('dtParam')} :#{p:component('ctParam')}"/>
+                                <p:commandButton ajax="true" id="btnDelParam" disabled="#{sysFunctionFlowBean.l_delparam}" widgetVar="btnDelParam" styleClass="btnHeight"
+                                                 icon="delete"  title="Xóa Param"
+                                                 actionListener="#{sysFunctionFlowBean.btnDelNewParamClick}" update=":#{p:component('msgInfo')} :#{p:component('dtParam')} :#{p:component('ctParam')}"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <fieldset>
+                            <legend>Chi tiết Tham số</legend>
+                            <p:panel id="ctParam">
+                                <table>
+                                    <tr>
+                                        <td style="display: none;">
+                                            <p:inputText value="#{sysFunctionFlowBean.wflowdataid}"/>
+                                            <p:inputText value="#{sysFunctionFlowBean.wflowid}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><h:outputLabel value="Name"/></td>
+                                        <td colspan="5"><p:inputText value="#{sysFunctionFlowBean.dataname}" disabled="#{sysFunctionFlowBean.l_dataname}"/></td>                                    
+                                    </tr>
+                                    <tr>
+                                        <td><h:outputLabel value="Code"/></td>
+                                        <td><p:inputText value="#{sysFunctionFlowBean.datacode}" disabled="#{sysFunctionFlowBean.l_datacode}"/></td>
+                                        <td><h:outputLabel value="Data Type"/></td>
+                                        <td colspan="3">
+                                            <p:selectOneMenu value="#{sysFunctionFlowBean.datatypeid}"  disabled="#{sysFunctionFlowBean.l_datatypeid}">
+                                                <f:selectItem itemLabel="Số" itemValue="NUM"/>
+                                                <f:selectItem itemLabel="Ngày\Tháng" itemValue="DATE"/>
+                                                <f:selectItem itemLabel="Chuỗi" itemValue="STR"/>
+                                                <f:selectItem itemLabel="Danh sách số" itemValue="LSTNUM"/>
+                                                <f:selectItem itemLabel="Danh sách ngày" itemValue="LSTDATE"/>
+                                                <f:selectItem itemLabel="Danh sách chuỗi" itemValue="LSTSTR"/>
+                                            </p:selectOneMenu>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><h:outputLabel value="Value"/></td>
+                                        <td><p:inputText value="#{sysFunctionFlowBean.value}"  disabled="#{sysFunctionFlowBean.l_value}"/></td>
+                                        <td><h:outputText value="Type"/></td>
+                                        <td>
+                                            <p:selectOneMenu value="#{sysFunctionFlowBean.type}"  disabled="#{sysFunctionFlowBean.l_type}">
+                                                <f:selectItem itemLabel="Vào" itemValue="0"/>
+                                                <f:selectItem itemLabel="Ra" itemValue="1"/>
+                                            </p:selectOneMenu>
+                                        </td>
+                                        <td>                                        
+                                            <h:outputText value="Ord"/>
+                                        </td>
+                                        <td>
+                                            <p:inputText type="number" value="#{sysFunctionFlowBean.dataord}" style="width: 50px; height: 100%;"  disabled="#{sysFunctionFlowBean.l_dataord}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </p:panel>
+                        </fieldset>
+                    </p:layoutUnit>
+                </p:layout>
+                <!-- Dialog-->   
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {                        
+                        if (args.Method)
+                        {
+                            var temp = "&amp;";
+                            switch (args.Method)
+                            {                               
+                                case 'EditFlow':
+                                    var f = document.getElementById('browserContent1');
+                                    f.title = "Edit Flow";
+                                    f.src = "./../../shared/admin/Sys_Function_Flow_Detail.jsf?flag=1"+ temp + "funid=" + args.funid + temp + "id=" + args.id;
+                                    PF('dlgOpenFlowDetail').show();
+                                    break;
+                                case 'AddFlow':
+                                    var f = document.getElementById('browserContent1');
+                                    f.title = "AddNew Flow";
+                                    f.src = "./../../shared/admin/Sys_Function_Flow_Detail.jsf?flag=0"+ temp + "funid=" + args.funid;
+                                    PF('dlgOpenFlowDetail').show();
+                                    break;
+                                case 'CopyFlow':
+                                    var f = document.getElementById('browserContent1');
+                                    f.title = "Copy Flow";
+                                    f.src = "./../../shared/admin/Sys_Function_Flow_Detail.jsf?flag=2"+ temp + "funid=" + args.funid + ""+ temp + "id=" + args.id;                                    
+                                    PF('dlgOpenFlowDetail').show();
+                                    break;
+                                case 'DelFlow':
+                                    var k = document.getElementById('browserContent1');
+                                    k.src = "../problem/problem_details.jsf";
+                                    PF('dlgOpenProblemDetailBC').show();
+                                    break;
+                            }
+                        }
+                    }
+                </script>              
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenFlowDetail" widgetVar="dlgOpenFlowDetail" header="Chi tiết luồng công việc"
+                        width="900" height="550" closable="true"
+                        resizable="true" modal="true"  >
+                    <p:ajax event="close" listener="#{sysFunctionFlowBean.onCloseDetailFlow}" update = ":#{p:component('msgInfo')} :#{p:component('treeFlow')} :#{p:component('dtParam')} :#{p:component('ctParam')}"/>
+                    <iframe id="browserContent1" scrolling="no"
+                            frameborder="true"
+                            width="100%" height="99%"
+                            style="border: none;">
+                    </iframe>
+                </p:dialog>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

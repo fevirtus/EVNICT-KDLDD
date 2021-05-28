@@ -1,0 +1,285 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package diemdo.web;
+
+import diemdo.ADiemdo;
+import diemdo.ADiemdoAx;
+import diemdo.remote.IDiemDoRemote;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.event.AjaxBehaviorEvent;
+import main.ContextResources.EjbContext;
+import main.entity.shared.admin.Q_Function_Wflow;
+import main.web.common.bean.BasePageCommon;
+import main.web.common.bean.WorkingContext;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
+
+/**
+ *
+ * @author TUYEN EVN
+ */
+@ManagedBean
+@ViewScoped
+public class Dialog_AX extends BasePageCommon implements Serializable {
+
+    private IDiemDoRemote iDiemDoRemote;
+    private boolean modeSwitch = false;
+    private boolean lockInput = true;
+    private boolean disableSwitch = false;
+
+    private ADiemdo diemDo;
+    private ADiemdoAx Ax;
+    private ADiemdoAx temp_Ax;
+    private List<ADiemdoAx> listAx = new ArrayList<>();
+    private List<ADiemdo> listDiemdo = new ArrayList<>();
+
+    public Dialog_AX() {
+        try {
+            //get maDD of diemdoSelected from diemdo_details.xhtml            
+            String maDD = WorkingContext.getRequestQueryString("maDD");
+            if (maDD != null) {
+                diemDo = getIDiemDoRemote().getDiemDoByID(maDD);
+            }
+
+            //prepare data for dialog
+            listDiemdo = getIDiemDoRemote().getAllDiemDo();
+            listAx = getIDiemDoRemote().getAllAxByMaDD(maDD);
+
+            if (listAx.isEmpty()) {
+                //list empty => Add new mode
+                modeSwitch = true;
+                //open input
+                lockInput = false;
+            } else {
+
+                if (isDoned()) {
+                    
+                    lockInput = false;
+                } else {
+//                    Ax = selectNewestAx();
+                    lockInput = true;
+                }
+            }
+
+        } catch (Exception e) {
+        }
+    }
+
+    public boolean isDisableSwitch() {
+        return disableSwitch;
+    }
+
+    public void setDisableSwitch(boolean disableSwitch) {
+        this.disableSwitch = disableSwitch;
+    }
+
+    public ADiemdoAx getTemp_Ax() {
+        return temp_Ax;
+    }
+
+    public void setTemp_Ax(ADiemdoAx temp_Ax) {
+        this.temp_Ax = temp_Ax;
+    }
+
+    public boolean isModeSwitch() {
+        return modeSwitch;
+    }
+
+    public void setModeSwitch(boolean modeSwitch) {
+        this.modeSwitch = modeSwitch;
+    }
+
+    public boolean isLockInput() {
+        return lockInput;
+    }
+
+    public void setLockInput(boolean lockInput) {
+        this.lockInput = lockInput;
+    }
+
+    public ADiemdoAx getAx() {
+        return Ax;
+    }
+
+    public void setAx(ADiemdoAx Ax) {
+        this.Ax = Ax;
+    }
+
+    public List<ADiemdoAx> getListAx() {
+        return listAx;
+    }
+
+    public void setListAx(List<ADiemdoAx> listAx) {
+        this.listAx = listAx;
+    }
+
+    public List<ADiemdo> getListDiemdo() {
+        return listDiemdo;
+    }
+
+    public void setListDiemdo(List<ADiemdo> listDiemdo) {
+        this.listDiemdo = listDiemdo;
+    }
+
+    public ADiemdo getDiemDo() {
+        return diemDo;
+    }
+
+    public void setDiemDo(ADiemdo diemDo) {
+        this.diemDo = diemDo;
+    }
+
+    public IDiemDoRemote
+            getIDiemDoRemote() {
+        try {
+            if (iDiemDoRemote == null) {
+                iDiemDoRemote = (IDiemDoRemote) EjbContext.getLocalEJBRemote(IDiemDoRemote.class
+                        .getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iDiemDoRemote;
+    }
+
+    //check input in New mode
+    public boolean checkInputNewMode() {
+        try {
+            if (Ax.getADiemdoAxPK().getOrgidRef() == null) {
+                PrimeFaces.current().executeScript("alert('Đơn vị cung cấp số liệu không được để trống');");
+                return false;
+            }
+            if (Ax.getADiemdoAxPK().getMaDiemdoRef() == null) {
+                PrimeFaces.current().executeScript("alert('Mã điểm đo bên cung cấp số liệu không được để trống');");
+                return false;
+            }
+            if (Ax.getNgayKt().compareTo(Ax.getNgay()) <= 0) {
+                PrimeFaces.current().executeScript("alert('Ngày kết thúc phải xa hơn ngày bắt đầu ánh xạ');");
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //check input in AddNew mode
+    public boolean checkInputAddNewMode() {
+        try {
+            if (Ax.getNgayKt().compareTo(Ax.getNgay()) <= 0) {
+                PrimeFaces.current().executeScript("alert('Ngày kết thúc phải xa hơn ngày bắt đầu ánh xạ');");
+                return false;
+            }
+            if (Ax.getNgay().compareTo(selectNewestAx().getNgayKt()) < 0) {
+                PrimeFaces.current().executeScript("alert('Ngày bắt đầu ánh xạ mới phải xa hơn hoặc bằng ngày kết thúc ánh xạ cũ');");
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //check input in AddNewContinue mode
+    public boolean checkInputAddNewContinue() {
+        try {
+            if (Ax.getADiemdoAxPK().getOrgidRef() == null) {
+                PrimeFaces.current().executeScript("alert('Đơn vị cung cấp số liệu không được để trống');");
+                return false;
+            }
+            if (Ax.getADiemdoAxPK().getMaDiemdoRef() == null) {
+                PrimeFaces.current().executeScript("alert('Mã điểm đo bên cung cấp số liệu không được để trống');");
+                return false;
+            }
+            if (Ax.getNgayKt().compareTo(Ax.getNgay()) <= 0) {
+                PrimeFaces.current().executeScript("alert('Ngày kết thúc phải xa hơn ngày bắt đầu ánh xạ');");
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    public void onRowSelected(){
+        
+    }
+
+    //Add Ax function
+    public void addNewAx() {
+
+    }
+
+    //Excute Add new or Edit Activity and save result
+    public void saveChange() {
+        if (Ax != null) {
+            if (isDoned()) {
+
+            }
+        } else {
+            PrimeFaces.current().executeScript("alert('Hãy chọn một một Ánh xạ để chỉnh sửa');");
+        }
+    }
+
+    //
+    public void onSwitch() {
+        if (isPast()) {
+            disableSwitch = true;
+        }else{
+            disableSwitch = false;
+            if (modeSwitch) {
+                lockInput = false;
+            } else {
+                lockInput = true;
+            }
+        }              
+    }
+
+    //check ngayKt = null to select type of Add function
+    public boolean isDoned() {
+        return listAx.stream().noneMatch((item) -> (item.getNgayKt() == null));
+    }
+    
+    public boolean isPast(){
+        if (isDoned()) {
+            return false;
+        }else{
+            if (Ax.getNgayKt() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //select Anh xa have ngayKt is newest
+    public ADiemdoAx selectNewestAx() {
+        ADiemdoAx ax = new ADiemdoAx();
+        ax = listAx.get(0);
+        try {
+            for (ADiemdoAx item : listAx) {
+                if (item.getNgayKt() == null) {
+                    ax = item;
+                    return ax;
+                }
+                if (ax.getNgayKt().compareTo(item.getNgayKt()) > 0) {
+                    ax = item;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ax;
+    }
+}

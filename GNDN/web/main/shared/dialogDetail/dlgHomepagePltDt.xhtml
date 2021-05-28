@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Homepage Portlet Detail</title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_HomepageProp" var="propThis" />
+        <style type="text/css">
+            .hasDatepicker {
+                width: 90px;
+            }
+        </style>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+    </h:head>
+    <h:body>
+        <h:form onsubmit="return false" id="formDlg">
+            <p:toolbar>
+                <p:toolbarGroup align="left">
+                    <p:commandButton icon="save" title="#{commonMessages.btnSave}" styleClass="btnHeight"
+                                     actionListener="#{SM_HomepageBean.onDtSave}" update=":formDlg:tbNavigator @([id$=msgInfo])"/>
+                    <p:commandButton icon="delete" title="#{propThis.BtnRemovePortlet}" styleClass="btnHeight"
+                                     actionListener="#{SM_HomepageBean.onDtDelete}" update="@form"/>
+                </p:toolbarGroup>
+                <p:toolbarGroup align="right">
+                    <h:panelGroup id="tbNavigator">
+                        <p:commandButton icon="resultset_first" styleClass="btnHeight"
+                                         actionListener="#{SM_HomepageBean.onDtNvgFirst}" disabled="#{SM_HomepageBean.dtNvgDisabledPrev}" update="@form"/>
+                        <p:commandButton icon="resultset_previous" styleClass="btnHeight"
+                                         actionListener="#{SM_HomepageBean.onDtNvgPrev}" disabled="#{SM_HomepageBean.dtNvgDisabledPrev}" update="@form"/>
+                        <p:commandButton icon="resultset_next" styleClass="btnHeight"
+                                         actionListener="#{SM_HomepageBean.onDtNvgNext}" disabled="#{SM_HomepageBean.dtNvgDisabledNext}" update="@form"/>
+                        <p:commandButton icon="resultset_last" styleClass="btnHeight"
+                                         actionListener="#{SM_HomepageBean.onDtNvgLast}" disabled="#{SM_HomepageBean.dtNvgDisabledNext}" update="@form"/>
+                    </h:panelGroup>
+                </p:toolbarGroup>
+            </p:toolbar>
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+            </p:outputPanel>
+            <p:focus/>
+            <table width="100%" cellpadding="2" cellspacing="2">
+                <tr>
+                    <td>
+                        <h:outputText value="#{propThis.LblPortlet}"/>
+                    </td>
+                    <td>
+                        <h:inputText value="#{SM_HomepageBean.m_dtCurrentHomepagePlt.id.pltid}" readonly="true"/>
+                    </td>
+                    <td>
+                        <h:inputText value="#{SM_HomepageBean.m_dtCurrentHomepagePlt.smPortlet.pltdesc}" style="width: 250px;" readonly="true"/>
+                        <h:outputText value="#{propThis.ColIsFix}"/>
+                        <p:selectBooleanCheckbox value="#{SM_HomepageBean.m_dtCurrentHomepagePlt.smPortlet.isfix}" disabled="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h:outputText value="#{propThis.LblPos}"/>
+                    </td>
+                    <td colspan="2">
+                        <p:selectOneMenu value="#{SM_HomepageBean.m_dtCurrentHomepagePlt.smLstPltpos.pposid}" style="width: 160px;">
+                            <f:selectItems value="#{SM_HomepageBean.anDsPltPos}" var="dt" itemLabel="#{dt.pposdesc}" itemValue="#{dt.pposid}"/>
+                        </p:selectOneMenu>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h:outputText value="#{propThis.ColOrd}"/>
+                    </td>
+                    <td>
+                        <h:inputText value="#{SM_HomepageBean.m_dtCurrentHomepagePlt.posord}" converterMessage="#{commonMessages.msgDecimalInvalid} (#{propThis.ColOrd})"/>
+                    </td>
+                    <td>
+                        <h:outputText value="#{propThis.ColVisible}"/>
+                        <p:selectBooleanCheckbox value="#{SM_HomepageBean.m_dtCurrentHomepagePlt.visible}" disabled="#{SM_HomepageBean.m_dtCurrentHomepagePlt.smPortlet.isfix}"/>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <center>
+                <p:commandButton icon="save" value="#{commonMessages.btnSave}" actionListener="#{SM_HomepageBean.onDtSave}" update="@([id$=msgInfo])"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="parent.hideDlgHomepagePltUpdate();" />
+            </center>
+
+        </h:form>
+        <script type="text/javascript">
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case '':
+                            //var f = document.getElementById('ifrdlgChoose');
+                            //f.src = "../dialog/dlgUser.jsf";
+                            //dlgChoose').show();
+                            break;
+                    }
+                }
+            }
+        </script>
+    </h:body>
+</html>
+

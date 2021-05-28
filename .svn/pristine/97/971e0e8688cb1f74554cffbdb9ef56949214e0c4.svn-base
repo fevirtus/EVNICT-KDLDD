@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>PrimeFaces Rain - Login</title>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    </h:head>
+
+    <h:body styleClass="login-body" style="background-image: url(images/background/img103.png);background-size: cover">
+        <h:form id="formMain">
+            <div class="login-card" style="">
+                <img src="#{request.contextPath}/images/logo/logoEVN.png" alt=""/>            
+                <br/>
+                <h1><span>HỆ THỐNG <br/>KHO DỮ LIỆU ĐO ĐẾM EVN</span>  </h1>
+                <span>Xin chào, Xin vui lòng đăng nhập </span>
+                <div class="form-group">
+                    <span class="ui-input-icon-right ui-float-label">
+                        <i class="pi pi-user"></i>
+                        <p:inputText value="#{loginBean.userName}"/>
+                        <p:outputLabel for="@previous" value="Tên đăng nhập" />
+                    </span>                
+                </div>
+                <div class="form-group">
+                    <span class="ui-input-icon-right ui-float-label">
+                        <i class="pi pi-key"></i>
+                        <p:password value="#{loginBean.password}"/>
+                        <p:outputLabel for="@previous" value="Mật khẩu" />
+                    </span>                
+                </div>
+                <div class="form-footer">
+                    <div class="checkbox">
+                        <span>Remember Me</span>
+                        <p:selectBooleanCheckbox />
+                    </div>
+                    <a href="#">Forget Password?</a>
+                </div>
+                <div>
+                    <p:commandButton value="ĐĂNG NHẬP" actionListener="#{loginBean.onLogin}" update="@form" />                 
+                    <p:linkButton outcome="/dashboard" value="ĐĂNG NHẬP SSO"/>                
+                </div>
+                <div>
+                    <p:outputLabel value="#{loginBean.msgError}" style="font-size: 13px;height: 30px;padding-left: 10px"/>
+                </div>
+                <div>                     
+                    <span>Thông tin hỗ trợ</span>                
+                </div>            
+                <div class="form-footer">
+                    <div class="checkbox">
+                        <a href="http://jira.evn.com.vn/">Jira</a>
+                    </div>
+                    <a href="https://zalo.me/g/aclsmh758">Zalo</a>
+                </div>
+
+            </div>
+        </h:form>
+
+
+        <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+        <h:outputStylesheet name="css/#{guestPreferences.layout}.css" library="rain-layout" />
+    </h:body>
+
+</html>

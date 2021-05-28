@@ -1,0 +1,214 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package diemdo.web;
+
+import diemdo.ADiemdo;
+import diemdo.ADiemdoTariff;
+import diemdo.ADiemdoTariffMix;
+import diemdo.ADiemdoTariffMix2;
+import diemdo.ADiemdoTariffPK;
+import diemdo.remote.IDiemDoRemote;
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import main.ContextResources.EjbContext;
+import main.web.common.bean.BasePageCommon;
+import main.web.common.bean.WorkingContext;
+import org.primefaces.PrimeFaces;
+
+/**
+ *
+ * @author Admin
+ */
+@ManagedBean
+@ViewScoped
+public class DiemDoTariffDialog extends BasePageCommon implements Serializable {
+
+    private ADiemdoTariff tariff;
+    private IDiemDoRemote iDiemDoRemote;
+    private List<ADiemdo> listDiemdo = new ArrayList<>();                   //List all Diemdo
+    private List<ADiemdoTariff> listTariffOnline = new ArrayList<>();       //list Diemdo have config still working
+
+    //0: default    1: configNewDD      2: createNewConfig1
+    //3: createNewConfig2   4: view     5: edit
+    private int mode = 0;
+
+    private String placeholder;
+    private boolean isAdd = true;                                           //Config new Diemdo
+    private String insertTariff;                                            //Config 
+    private boolean lockAllInput = false;
+    private boolean lockTenDD = false;
+    private boolean lockTuNgay = false;
+
+    public DiemDoTariffDialog() {
+        try {
+            listDiemdo = getIDiemDoRemote().getAllDiemDo();
+
+            //get maDD of diemdoSelected from diemdo_tariff.xhtml            
+            String maDD = WorkingContext.getRequestQueryString("maDD");
+            String thang = WorkingContext.getRequestQueryString("thang");
+            String nam = WorkingContext.getRequestQueryString("nam");
+            String dateId = WorkingContext.getRequestQueryString("dateId");
+            insertTariff = WorkingContext.getRequestQueryString("insertTariff");
+            if (maDD != null) {
+                if (insertTariff == "true") {
+                    lockTenDD = true;
+                    lockAllInput = lockTuNgay = false;
+                } else {
+                    isAdd = false;
+//                lockKey = true;
+                    tariff = getIDiemDoRemote().getTariffById(maDD, thang, nam, dateId);
+                    if (tariff.getDenNgay() == null) {
+                        lockAllInput = false;
+                    } else {
+                        lockAllInput = true;
+                    }
+                }
+            } else {
+                isAdd = true;
+                lockTenDD = lockTuNgay = lockAllInput = false;
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void onTenDDChange() {
+        try {
+            
+        } catch (Exception e) {
+        }
+    }
+
+    public int selectMode() {
+        if (insertTariff == null) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public void onSaveDiemdo() {
+        try {
+            if (isAdd) {
+                AddNewTariff();
+            } else {
+                if (checkInput()) {
+                    tariff.setUserMdfDtime(new Date(System.currentTimeMillis()));
+                    tariff.setUserMdfId(WorkingContext.getUserName());
+
+                    //update to db
+                    getIDiemDoRemote().update(tariff);
+                    //alert
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Chỉnh sửa thành công"));
+                    PrimeFaces.current().ajax().update("tariffForm:messages");
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public void AddNewTariff() {
+        try {
+            if (checkInput()) {
+
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public boolean checkInput() {
+        if (isAdd) {
+            if (tariff.getDenNgay().compareTo(tariff.getTuNgay()) <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Ngày kết thúc phải lớn hơn ngày bắt đầu!"));
+                PrimeFaces.current().ajax().update("tariffForm:messages");
+                return false;
+            }
+            if (tariff.getADiemdoTariffPK().getMaDiemdo() == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Mã điểm đo không được để trống!"));
+                PrimeFaces.current().ajax().update("tariffForm:messages");
+                return false;
+            }
+            if (tariff.getTuNgay() == null) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Ngày bắt đầu không được để trống!"));
+                PrimeFaces.current().ajax().update("tariffForm:messages");
+                return false;
+            }
+        } else {
+            if (tariff.getDenNgay().compareTo(tariff.getTuNgay()) <= 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Thông báo", "Ngày kết thúc phải lớn hơn ngày bắt đầu!"));
+                PrimeFaces.current().ajax().update("tariffForm:messages");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public List<ADiemdo> getListDiemdo() {
+        return listDiemdo;
+    }
+
+    public void setListDiemdo(List<ADiemdo> listDiemdo) {
+        this.listDiemdo = listDiemdo;
+    }
+
+    public boolean isLockTenDD() {
+        return lockTenDD;
+    }
+
+    public void setLockTenDD(boolean lockTenDD) {
+        this.lockTenDD = lockTenDD;
+    }
+
+    public boolean isLockTuNgay() {
+        return lockTuNgay;
+    }
+
+    public void setLockTuNgay(boolean lockTuNgay) {
+        this.lockTuNgay = lockTuNgay;
+    }
+
+    public boolean isLockAllInput() {
+        return lockAllInput;
+    }
+
+    public void setLockAllInput(boolean lockAllInput) {
+        this.lockAllInput = lockAllInput;
+    }
+
+    public ADiemdoTariff getTariff() {
+        return tariff;
+    }
+
+    public void setTariff(ADiemdoTariff tariff) {
+        this.tariff = tariff;
+    }
+
+    public IDiemDoRemote getIDiemDoRemote() {
+        try {
+            if (iDiemDoRemote == null) {
+                iDiemDoRemote = (IDiemDoRemote) EjbContext.getLocalEJBRemote(IDiemDoRemote.class.getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iDiemDoRemote;
+    }
+}

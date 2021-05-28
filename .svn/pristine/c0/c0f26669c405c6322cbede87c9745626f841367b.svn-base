@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">                
+                <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+            </ui:define>
+            <ui:define name="content">                                
+                <h:form id="formNhom">
+                    <div class="p-grid crud-demo">
+                        <p:growl id="messages" showDetail="true" />  
+                        <!--data table for nhom diem do-->
+                        <div class="ui-grid-col-4 card" style=" background: #FFFFFF">
+                            <p:toolbar id="tlBarNhom" style="border: none; padding-top: 0; background: #FFFFFF">
+                                <f:facet name="left">
+                                    <p:commandButton value="Thêm mới" icon="pi pi-plus" 
+                                                     styleClass="success-button" 
+                                                     style="margin-right: .5rem"
+                                                     actionListener="#{diemDoBean.onAddNhom}"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                    <p:commandButton value="Sửa" icon="pi pi-plus" 
+                                                     styleClass="primary-button"
+                                                     style="margin-right: .5rem"
+                                                     update="@this"
+                                                     actionListener="#{diemDoBean.onEditNhom}"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)">
+                                    </p:commandButton>
+                                    <p:commandButton value="Xóa" icon="pi pi-trash" 
+                                                     styleClass="danger-button" 
+                                                     actionListener="#{diemDoBean.onDeleteNhom}"                                                                                                                                              style="margin-right: .5rem"
+                                                     update="@this"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)">
+                                    </p:commandButton>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:dataTable widgetVar="listNhom" id="listNhom" var="item" 
+                                         value="#{diemDoBean.listDiemDoNhom}" 
+                                         selection="#{diemDoBean.listDiemDoNhomSelected}" 
+                                         rowKey="#{item.maNhomDd}" 
+                                         paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} Tổng: #{diemDoBean.listDiemDoNhom.size()}"
+                                         styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                <p:ajax event="rowSelect" />
+                                <p:ajax event="rowUnselect"/>
+                                <!--header-->
+                                <f:facet name="header">
+                                    <div class="customers-table-header">
+                                        <span style="font-weight: bold">Nhóm điểm đo</span>
+
+                                        <span class="ui-input-icon-left filter-container">
+                                            <i class="pi pi-search"></i>
+                                            <p:inputText id="globalFilter" onkeyup="PF('listNhom').filter()" placeholder="Tìm kiếm"/>
+                                        </span>
+                                    </div>
+                                </f:facet>
+                                <!--content of datatable-->
+                                <p:column selectionMode="multiple" style="text-align: center; width: 40px;"></p:column>
+                                <p:column headerText="Số thứ tự" style="text-align: right;"
+                                          filterBy="#{item.stt}" filterStyle="display:none; visibility:hidden;">
+                                    <h:outputText value="#{item.stt}" style="p-col-4"/>
+                                </p:column>
+                                <p:column headerText="Tên nhóm điểm đo" style="text-align: center;"
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{item.tenNhomDd}">
+                                    <h:outputText style="p-col-4" value="#{item.tenNhomDd}" />
+                                </p:column>
+                                <p:column headerText="Loại" style="text-align: center;"
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{item.typeid}">
+                                    <h:outputText style="p-col-4" value="#{item.typeid}" />
+                                </p:column>
+                            </p:dataTable> 
+                        </div>
+                        <!--dialog for table NhomDD-->
+                        <p:dialog header="Thông tin nhóm" width="450" showEffect="fade" 
+                                  modal="true" widgetVar="NewNhomDialog" id="NewNhomDialog"
+                                  responsive="true" appendTo="@(body)" closeOnEscape="true">
+                            <p:ajax event="close"/>
+                            <iframe id="iframeNewNhom" scrolling="no"
+                                    frameborder="0" width="100%" height="560px"></iframe>
+                        </p:dialog> 
+                        <p:confirmDialog widgetVar="deleteItem" showEffect="fade" width="300" 
+                                         message="Delete the product?" header="Confirm" severity="warn">
+                            <p:commandButton value="Yes" icon="pi pi-check" 
+                                             actionListener="#{diemDoBean.onDeleteNhom()}" 
+                                             process="@this" 
+                                             oncomplete="PF('deleteProductDialog').hide()"/>
+                            <p:commandButton value="No" type="button" styleClass="secondary-button" icon="pi pi-times" onclick="PF('deleteProductDialog').hide()" />
+                        </p:confirmDialog>
+
+
+
+                        <!--datatable for DiemDo-->
+                        <div class="ui-grid-col-8 card" style="background-color: #FFFFFF">
+                            <p:toolbar id="tlBarDiemDo" style="border: none; padding-top: 0; background: #FFFFFF">
+                                <f:facet name="left">
+                                    <p:commandButton value="Thêm mới" icon="pi pi-plus" 
+                                                     styleClass="success-button" 
+                                                     style="margin-right: .5rem"
+                                                     actionListener="#{diemDoBean.onAddDiemDo}"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                    <p:commandButton value="Sửa" icon="pi pi-plus" 
+                                                     styleClass="primary-button"
+                                                     style="margin-right: .5rem"
+                                                     update="@this"
+                                                     actionListener="#{diemDoBean.onEdiDiemDo}"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)">
+                                    </p:commandButton>
+                                    <p:commandButton value="Xóa" icon="pi pi-trash" 
+                                                     styleClass="danger-button" 
+                                                     actionListener="#{diemDoBean.onDeleteDiemDo()}"                                                                                                                                              style="margin-right: .5rem"
+                                                     update="@this"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)">
+                                    </p:commandButton>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <p:commandButton value="Ánh xạ" icon="pi pi-check" 
+                                                     styleClass="primary-button"
+                                                     actionListener ="#{diemDoBean.onAX}"
+                                                     update="@this"
+                                                     oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                </f:facet>
+                            </p:toolbar>
+                            <p:dataTable widgetVar="listDiemDo" id="listDiemDo" var="itemx" 
+                                         value="#{diemDoBean.listDiemdoMix}" reflow="true"
+                                         selection="#{diemDoBean.listDiemDoMixSelected}" 
+                                         rowKey="#{itemx.maDiemdo}" scrollable="true"
+                                         paginator="true" rows="10" rowSelectMode="add" 
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} Tổng: #{diemDoBean.listDiemdoMix.size()}"
+                                         styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+
+
+                                <f:facet name="header">
+                                    <div class="customers-table-header">
+                                        <span style="font-weight: bold">Điểm đo</span>
+
+                                        <span class="ui-input-icon-left filter-container">
+                                            <i class="pi pi-search"></i>
+                                            <p:inputText id="globalFilter" onkeyup="PF('listDiemDo').filter()" placeholder="Tìm kiếm"/>
+                                        </span>
+                                    </div>
+                                </f:facet>
+                                <p:column selectionMode="multiple" style="text-align: center; width: 40px;"></p:column>
+                                <p:column headerText="Số thứ tự" style="text-align: center;"
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.stt}">
+                                    <h:outputText value="#{itemx.stt}" />
+                                </p:column>
+                                <p:column headerText="Nhóm" style="text-align: center;"
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.tenNhomDD}">
+                                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{itemx.tenNhomDD}" />
+                                </p:column>
+                                <p:column headerText="Mã điểm đo" style="text-align: center;" 
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.maDiemdo}">
+                                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{itemx.maDiemdo}"/>
+                                </p:column>
+                                <p:column headerText="Tên điểm đo" style="text-align: center;"
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.tenDiemdo}">
+                                    <h:outputText value="#{itemx.tenDiemdo}" />
+                                </p:column>
+                                <p:column headerText="Loại điểm đo" style="text-align: center;"
+                                          filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.tenLoaiDD}">
+                                    <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{itemx.tenLoaiDD}" />
+                                </p:column>
+                                <p:column headerText="Tính chất" style="text-align: center;">
+                                    <h:outputText value="#{itemx.tenTcDD}" style="vertical-align: middle; margin-left: .5rem"/>
+                                </p:column>
+                                <p:column headerText="Cấp điện áp" style="text-align: center;">
+                                    <h:outputText value="#{itemx.ulevelDesc}" style="vertical-align: middle; margin-left: .5rem"/>
+                                </p:column>
+                                <p:column headerText="Đơn vị quản lý" style="text-align: center;">
+                                    <h:outputText value="#{itemx.orgDesc}" style="vertical-align: middle; margin-left: .5rem"/>
+                                </p:column>
+                                <p:column headerText="Ngày hiệu lực" style="text-align: center;">
+                                    <h:outputText value="#{itemx.ngayVh}" style="vertical-align: middle; margin-left: .5rem">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Trạng thái" style="text-align: center;">
+                                    <p:selectBooleanCheckbox value="#{itemx.trangThaiToBoolean}" disabled="true"
+                                                             style="vertical-align: middle; margin-left: .5rem"/>                                   
+                                </p:column>
+                                <p:column headerText="Ít vận hành" style="text-align: center;">
+                                    <p:selectBooleanCheckbox value="#{itemx.itVhToBoolean}" disabled="true"
+                                                             style="vertical-align: middle; margin-left: .5rem"/>
+                                </p:column>
+                                <p:column headerText="Ánh xạ" style="text-align: center;">
+                                    <p:selectBooleanCheckbox value="#{itemx.isAx}" disabled="true"
+                                                             style="vertical-align: middle; margin-left: .5rem"/>
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                        <!--dialog for table DiemDo-->
+                        <p:dialog header="Thông tin điểm đo" width="800px" height="560px" showEffect="fade" 
+                                  modal="true" widgetVar="NewDiemDoDialog" id="NewDiemDoDialog"
+                                  responsive="true" appendTo="@(body)" closeOnEscape="true" styleClass="background-color: #f4f7f9">
+                            <p:ajax event="close"/>
+                            <iframe id="iframeNewDiemDo" scrolling="no" style="overflow: hidden;"
+                                    frameborder="0" width="100%" height="550px"></iframe>
+                        </p:dialog> 
+                        <p:confirmDialog widgetVar="deleteItem" showEffect="fade" width="300" 
+                                         message="Xóa điểm đo này?" header="Confirm" severity="warn">
+                            <p:commandButton value="Yes" icon="pi pi-check" 
+                                             actionListener="#{diemDoBean.onDeleteNhom()}" 
+                                             process="@this" 
+                                             oncomplete="PF('deleteProductDialog').hide()"/>
+                            <p:commandButton value="No" type="button" styleClass="secondary-button" icon="pi pi-times" onclick="PF('deleteProductDialog').hide()" />
+                        </p:confirmDialog>
+
+                        <!--dialog for function AX-->
+                        <p:dialog header="Ánh xạ điểm đo"  width="870px" height="700px" showEffect="fade" 
+                                  modal="true" widgetVar="AXDialog" id="AXDialog"
+                                  responsive="true" closeOnEscape="true" styleClass="background-color: #f4f7f9">
+                            <iframe id="iframeAX" scrolling="no" style="overflow: hidden;"
+                                    frameborder="0" width="100%" height="690px"></iframe>
+                        </p:dialog> 
+
+                        <!--confirm Delete Nhom Dialog-->
+                        <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDelNhom"
+                                  modal="true" header="Delete" styleClass="background-color: #f4f7f9"
+                                  widgetVar="confirmDelNhom" resizable="false">
+                            <h:panelGrid id="dlgConfirmDelNhomContent" columns="2" cellspacing="5" 
+                                         style="padding-top: 5px;margin-bottom: 10px">
+                                <h:graphicImage url="/images/global/ConfirmDel.gif"/>
+                                <h:outputText value="Chắn chắn xóa thành phần này?"/>
+                            </h:panelGrid>
+                            <p:commandButton icon="accept" value="Đồng ý" 
+                                             oncomplete="PF('confirmDelNhom').hide()"
+                                             actionListener="#{diemDoBean.doDeleteNhom}" 
+                                             update="formNhom:@id(listNhom)"/>
+                            <p:commandButton icon="cancel" value="Hủy bỏ" 
+                                             onclick="PF('confirmDelNhom').hide()"/>
+                        </p:dialog>
+
+                        <!--confirm Delete Diem Do Dialog-->
+                        <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDelDiemdo"
+                                  modal="true" header="Delete" 
+                                  widgetVar="confirmDelDiemdo" resizable="false">
+                            <h:panelGrid id="dlgConfirmDelDiemdoContent" columns="2" cellspacing="5" 
+                                         style="padding-top: 5px;margin-bottom: 10px">
+                                <h:graphicImage url="/images/global/ConfirmDel.gif"/>
+                                <h:outputText value="Chắn chắn xóa thành phần này?"/>
+                            </h:panelGrid>
+                            <p:commandButton icon="accept" value="Đồng ý" 
+                                             oncomplete="PF('confirmDelDiemdo').hide()"
+                                             actionListener="#{diemDoBean.doDeleteDiemDo()}" 
+                                             update="formNhom:@id(listDiemDo)"/>
+                            <p:commandButton icon="cancel" value="Hủy bỏ" 
+                                             onclick="PF('confirmDelDiemdo').hide()"/>
+                        </p:dialog>
+
+                    </div>
+                    <script type="text/javascript">
+                        function handleCmdComplete(xhr, status, args) {
+                            if (args.Method)
+                            {
+                                switch (args.Method)
+                                {
+                                    case 'openDialogNhom':
+                                        var f = document.getElementById('iframeNewNhom');
+                                        f.src = "./diemdo_nhomdetail.jsf";
+                                        PF('NewNhomDialog').show();
+                                        break;
+                                    case 'openEditDialogNhom':
+                                        var f = document.getElementById('iframeNewNhom');
+                                        f.src = "./diemdo_nhomdetail.jsf?maNhomDD=" + args.maNhomDD;
+                                        PF('NewNhomDialog').show();
+                                        break;
+                                    case 'openDialogDiemDo':
+                                        var f = document.getElementById('iframeNewDiemDo');
+                                        f.src = "./diemdo_diemdodetail.jsf?";
+                                        PF('NewDiemDoDialog').show();
+                                        break;
+                                    case 'openEditDialogDiemDo':
+                                        var f = document.getElementById('iframeNewDiemDo');
+                                        f.src = "./diemdo_diemdodetail.jsf?maDD=" + args.maDD;
+                                        PF('NewDiemDoDialog').show();
+                                        break;
+                                    case 'openAXDialog':
+                                        var f = document.getElementById('iframeAX');
+                                        f.src = "./diemdo_ax.jsf?maDD=" + args.maDD;
+                                        PF('AXDialog').show();
+                                        break;
+                                    case 'openDeleteDialogNhom':
+                                        PF('confirmDelNhom').show();
+                                        break;
+                                    case 'openDeleteDialogDiemDo':
+                                        PF('confirmDelDiemdo').show();
+                                        break;
+                                }
+                            }
+                        }
+
+                    </script>
+                    <style type="text/css">
+                        .card{background: none}
+                        .products-buttonbar{
+                            margin-bottom: 10px;
+                            display: flex !important;
+                        }
+                        .ui-dialog-titlebar{
+                            background-color: #f4f7f9 !important;
+                        }
+                        .ui-dialog-content{
+                            background-color: #f4f7f9 !important;
+                        }
+                        .ui-widget-content{
+                            padding-top: 5px !important;
+                        }
+                    </style>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

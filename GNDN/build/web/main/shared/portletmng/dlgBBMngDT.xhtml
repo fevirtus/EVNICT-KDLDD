@@ -1,0 +1,322 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>BulletinBoard Read Log</title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+    </h:head>
+    <h:body>
+    <h:form id="formDlg">
+            <!-- Thêm xử lý locale ngày tháng do phiên bản 3.0.M3 chưa tự làm được -->
+            <script type="text/javascript">
+                setLocale('#{settingsBean.dateLocale}');
+            </script>
+            <p:toolbar>
+                <p:toolbarGroup align="left" rendered="#{pltBBMng.renderedFuncEdit('02.31')}">
+                    <p:commandButton ajax="false" icon="addnew" title="#{propSM_BB.BBAddNew}" styleClass="btnHeight"
+                                     actionListener="#{pltBBMng.onDtBBAddNew}" update="@form" oncomplete="document.getElementById('formDlg:txtBBSum').focus();"/>
+                    <p:commandButton ajax="false" icon="save" title="#{commonMessages.btnSave}" styleClass="btnHeight"
+                                     actionListener="#{pltBBMng.onDtBBSave}" update="formDlg:tbNavigator formDlg:txtBBID formDlg:txtAuthorInfo formDlg:btndtAttachCount formDlg:msgInfo lstRcvType"/>
+                    <p:commandButton ajax="false" icon="delete" title="#{propSM_BB.BBDel}" styleClass="btnHeight"
+                                     actionListener="#{pltBBMng.onDtBBDelete}" update="@form"/>
+                </p:toolbarGroup>
+                <p:toolbarGroup align="right">
+                    <h:panelGroup id="tbNavigator">
+                        <p:commandButton ajax="false" icon="resultset_first" styleClass="btnHeight"
+                                         actionListener="#{pltBBMng.onDtNvgFirst}" disabled="#{pltBBMng.dtNvgDisabledPrev}" update="@form"/>
+                        <p:commandButton ajax="false" icon="resultset_previous" styleClass="btnHeight"
+                                         actionListener="#{pltBBMng.onDtNvgPrev}" disabled="#{pltBBMng.dtNvgDisabledPrev}" update="@form"/>
+                        <p:commandButton ajax="false" icon="resultset_next" styleClass="btnHeight"
+                                         actionListener="#{pltBBMng.onDtNvgNext}" disabled="#{pltBBMng.dtNvgDisabledNext}" update="@form"/>
+                        <p:commandButton ajax="false" icon="resultset_last" styleClass="btnHeight"
+                                         actionListener="#{pltBBMng.onDtNvgLast}" disabled="#{pltBBMng.dtNvgDisabledNext}" update="@form"/>
+                    </h:panelGroup>
+                </p:toolbarGroup>
+            </p:toolbar>
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+            </p:outputPanel>
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDelDlg" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel">
+                <h:panelGrid id="confirmDel" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                    <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{pltBBMng.m_sDeleteMsg}"/>
+                </h:panelGrid>
+                <p:commandButton value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                 actionListener="#{pltBBMng.onDtConfirmEnd}" update="@form" />
+                <p:commandButton value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()" type="button" />
+            </p:dialog>
+                <p:focus/>
+                <table width="100%" cellpadding="0" cellspacing="5">
+                    <tr>
+                        <td width="120" align="right" valign="top">
+                            <h:outputText value="#{propSM_BB.BB}"/>
+                        </td>
+                        <td valign="middle">
+                            <h:inputText id="txtBBID" style="width: 150px;" disabled="true" value="#{pltBBMng.m_currentBBNew.bbmid}"/>
+                            <p:watermark value="#{commonMessages.lblAuto}" for="txtBBID"/>
+                            <h:inputText id="txtBBSum" style="width: 420px" value="#{pltBBMng.m_currentBBNew.bbmsum}" required="true" requiredMessage="#{propSM_BB.BBSum_Required}"/>
+                            <p:outputPanel id="opLongDetail">
+                                <!--                        <p:editor id="txtLongDetail" value="{pltBBMng.m_currentBBNew.bbmdetail}" widgetVar="editor"
+                                                                  rendered="{pltBBMng.m_bShowLongDetail}" height="200" width="650" />-->
+                                <p:editor id="txtLongDetail" value="#{pltBBMng.m_currentBBNew.bbmdetail}"  height="250" width="650"
+                                           widgetVar="editor"/>
+                            </p:outputPanel>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <h:outputText value="#{propSM_BB.BBDTDayValid}"/>
+                        </td>
+                        <td>
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <p:calendar locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}" value="#{pltBBMng.m_currentBBNew.edfrom}" converterMessage="#{commonMessages.msgDateInvalid}"/>
+                                        <h:outputLabel value=" - "/> <p:calendar locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}" value="#{pltBBMng.m_currentBBNew.edto}" converterMessage="#{commonMessages.msgDateInvalid}"/>
+                                    </td>
+                                    <td align="right">
+                                        <h:outputText value="#{propSM_BB.BBEnable} " style="#{settingsProp.StyleNote_Bold}"/>
+                                        <p:selectBooleanCheckbox value="#{pltBBMng.m_currentBBNew.enable}"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" valign="top">
+                            <h:outputText value="#{propSM_BB.BBColReceiver}"/>
+                        </td>
+                        <td>
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td valign="top" style="width: 30%">
+                                        <p:selectOneListbox  id="lstRcvType" style="width: 160px;height: 130px" value="#{pltBBMng.m_currentRcvTypeID}" disabled="#{pltBBMng.m_currentBBNew.ispublic!=null?pltBBMng.m_currentBBNew.ispublic:false}">
+                                            <f:selectItems value="#{pltBBMng.dsRcvType}"/>
+                                            <p:ajax event="valueChange" listener="#{pltBBMng.onChangeRcvObjType}" process="@this" update="dtRcvObj"/>
+                                        </p:selectOneListbox>
+                                        <p:selectBooleanCheckbox value="#{pltBBMng.m_currentBBNew.ispublic}">
+                                            <p:ajax event="valueChange" process="@this" update="lstRcvType"/>
+                                        </p:selectBooleanCheckbox> <h:outputText value=" #{propSM_BB.BBPublic}"/>
+                                    </td>
+                                    <td style="padding-left: 10px">
+                                        <p:outputPanel id="grdRcvObj">
+                                            <p:dataTable id="dtRcvObj" style="margin-bottom: 5px; margin-top: 0px" value="#{pltBBMng.pltBBMngRcvDataModel}" selection="#{pltBBMng.m_arrRcvObjChooose}"
+                                                         var="ro" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         scrollable="true"
+                                                         scrollHeight="90"
+                                                         paginator="true" paginatorAlwaysVisible="tue" paginatorPosition="bottom" rows="50" rowsPerPageTemplate="50,100,250">
+                                                <p:column selectionMode="multiple" style="text-align: center;" width="45"/>
+                                                <p:column headerText="#{propSM_BB.BBDTColID}" width="100">
+                                                    <h:outputText value="#{ro.id.rcvid}"/>
+                                                </p:column>
+                                                <p:column headerText="#{propSM_BB.BBDTColDesc}">
+                                                    <h:outputText value="#{ro.objdesc}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:outputPanel>
+                                        <p:commandButton icon="add" styleClass="btnHeight" title="#{propSM_BB.BBDTRcvAddNew}" rendered="#{pltBBMng.renderedFuncEdit('02.31')}"
+                                                         actionListener="#{pltBBMng.onDtRcvObjAdd}" process="dtRcvObj" update="dtRcvObj msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                        <p:commandButton icon="remove" styleClass="btnHeight" title="#{propSM_BB.BBDTRcvRemove}" rendered="#{pltBBMng.renderedFuncEdit('02.31')}"
+                                                         actionListener="#{pltBBMng.onDtRcvObjRemove}" update="dtRcvObj msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right">
+                            <h:outputText value="#{propSM_BB.BBColAttach}"/>
+                        </td>
+                        <td>
+                            <h:panelGrid columns="3">
+                                <h:outputText id="dtAttachCount" value="#{pltBBMng.dtAttachCount} "/>
+                                <p:commandButton id="btndtAttachCount" styleClass="btnHeight" title="#{commonMessages.btnOpen}" icon="ui-icon ui-icon-search"
+                                                 actionListener="#{pltBBMng.onDtAttachOpen}" oncomplete="handleCmdComplete(xhr, status, args)" disabled="#{pltBBMng.m_currentBBNew.bbmid==null}">
+                                </p:commandButton>
+
+                                <!--
+                                <p:commandButton id="btndtAttachCount" styleClass="btnHeight" title="{commonMessages.btnOpen}" icon="ui-icon ui-icon-search"
+                                                 onclick="OpenAttachFileDialog('{pltBBMng.m_currentBBNew.bbmid}')" actionListener="{pltBBMng.onDtAttachOpen}" disabled="{pltBBMng.m_currentBBNew.bbmid==null}">
+                                </p:commandButton>
+                                -->
+                            </h:panelGrid>
+                        </td>
+                    </tr>
+                </table> 
+                <p:separator/>
+                <h:panelGroup id="txtAuthorInfo">
+                    <table width="100%">
+                        <tr>
+                            <td><h:graphicImage url="/images/user/user_add.png"/><h:outputText value="#{pltBBMng.userCRInfo}" escape="false"/></td>
+                            <td align="right"><h:graphicImage url="/images/user/user_edit.png"/><h:outputText value="#{pltBBMng.userMDFInfo}" escape="false"/></td>
+                        </tr>
+                    </table>
+                </h:panelGroup>
+            <p:remoteCommand name="updateAttachCount" update="formDlg:dtAttachCount">
+                <f:setPropertyActionListener value="#{null}" target="#{pltBBMng.dtAttachCount}" />
+            </p:remoteCommand>
+
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgChoose" header="#{propSM_BB.BBDTRcvAddNew}" widgetVar="dlgChoose" width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" modal="true"
+                      onHide="document.getElementById('ifrdlgChoose').src='';">
+                <p:ajax event="close" listener="#{pltBBMng.onDtCloseDlgFunc}" update=""/>
+                <iframe id="ifrdlgChoose" scrolling="auto"
+                        frameborder="true"
+                        width="100%" height="#{settingsProp.L3DlgHeight-40}"
+                        style="border: none;margin-bottom: 5px">
+                </iframe>
+                <center>
+                <p:commandButton value="#{commonMessages.btnChoonse}" actionListener="#{pltBBMng.onDtDlgChooseClick}" icon="accept" oncomplete="PF('dlgChoose').hide();" update="grdRcvObj lstRcvType"/>
+                <p:commandButton value="#{commonMessages.btnCancel}" icon="cancel" oncomplete="PF('dlgChoose').hide();" />
+                </center>
+            </p:dialog>
+            <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenAttDialog" widgetVar="dlgOpenAttDialog" header="#{commonMessages.headerDlgAttachInfo}"
+                      width="#{settingsProp.NormalDlgWidth-60}" height="#{settingsProp.NormalDlgHeight-60}" closable="true"
+                      resizable="true" modal="true">
+                <p:ajax event="close" listener="#{pltBBMng.onDtDlgAfOtherClose}" update="formDlg:dtAttachCount"/>
+                <iframe id="ifrdlgOpenAttDialog" scrolling="auto"
+                        frameborder="true"
+                        width="100%" height="99%"
+                        style="border: none">
+                </iframe>
+            </p:dialog>
+        </h:form>
+        <script type="text/javascript">
+            var newwin;
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'BBDTRcvAddNew_BYUSER':
+                            var f = document.getElementById('ifrdlgChoose');
+                            f.src = "../dialog/dlgUser.jsf";
+                            PF('dlgChoose').show();
+                            break;
+                        case 'BBDTRcvAddNew_BYROLE':
+                            var f = document.getElementById('ifrdlgChoose');
+                            f.src = "../dialog/dlgRole.jsf";
+                            PF('dlgChoose').show();
+                            break;
+                        case 'BBDTRcvAddNew_BYDEPT':
+                            var f = document.getElementById('ifrdlgChoose');
+                            f.src = "../dialog/dlgDept.jsf";
+                            PF('dlgChoose').show();
+                            break;                      
+            case 'BBDTAttachOpen':
+                OpenAttachFileDialogFromParent(args.bbmid);
+                break;
+        }
+    }
+}
+function handleDlgComplete(xhr, status, args) {
+    //alert(args.dlgId + ':' + args.result);
+    //if(args.validationFailed) {
+    //   alert("Validation Failed");
+    //   return;
+    //}
+    if (args.result)
+    {
+        switch (args.dlgId)
+        {
+            case '':
+                PF('dlgChoose').hide();
+                break;
+
+        }
+    }
+}
+
+function handleCmdDelete(xhr, status, args) {
+    if (args.Method)
+    {
+        //alert(args.Method);
+        switch (args.Method)
+        {
+            case 'DelBB':
+                  PF('confirmDel').show();
+                //alert('Delete');
+                break;
+        }
+    }
+}
+
+function OpenAttachFileDialogFromParent(bbid) {
+    //var f = document.getElementById('ifrdlgOpenAttDialog');
+    var url = "#{settingsBean.webRootPath}/shared/attach/dlgAfOtherImages.jsf";
+    var temp = "?";
+    url = url + temp + "ObjTypeID=BBMSG";
+    temp = '&amp;' ;
+    url = url + temp + "ObjID=" + bbid;
+    parent.showdlgMainTopModal1(url);
+    //Tạo timmer để refresh
+    var timer = setInterval(function() {
+        if(parent.dlgMainTopModal1_closed()) {
+            clearInterval(timer);
+            updateAttachCount();
+            //alert("Closed and update");
+        }
+    }, 1000);   
+}
+
+function OpenAttachFileDialog(bbid) {
+    //var f = document.getElementById('ifrdlgOpenAttDialog');
+    var url = "#{settingsBean.webRootPath}/shared/attach/dlgAfOtherImages.jsf";
+    var temp = "?";
+    url = url + temp + "ObjTypeID=BBMSG";
+    temp = '&amp;' ;
+    url = url + temp + "ObjID=" + bbid;
+    //f.src = url;
+    //dlgOpenAttDialog').show();
+    //Gọi hàm mở cửa sổ không phải modal
+    var width  = #{settingsProp.NormalDlgWidth} + 50;
+    var height = #{settingsProp.NormalDlgHeight} + 50;
+    var left   = (screen.width  - width)/2;
+    var top    = (screen.height - height)/2;
+    var params = 'width='+width+', height='+height;
+    params += ', top='+top+', left='+left+',scrollbars=yes,location=no,status=no';
+    newwin=window.open(url,'popwindow',params);
+    if (window.focus) {newwin.focus()}
+    //Tạo timmer để refresh
+    var timer = setInterval(function() {
+        if(newwin.closed) {
+            clearInterval(timer);
+            updateAttachCount();
+        }
+    }, 1000);
+
+    //Test: Dùng hàm window.showModalDialog. Kết quả chạy không tốt trên IE
+    /*
+                var sFeatures="dialogHeight: #{settingsProp.MainDlgHeight};";
+                sFeatures += "dialogWidth: #{settingsProp.MainDlgWidth};";
+                sFeatures += "center: yes;";
+                sFeatures += "edge: sunken;";
+                sFeatures += "scroll: yes;";
+                sFeatures += "status: no;";
+                sFeatures += "resizeable: yes;";
+                window.showModalDialog(url,'ChildForm', sFeatures);
+                updateAttachCount();
+     */
+}
+
+function CallBackFileAttachDialog()
+{
+    //alert("Enter callback");
+    //This is so that the function doesn't do anything when the window is first opened
+    alert(newwin.location);
+    if(newwin.location != 'about:blank') {
+        //alert('Call back file attach dialog');
+        updateAttachCount();
+    }
+}
+
+        </script>
+    </h:body>
+</html>
+

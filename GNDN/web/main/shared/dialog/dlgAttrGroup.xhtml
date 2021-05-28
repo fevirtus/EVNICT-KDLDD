@@ -1,0 +1,132 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">                
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogProp"
+                                var="dlgProp" />
+                <p:dataTable emptyMessage="Không có dữ liệu" var="attGroup" id="dtAttGroup" value="#{attributeGroupDialog.dsS_AttGroupForGrid}"
+                              paginator="true" rows="100"
+                              scrollHeight="275"
+                              scrollable="true"
+                              paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,500" widgetVar="dtAttGroup">
+                    <p:column headerText="Chọn" width="45" style="text-align: center;">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{attributeGroupDialog.bCheckAll}" rendered="#{attributeGroupDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{attributeGroupDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{attGroup.bChecked}">
+                            <p:ajax listener="#{attributeGroupDialog.updateAttributeGroup}" />
+<!--                            <p:ajax event="valueChange" listener="{attributeGroupDialog.updateAttributeGroup}" update=":formDlg:dtAttGroup"/>
+                            <f:param name="attrgroupid" value="{attGroup.attrgroupid}"/>-->
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="attgroupid" width="120" headerText="Mã nhóm" filterBy="#{attGroup.attrgroupid}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{attGroup.attrgroupid}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="#{dlgProp.desc}" filterBy="#{attGroup.attrgroupdesc}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{attGroup.attrgroupdesc}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+      function  init()
+       {
+           if(!#{attributeGroupDialog.isPostBack})
+           {
+               if ("#{attributeGroupDialog.initFilter}" != "")
+               {
+                   var oFilter;
+                   oFilter=document.getElementById('formDlg:dtAttGroup:attgroupid_filter');
+                   var oTest;
+                   oTest=document.getElementById('formDlg:dtAttGroup:test');
+                   
+                   if (oFilter){
+                       oFilter.value= '#{attributeGroupDialog.initFilter}';
+                       oTest.value= '#{attributeGroupDialog.initFilter}';
+                       dtAttGroup.filter()
+                   }
+//                   oFilter.onkeyup = null;
+//                   oFilter.onkeydown = function(event) {return EnterFilter(event); };
+//                   oDesc.onkeyup = null;
+//                   oDesc.onkeydown = function(event) {return EnterFilter(event); };
+               };
+           }
+       }
+       function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtAttGroup:attgroupid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtAttGroup:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtAttGroup.update = "chk rowIndexVar";
+                dtAttGroup.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oDesc;
+                oDesc=document.getElementById('formDlg:dtAttGroup:desc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtAttGroup:test2');
+                oDesc.value=oTest.value;
+                //alert(oFilter.value);
+                dtAttGroup.update = "chk rowIndexVar";
+                dtAttGroup.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+       function EnterFilter(event){
+             if (event.keyCode == 13){
+                 dtAttGroup.filter();
+                 return false;
+             }
+             return true;
+       }
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtAttGroup:attgroupid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="./../../templates/tplEAM_Main.xhtml">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.report.prop.ReportProp"/>
+            </ui:define>
+            <ui:define name="content">                 
+                <h:panelGroup styleClass="header">
+                    <center>
+                        <h:outputLabel value="THÔNG KÊ THU THẬP DỮ LIỆU TSVH NGÀY "/>
+                        <h:outputLabel id="txtNgay" value=" #{s_ReportTTTSVanhanhBean.m_date_hienthi}">
+                            <!--<f:convertDateTime pattern = "dd/MM/yyyy" />-->
+                            <!--<f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}" locale="#{settingsBean.dateLocale}"/>-->
+                        </h:outputLabel>
+                    </center>
+                </h:panelGroup>                
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                </p:outputPanel>                
+                <table>
+                    <tr>
+                        <td><h:outputLabel value="DVQL" style="font-weight: bold"/></td>
+                        <td><h:selectOneMenu id="cbxOrgId" value="#{s_ReportTTTSVanhanhBean.m_OrgSelected}" style="width:250px;height: 25px">
+                                <f:selectItems value="#{s_ReportTTTSVanhanhBean.lstOrganization}" 
+                                               var="o" itemValue="#{o.orgid}" itemLabel="#{o.orgdesc}"/>
+<!--                                <p:ajax event="valueChange" listener="#{s_ReportTTTSVanhanhBean.onChangeFilter}" 
+                                        update=":formMain:dtProblem :formMain:dtProblem185"/>-->
+                            </h:selectOneMenu></td>
+                    </tr>
+                    <tr>
+                        <td><h:outputLabel value="Ngày" style="font-weight: bold"/> </td>
+                        <td><p:calendar locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateMask}"
+                                        timeZone="#{settingsBean.timeZone}"
+                                        id="id_Date" value="#{s_ReportTTTSVanhanhBean.m_date}"
+                                        showButtonPanel="true" style="width: 140px !important;height: 15px;"  >
+                                <p:ajax event="dateSelect" update="txtNgay"/>
+                            </p:calendar></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:commandButton value="Tải dữ liệu" actionListener="#{s_ReportTTTSVanhanhBean.onReload}" update=":formMain:msgInfo :formMain:dtBaocao"/>                                    
+                            <p:commandButton icon="excel" value="Xuất ra excel" ajax="false">
+                                <p:fileDownload value="#{s_ReportTTTSVanhanhBean.exportExcel()}" />
+                            </p:commandButton>
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable var="s" id="dtBaocao" widgetVar="dtBaocao" value="#{s_ReportTTTSVanhanhBean.lstData}" >
+                            <!--<p:dataTable var="s" id="dtBaocao" widgetVar="dtBaocao" value="#{s_ReportTTTSVanhanhBean.m_model}" />-->
+                                         <!--selection="#{s_ReportTTTSVanhanhBean.arr_selection}">-->
+                                <p:columnGroup type="header">
+                                    <p:row>
+                                        <p:column headerText="STT" style="width: 80px" rowspan="2"/>
+                                        <p:column headerText="Giờ (24H)" style="width: 120px" rowspan="2"/>
+                                        <p:column headerText="Tổng điểm đo" rowspan="2" style="width: 120px"/>
+                                        <p:column headerText="Thu thập đủ" style="width: 90px" rowspan="2"/>
+                                        <p:column headerText="Thu thập thiếu" style="width: 270px" colspan="3"/>
+                                        <p:column headerText="Không thu thập" style="width: 100px" rowspan="2"/>
+                                        <p:column headerText="Tỷ lệ (%)" style="width: 100px" rowspan="2"/>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="Tổng" style="width: 90px" />
+                                        <p:column headerText="Offline" style="width: 90px" />
+                                        <p:column headerText="Khác" style="width: 90px" />
+                                    </p:row>
+                                    <p:row>
+                                        <p:column headerText="(1)" style="width: 80px"/>
+                                        <p:column headerText="(2)" style="width: 120px"/>
+                                        <p:column headerText="(3)" style="width: 120px"/>
+                                        <p:column headerText="(4)" style="width: 90px" />
+                                        <p:column headerText="(5)" style="width: 90px" />
+                                        <p:column headerText="(6)" style="width: 90px" />
+                                        <p:column headerText="(7)" style="width: 90px" />
+                                        <p:column headerText="(8)" style="width: 100px" />
+                                        <p:column headerText="(9)" style="width: 100px" />
+                                    </p:row>
+                                </p:columnGroup>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.stt}">
+                                        <!--<f:converter converterId="IntegerConverter"/>-->
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.gio}"/>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.sltong}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.sldu}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.thuthapThieu_T}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.sloff}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.slfail}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.khongthuthap}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column style="text-align: center;" >
+                                    <h:outputText value="#{s.tile}">
+                                        <f:converter converterId="DoubleConverter"/>
+                                    </h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                </table>   
+
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'ReportView':
+                                    OpenReporView(args.rId);
+                                    break;
+                            }
+                        }
+                    }
+                    function OpenReporView(id) {
+                        var f = document.getElementById('frReportView');
+                        if (id)
+                            f.src = "#{settingsBean.webRootPath}/shared/report/S_ReportResult.jsf?rId=" + id;
+                    }
+
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

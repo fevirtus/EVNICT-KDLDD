@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pm="http://primefaces.org/mobile">
+    <body>
+        <ui:composition template="./../../templates/tplEAM_MainM.xhtml">
+            <ui:define name="head">                
+                <f:loadBundle var="msgs" basename="main.web.shared.report.prop.ReportProp"/>                
+            </ui:define>
+            <ui:define name="content">                 
+                <p:growl id="msgInfo" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <pm:field>
+                    <table width="100%">
+                        <tr>
+                            <td valign="top">
+                                <p:menu model="#{reportMBean.m_RootNode}">                                    
+                                </p:menu>
+                            </td>
+                            <td valign="top">
+
+                            </td>
+                        </tr>
+                    </table>
+                </pm:field>
+                <p:overlayPanel id="dlgReportSelect"                                
+                                widgetVar="dlgReportSelect"
+                                dynamic="false"
+                                at="right"
+                                showEffect="overlay">                            
+                    <p:dataList var="s" id="dtReportTab"                                
+                                value="#{reportMBean.dsReportsForGrid}"
+                                widgetVar="dtReportTab">
+                        <h:outputLink value="#" target="_blank">
+                            <p:ajax event="click" immediate="true" oncomplete="showDlgReport('#{s.rptid}');scroll(0,0);"/>
+                            <h:outputText value="#{s.rptdesc}"/>
+                        </h:outputLink>                            
+                    </p:dataList>
+                </p:overlayPanel>
+                <!-- Vùng dialog-->                
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+            #{sys_Uom_ExchangeDetails.assertFuncRight('02.13')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{sys_Uom_ExchangeDetails.renderedFuncEdit('02.13')}">
+                        <p:commandButton id="btnNew" disabled="#{sys_Uom_ExchangeDetails.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" ajax="false" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         actionListener="#{sys_Uom_ExchangeDetails.onAddNewUom}" />
+                        <p:commandButton id="btnUpdate" disabled="#{sys_Uom_ExchangeDetails.m_bSave}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Uom_ExchangeDetails.onSaveUom}" />
+                        <p:commandButton id="btnDel" disabled="#{sys_Uom_ExchangeDetails.m_bDelete}" styleClass="btnHeight"
+                                         icon="delete" ajax="false" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDeleteUomDetail}');"
+                                         actionListener="#{sys_Uom_ExchangeDetails.onDeleteUom}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                                 disabled="#{sys_Uom_ExchangeDetails.m_bFirst}" update="tbrHeader msgInfo pnlContent"
+                                                 actionListener="#{sys_Uom_ExchangeDetails.onNavigatorFirst}"/>
+                                <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{sys_Uom_ExchangeDetails.m_bPrevious}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{sys_Uom_ExchangeDetails.onNavigatorPrevious}"/>
+                                <p:commandButton id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{sys_Uom_ExchangeDetails.m_bNext}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                                 actionListener="#{sys_Uom_ExchangeDetails.onNavigatorNext}"/>
+                                <p:commandButton id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{sys_Uom_ExchangeDetails.m_bLast}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                                 actionListener="#{sys_Uom_ExchangeDetails.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <div style="height: #{settingsProp.MainDlgIFrameHeight_ToolbarTop_NoFooter}px;overflow:auto; margin-top: 5px;margin-bottom: 5px;" align="center">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="pnlContent">
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="Đơn vị tính đổi*"
+                                          styleClass="#{sys_Uom_ExchangeDetails.style_TxtCMID}"/>
+                            </td>
+                            <td >
+                            <p:selectOneMenu id="somFrom" value="#{sys_Uom_ExchangeDetails.uom.id.fromuomid}" style="margin-left: 2px;font-size:12px;" disabled="#{sys_Uom_ExchangeDetails.txtCMIDReadOnly}">
+                                <f:selectItems value="#{sys_Uom_ExchangeDetails.listUom}" var="from" itemLabel="#{from.uomdesc}" itemValue="#{from.uomid}"/>
+                            </p:selectOneMenu>
+                            </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="Đơn vị tính quy đổi*"
+                                          styleClass="#{sys_Uom_ExchangeDetails.style_TxtCMID}"/>
+                            </td>
+                            <td >
+                            <p:selectOneMenu id="somTo" value="#{sys_Uom_ExchangeDetails.uom.id.touomid}" style="margin-left: 2px;font-size:12px;" disabled="#{sys_Uom_ExchangeDetails.txtCMIDReadOnly}">
+                                <f:selectItems value="#{sys_Uom_ExchangeDetails.listUom}" var="to" itemLabel="#{to.uomdesc}" itemValue="#{to.uomid}"/>
+                            </p:selectOneMenu>
+                            </td>
+                            </tr>
+                            <tr style="height: 25px">
+                                <td width="150px" align="right">
+                            <h:outputText value="Hệ số quy đổi*"
+                                          styleClass="#{sys_Uom_ExchangeDetails.style_TxtMeterID}"/>
+                            </td>
+                            <td >
+                            <h:inputText id="txtUomDesc" style="width: 350px;"
+                                         value="#{sys_Uom_ExchangeDetails.uom.multipcoeff}">
+<!--                                <f:convertNumber pattern="###,###.###"/>-->
+                                <f:converter converterId="DoubleConverter"/>
+                            </h:inputText>
+                            </td>
+                            </tr>
+                        </table>
+
+                    </p:outputPanel>
+
+                </div>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

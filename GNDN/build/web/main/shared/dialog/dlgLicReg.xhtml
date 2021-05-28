@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogLicRegProp" var="dlgProp" />
+                <p:outputPanel id="msgInfo">
+                    <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    <!--<p:messages id="msgThis" showDetail="true"/>-->
+                    <!--Dùng confirmDialog bị lỗi hiển thị nên chuyển sang dialog -->
+                </p:outputPanel>
+
+                <h:panelGrid columns="1" cellspacing="5">
+                    <h:outputText value="#{dlgProp.lrlblRegcode}"/>
+                    <p:inputTextarea id="txtRegCode" style="width:#{settingsProp.NormalDlgWidth-40};height:140px;" value="#{licRegDialog.regCode}" />
+                    <h:panelGrid id="pnRegCodeErr" rendered="#{licRegDialog.regCodeErr!=null}" columns="1">
+                        <h:outputText value="#{licRegDialog.regCodeErr}" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputText value="#{dlgProp.lrlblLiccode}"/>
+                    <p:inputTextarea style="width:#{settingsProp.NormalDlgWidth-40};height:140px;" value="#{licRegDialog.licCode}"/>
+                    <h:outputText id="lbLicDesc" value="#{licRegDialog.licDesc}" escape="false"/>
+                    <!--<h:panelGroup rendered="{licRegDialog.commandVisible}">-->
+                    <h:panelGroup>
+                        <p:commandButton value="#{dlgProp.lrbtnCheckLic}" actionListener="#{licRegDialog.onCheckLicCode}" update="msgInfo lbLicDesc"/>
+                        <p:commandButton value="#{dlgProp.lrbtnSaveLiccode}" actionListener="#{licRegDialog.onSaveLicCode}" update="msgInfo lbLicDesc"/>
+                        <p:commandButton value="#{dlgProp.lrbtnCreateReg}" actionListener="#{licRegDialog.onReCreateRegCode}" update="msgInfo txtRegCode pnRegCodeErr"/>
+                    </h:panelGroup>
+                </h:panelGrid>
+            </h:form>
+        </h:body>
+    </f:view>
+
+</html>

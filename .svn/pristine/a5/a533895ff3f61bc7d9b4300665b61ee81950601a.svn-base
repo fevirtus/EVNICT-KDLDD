@@ -1,0 +1,59 @@
+<!--
+
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:ui="http://java.sun.com/jsf/facelets">
+<script type="text/javascript">
+function wlmOpenDlgHangMucDetail(hmid){
+    alert(hmid);
+    if (!hmid) return;
+    var url="#{settingsBean.webRootPath}/etm/dtc/chitiethangmuc.jsf?MaHM=" + hmid;
+    alert(url);
+    showdlgMainTopModal1(url);
+}
+function wlmOpenDlgOrgDetail(orgid){
+    if (!orgid) return;
+    var url="#{settingsBean.webRootPath}/shared/system/Sys_Site_details.jsf?ORGID=" + orgid;
+    showdlgMainTopModal1(url);
+}
+function wlmOpenProblemDetail(problemid){
+    alert(problemid);
+    if (!problemid) return;
+    var url="#{settingsBean.webRootPath}/eam/problem/problem_details.jsf?problemid=" + problemid;
+    showdlgMainTopModal1(url);
+}
+function wlmOpenDlgAssetDetail(assetid){
+    if (!assetid) return;
+    var url="#{settingsBean.webRootPath}/eam/dialog/dlgAsset_parameters.jsf?assetid=" + assetid;
+    showdlgMainTopModal1(url);
+}
+function wlmOpenDlgAssetParameter(assetid){
+    if (!assetid) return;
+    var url="#{settingsBean.webRootPath}/eam/dialog/dlgAsset_parameters.jsf?assetid=" + assetid;
+    showdlgMainTopModal1(url);
+}
+function wlmOpenDlgRouteDetail(routeid){
+    if (!routeid) return;
+    var url="#{settingsBean.webRootPath}/eam/asset/asset_route_detail.jsf?ARID=" + routeid;
+    showdlgMainTopModal1(url);
+}
+
+function wlmOpenDlgPmDetail(pmid){
+    if (!pmid) return;
+    var url="#{settingsBean.webRootPath}/eam/preventive/dlgPreventDt.jsf?Method=Edit&amp;PMID=" + pmid;
+    showdlgMainTopModal1(url);
+}
+
+function wlmOpenDlgMeterDetail(meterid){
+    if (!meterid) return;
+    var url="#{settingsBean.webRootPath}/eam/asset/asset_meter_detail.jsf?meterid=" + meterid;
+    showdlgMainTopModal1(url);
+}
+
+function wlmOpenDlgExperimentDetail(tnid){
+    if (!tnid) return;
+    var url="#{settingsBean.webRootPath}/eam/experiments/dlgExperimentMaintDt.jsf?Method=Edit&amp;eID=" + tnid;
+    showdlgMainTopModal1(url);
+}
+</script>
+</ui:composition>

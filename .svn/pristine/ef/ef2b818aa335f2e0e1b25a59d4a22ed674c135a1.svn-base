@@ -1,0 +1,185 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <style type="text/css">
+        .horzDivide {
+            margin-bottom: 3px;
+            margin-top: 3px;
+        }
+    </style>
+    <p:outputPanel id="msgInfo">
+        <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+        <!--<p:messages id="msgThis" showDetail="true"/>-->
+        <!--Dùng confirmDialog bị lỗi hiển thị nên chuyển sang dialog -->
+    </p:outputPanel>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDelDlg" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel">
+        <h:panelGrid id="confirmDel" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+            <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{SM_HomepageBean.m_sDeleteMsg}" escape="false"/>
+        </h:panelGrid>
+        <p:commandButton value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                         actionListener="#{SM_HomepageBean.onPltDeleteEnd}" update="grdPlt,:#{p:component('msgInfo')}" />
+        <p:commandButton value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()" type="button" />
+    </p:dialog>
+
+    <f:loadBundle basename="main.web.shared.system.prop.SM_HomepageProp" var="propSM_Homepage" />
+    <f:loadBundle basename="main.web.shared.dialog.prop.DialogCopyUsrHpProp" var="propDlgHp" />    
+    <p:toolbar styleClass="horzDivide">
+        <p:toolbarGroup align="left">
+            <p:commandButton icon="addnew" title="#{commonMessages.btnAddNew}" styleClass="btnHeight"
+                             actionListener="#{SM_HomepageBean.onPltAddNew}" update=":#{p:component('msgInfo')}" oncomplete="handleCmdComplete(xhr, status, args)"/>
+            <p:commandButton icon="edit" title="#{commonMessages.btnUpdate}" styleClass="btnHeight"
+                             actionListener="#{SM_HomepageBean.onPltEditToolbar}" update=":#{p:component('msgInfo')}" oncomplete="handleCmdComplete(xhr, status, args)"/>
+            <p:commandButton icon="delete" title="#{commonMessages.btnDelete}" styleClass="btnHeight"
+                             actionListener="#{SM_HomepageBean.onPltDeleteStart}" update=":#{p:component('msgInfo')} formMain:confirmDel" oncomplete="handleCmdComplete(xhr, status, args)"/>
+            <p:separator/>
+            <p:commandButton icon="copy" title="#{propDlgHp.title}" styleClass="btnHeight"
+                             onclick="showDlgCopyUsrHomepage();
+                                     return false;"/>
+            <p:separator/>
+            
+            <p:commandButton icon="open" title="Thay đổi ảnh Login" styleClass="btnHeight"
+                             onclick="showDlgChangeImageLogin();
+                                     return false;"/>
+
+        </p:toolbarGroup>
+    </p:toolbar>
+    <table>
+        <tr>
+            <td>
+                <h:outputText value="#{commonMessages.lblUser} "/>
+            </td>
+            <td>
+                <p:selectOneMenu id="cbUser" value="#{SM_HomepageBean.m_UserID}">
+                    <f:selectItems value="#{SM_HomepageBean.dsUserWithCheckAdmin}" var="us" itemLabel="#{us.userIDName}" itemValue="#{us.userid}"/>
+                    <p:ajax event="valueChange" listener="#{SM_HomepageBean.onComboUserChange}" update="formMain:grdPlt"/>
+                </p:selectOneMenu>
+            </td>
+        </tr>
+    </table>
+
+
+    <p:dataTable emptyMessage="Không có dữ liệu" id="grdPlt" var="dt" 
+                 value="#{SM_HomepageBean.pltHomePageDataModel}" 
+                 selection="#{SM_HomepageBean.m_lstPltChoose}"
+                 rowKey="#{dt.id.pltid}"
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 paginator="true" paginatorAlwaysVisible="false" paginatorPosition="bottom" rows="50" rowsPerPageTemplate="50,100,150">
+        <p:column selectionMode="multiple" style="text-align: center;" width="35"/>
+        <p:column width="35">
+            <p:commandButton icon="edit" title="#{commonMessages.btnUpdate}" styleClass="btnHeight"
+                             actionListener="#{SM_HomepageBean.onPltEditGrid}" update=":#{p:component('msgInfo')}" oncomplete="handleCmdComplete(xhr, status, args)"/>
+        </p:column>
+        <p:column headerText="#{propSM_Homepage.ColPos}" width="100" filterBy="#{dt.smLstPltpos.pposid}" filterOptions="#{SM_HomepageBean.dsPltPos}" filterMatchMode="exact" filterStyle="width:100%" sortBy="#{dt.smLstPltpos.pposdesc}">
+            <h:outputText value="#{dt.smLstPltpos.pposdesc}"/>
+        </p:column>
+        <p:column headerText="#{propSM_Homepage.ColOrd}"  style="text-align: center;" width="30">
+            <h:outputText value="#{dt.posord}"/>
+        </p:column>
+        <p:column headerText="#{propSM_Homepage.ColPltID}" filterBy="#{dt.id.pltid}" filterMatchMode="contains" 
+                  width="150" sortBy="#{dt.id.pltid}">
+            <h:outputText value="#{dt.id.pltid}"/>
+        </p:column>
+        <p:column headerText="#{propSM_Homepage.ColPltDesc}" filterBy="#{dt.smPortlet.pltdesc}" filterMatchMode="contains" filterStyle="width:100%" sortBy="#{dt.smPortlet.pltdesc}">
+            <h:outputText value="#{dt.smPortlet.pltdesc}"/>
+        </p:column>
+        <p:column headerText="#{propSM_Homepage.ColVisible}" style="text-align: center; width: 80px">
+            <h:selectBooleanCheckbox value="#{dt.visible}" disabled="true"/>
+        </p:column>
+        <p:column headerText="#{propSM_Homepage.ColIsFix}" style="text-align: center; width: 80px">
+            <h:selectBooleanCheckbox value="#{dt.smPortlet.isfix}" disabled="true"/>
+        </p:column>
+    </p:dataTable>
+    <br/>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgCommon" header="#{propSM_Homepage.MsgDlgHeaderAddNew}" widgetVar="dlgCommon" width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight+50}" modal="true"
+              onHide="document.getElementById('ifrDlgCommon').src='';">
+        <p:ajax event="close" listener="#{SM_HomepageBean.onCloseDlgFunc}" update="formMain:grdPlt"/>
+        <iframe id="ifrDlgCommon" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none;background: transparent !important;">
+        </iframe>
+    </p:dialog>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgCommon2" header="#{propSM_Homepage.MsgDlgHeaderEdit}" widgetVar="dlgCommon2" width="600" 
+              height="300" modal="true" resizable="false"
+              onHide="document.getElementById('ifrDlgCommon2').src='';">
+        <p:ajax event="close" listener="#{SM_HomepageBean.onCloseDlgFunc}" update="formMain:grdPlt"/>
+        <iframe id="ifrDlgCommon2" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none;background: transparent !important;">
+        </iframe>
+    </p:dialog>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgCopyUserHmpage" header="#{propDlgHp.title}" widgetVar="dlgCopyUserHmpage" width="550" height="200" modal="true"
+              onHide="document.getElementById('ifrdlgCopyUserHmpage').src='';">
+        <p:ajax event="close" listener="#{SM_HomepageBean.onCloseDlgFunc}" update="formMain:grdPlt"/>
+        <iframe id="ifrdlgCopyUserHmpage" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none;background: transparent !important;">
+        </iframe>
+    </p:dialog>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgChangeImageLogin" header="Thay đổi ảnh Login" widgetVar="dlgChangeImageLogin" width="550" height="270" modal="true"
+              onHide="document.getElementById('ifrdlgChangeImageLogin').src='';">
+        <p:ajax event="close" listener="#{SM_HomepageBean.onCloseDlgFunc}"/>
+        <iframe id="ifrdlgChangeImageLogin" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none;background: transparent !important;">
+        </iframe>
+    </p:dialog>
+    <script type="text/javascript">
+        function handleCmdComplete(xhr, status, args) {
+            if (args.Method)
+            {
+                switch (args.Method)
+                {
+                    case 'DelHomepagePlt':
+                          PF('confirmDel').show();
+                        break;
+                    case 'AddNewHomepagePlt':
+                        var f = document.getElementById('ifrDlgCommon');
+                        f.src = "#{settingsBean.webRootPath}/shared/dialogDetail/dlgHomepagePltAddNew.jsf?Method=AddNewHomepagePlt&amp;hpid=" + args.hpid + "&amp;userid=" + args.userid;
+                        PF('dlgCommon').show();
+                        break;
+                    case 'EditHomepagePlt':
+                        var f = document.getElementById('ifrDlgCommon2');
+                        f.src = "#{settingsBean.webRootPath}/shared/dialogDetail/dlgHomepagePltDt.jsf?Method=EditHomepagePlt&amp;hpid=" + args.hpid + "&amp;pltid=" + args.pltid + "&amp;userid=" + args.userid;
+                        PF('dlgCommon2').show();
+                        break;
+                }
+            }
+        }
+        function hideDlgHomepagePltAddNew()
+        {
+            PF('dlgCommon').hide();
+        }
+        function hideDlgHomepagePltUpdate()
+        {
+            PF('dlgCommon2').hide();
+        }
+
+        function showDlgCopyUsrHomepage()
+        {
+            var s = document.getElementById('formMain:cbUser').value;
+            var f = document.getElementById('ifrdlgCopyUserHmpage');
+            f.src = "#{settingsBean.webRootPath}/shared/dialog/dlgCopyUsrHomepage.jsf?userid=" + s;
+            PF('dlgCopyUserHmpage').show();
+        }
+        
+        function showDlgChangeImageLogin()
+        {            
+            var f = document.getElementById('ifrdlgChangeImageLogin');
+            f.src = "#{settingsBean.webRootPath}/shared/dialog/dlgChangeImageLogin.jsf";
+            PF('dlgChangeImageLogin').show();
+        }
+
+        function hideDlgCopyUsrHomepage()
+        {
+            PF('dlgCopyUserHmpage').hide();
+        }
+
+    </script>
+</ui:composition>

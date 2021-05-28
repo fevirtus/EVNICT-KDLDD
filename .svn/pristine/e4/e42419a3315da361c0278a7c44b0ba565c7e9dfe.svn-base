@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.report.prop.ReportProp"/>
+            </ui:define>
+            <ui:define name="content">     
+                <h:form id="frmRpt">
+                    <h:panelGroup styleClass="header">
+                        <h:outputText value="Hệ thống báo cáo" />
+                    </h:panelGroup>                
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                    </p:outputPanel>                
+
+                    <p:layout id="layoutAsset" style="height:auto;" >
+                        <p:layoutUnit id="layoutAsset1" gutter="1" position="west" size="300" resizable="true" collapsible="true">
+                            <p:tree style="width:500px;height: auto;border: 0px" id="trvReportGroup" widgetVar="trvReportGroup" 
+                                    value="#{reportBean.m_RootNode}" var="node" cache="false"
+                                    selectionMode="single" selection="#{reportBean.selectedNode}">
+                                <p:ajax event="select"  process="@this" update="frmRpt:dtReportTab" 
+                                        listener="#{reportBean.onNodeSelect}" />
+                                <p:treeNode collapsedIcon="ui-icon ui-icon-folder-collapsed" expandedIcon="ui-icon ui-icon-folder-open">
+                                    <h:outputText value="#{node.note}" />
+                                </p:treeNode>
+                            </p:tree>
+                        </p:layoutUnit>
+                        <p:layoutUnit id="layoutAsset2" gutter="1" position="center" collapsible="true" style="width:100px;" >
+                            <p:dataTable var="s" id="dtReportTab"                                          
+                                         scrollable="true"
+                                         selectionMode="single"
+                                         value="#{reportBean.reportDataModel}"
+                                         emptyMessage="" selection="#{reportBean.selectReports}" widgetVar="dtReportTab">                            
+                                <p:ajax event="rowSelect" listener="#{reportBean.onRowSelect}" oncomplete="handleCmdComplete(xhr, status, args);"/>                            
+                                <p:column width="50" headerText="Stt" filterBy="#{s.rptord}" filterMatchMode="contains" filterStyle="width:97%">
+                                    <h:panelGroup styleClass="fa fa-bar-chart" style="color: #2F7ED8;margin-right: 5px!important;"/>
+                                    <h:outputText value="#{s.rptord}"/>
+                                </p:column>
+                                <p:column headerText="Báo cáo" filterBy="#{s.rptdesc}" filterMatchMode="contains" filterStyle="width:97%">
+                                    <h:outputText value="#{s.rptdesc}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:layoutUnit>
+                        <p:layoutUnit position="east" size="500">
+                            <iframe id="frReportView" scrolling="no"
+                                    frameborder="0" width="100%" height="99%">
+                            </iframe>
+                        </p:layoutUnit>
+                    </p:layout>
+                </h:form>
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'ReportView':
+                                    OpenReporView(args.rId);
+                                    break;
+                            }
+                        }
+                    }
+                    function OpenReporView(id) {
+                        var f = document.getElementById('frReportView');
+                        if (id)
+                                f.src = "#{settingsBean.webRootPath}/main/shared/report/S_ReportResult.jsf?rId=" + id;
+                    }
+
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

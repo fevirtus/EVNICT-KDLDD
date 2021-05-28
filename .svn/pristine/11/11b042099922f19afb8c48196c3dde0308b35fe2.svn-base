@@ -1,0 +1,449 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package dulieuthuthap;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author Admin
+ */
+@Entity
+@Table(name = "M_HISTORY_SANLUONG")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "MHistorySanluong.findAll", query = "SELECT m FROM MHistorySanluong m"),
+    @NamedQuery(name = "MHistorySanluong.findByMaDiemdo", query = "SELECT m FROM MHistorySanluong m WHERE m.mHistorySanluongPK.maDiemdo = :maDiemdo"),
+    @NamedQuery(name = "MHistorySanluong.findByThang", query = "SELECT m FROM MHistorySanluong m WHERE m.mHistorySanluongPK.thang = :thang"),
+    @NamedQuery(name = "MHistorySanluong.findByNam", query = "SELECT m FROM MHistorySanluong m WHERE m.mHistorySanluongPK.nam = :nam"),
+    @NamedQuery(name = "MHistorySanluong.findByLoai", query = "SELECT m FROM MHistorySanluong m WHERE m.mHistorySanluongPK.loai = :loai"),
+    @NamedQuery(name = "MHistorySanluong.findByKenh", query = "SELECT m FROM MHistorySanluong m WHERE m.kenh = :kenh"),
+    @NamedQuery(name = "MHistorySanluong.findByStt", query = "SELECT m FROM MHistorySanluong m WHERE m.stt = :stt"),
+    @NamedQuery(name = "MHistorySanluong.findByValBtDk", query = "SELECT m FROM MHistorySanluong m WHERE m.valBtDk = :valBtDk"),
+    @NamedQuery(name = "MHistorySanluong.findByValBtCk", query = "SELECT m FROM MHistorySanluong m WHERE m.valBtCk = :valBtCk"),
+    @NamedQuery(name = "MHistorySanluong.findByValCdDk", query = "SELECT m FROM MHistorySanluong m WHERE m.valCdDk = :valCdDk"),
+    @NamedQuery(name = "MHistorySanluong.findByValCdCk", query = "SELECT m FROM MHistorySanluong m WHERE m.valCdCk = :valCdCk"),
+    @NamedQuery(name = "MHistorySanluong.findByValTdDk", query = "SELECT m FROM MHistorySanluong m WHERE m.valTdDk = :valTdDk"),
+    @NamedQuery(name = "MHistorySanluong.findByValTdCk", query = "SELECT m FROM MHistorySanluong m WHERE m.valTdCk = :valTdCk"),
+    @NamedQuery(name = "MHistorySanluong.findByValSgDk", query = "SELECT m FROM MHistorySanluong m WHERE m.valSgDk = :valSgDk"),
+    @NamedQuery(name = "MHistorySanluong.findByValSgCk", query = "SELECT m FROM MHistorySanluong m WHERE m.valSgCk = :valSgCk"),
+    @NamedQuery(name = "MHistorySanluong.findByValVcDk", query = "SELECT m FROM MHistorySanluong m WHERE m.valVcDk = :valVcDk"),
+    @NamedQuery(name = "MHistorySanluong.findByValVcCk", query = "SELECT m FROM MHistorySanluong m WHERE m.valVcCk = :valVcCk"),
+    @NamedQuery(name = "MHistorySanluong.findBySlBtDd", query = "SELECT m FROM MHistorySanluong m WHERE m.slBtDd = :slBtDd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlCdDd", query = "SELECT m FROM MHistorySanluong m WHERE m.slCdDd = :slCdDd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlTdDd", query = "SELECT m FROM MHistorySanluong m WHERE m.slTdDd = :slTdDd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlSgDd", query = "SELECT m FROM MHistorySanluong m WHERE m.slSgDd = :slSgDd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlVcDd", query = "SELECT m FROM MHistorySanluong m WHERE m.slVcDd = :slVcDd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlBtKdd", query = "SELECT m FROM MHistorySanluong m WHERE m.slBtKdd = :slBtKdd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlCdKdd", query = "SELECT m FROM MHistorySanluong m WHERE m.slCdKdd = :slCdKdd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlTdKdd", query = "SELECT m FROM MHistorySanluong m WHERE m.slTdKdd = :slTdKdd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlSgKdd", query = "SELECT m FROM MHistorySanluong m WHERE m.slSgKdd = :slSgKdd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlVcKdd", query = "SELECT m FROM MHistorySanluong m WHERE m.slVcKdd = :slVcKdd"),
+    @NamedQuery(name = "MHistorySanluong.findBySlBtSum", query = "SELECT m FROM MHistorySanluong m WHERE m.slBtSum = :slBtSum"),
+    @NamedQuery(name = "MHistorySanluong.findBySlCdSum", query = "SELECT m FROM MHistorySanluong m WHERE m.slCdSum = :slCdSum"),
+    @NamedQuery(name = "MHistorySanluong.findBySlTdSum", query = "SELECT m FROM MHistorySanluong m WHERE m.slTdSum = :slTdSum"),
+    @NamedQuery(name = "MHistorySanluong.findBySlSgSum", query = "SELECT m FROM MHistorySanluong m WHERE m.slSgSum = :slSgSum"),
+    @NamedQuery(name = "MHistorySanluong.findBySlVcSum", query = "SELECT m FROM MHistorySanluong m WHERE m.slVcSum = :slVcSum"),
+    @NamedQuery(name = "MHistorySanluong.findBySlS3Qt", query = "SELECT m FROM MHistorySanluong m WHERE m.slS3Qt = :slS3Qt"),
+    @NamedQuery(name = "MHistorySanluong.findByUserid", query = "SELECT m FROM MHistorySanluong m WHERE m.userid = :userid"),
+    @NamedQuery(name = "MHistorySanluong.findBySysDate", query = "SELECT m FROM MHistorySanluong m WHERE m.sysDate = :sysDate"),
+    @NamedQuery(name = "MHistorySanluong.findByMaDiemdoRef", query = "SELECT m FROM MHistorySanluong m WHERE m.maDiemdoRef = :maDiemdoRef"),
+    @NamedQuery(name = "MHistorySanluong.findByOrgidRef", query = "SELECT m FROM MHistorySanluong m WHERE m.orgidRef = :orgidRef"),
+    @NamedQuery(name = "MHistorySanluong.findByIsLock", query = "SELECT m FROM MHistorySanluong m WHERE m.isLock = :isLock")})
+public class MHistorySanluong implements Serializable {
+    private static final long serialVersionUID = 1L;
+    @EmbeddedId
+    protected MHistorySanluongPK mHistorySanluongPK;
+    @Column(name = "KENH")
+    private String kenh;
+    @Column(name = "STT")
+    private BigInteger stt;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "VAL_BT_DK")
+    private BigDecimal valBtDk;
+    @Column(name = "VAL_BT_CK")
+    private BigDecimal valBtCk;
+    @Column(name = "VAL_CD_DK")
+    private BigDecimal valCdDk;
+    @Column(name = "VAL_CD_CK")
+    private BigDecimal valCdCk;
+    @Column(name = "VAL_TD_DK")
+    private BigDecimal valTdDk;
+    @Column(name = "VAL_TD_CK")
+    private BigDecimal valTdCk;
+    @Column(name = "VAL_SG_DK")
+    private BigDecimal valSgDk;
+    @Column(name = "VAL_SG_CK")
+    private BigDecimal valSgCk;
+    @Column(name = "VAL_VC_DK")
+    private BigDecimal valVcDk;
+    @Column(name = "VAL_VC_CK")
+    private BigDecimal valVcCk;
+    @Column(name = "SL_BT_DD")
+    private BigDecimal slBtDd;
+    @Column(name = "SL_CD_DD")
+    private BigDecimal slCdDd;
+    @Column(name = "SL_TD_DD")
+    private BigDecimal slTdDd;
+    @Column(name = "SL_SG_DD")
+    private BigDecimal slSgDd;
+    @Column(name = "SL_VC_DD")
+    private BigDecimal slVcDd;
+    @Column(name = "SL_BT_KDD")
+    private BigDecimal slBtKdd;
+    @Column(name = "SL_CD_KDD")
+    private BigDecimal slCdKdd;
+    @Column(name = "SL_TD_KDD")
+    private BigDecimal slTdKdd;
+    @Column(name = "SL_SG_KDD")
+    private BigDecimal slSgKdd;
+    @Column(name = "SL_VC_KDD")
+    private BigDecimal slVcKdd;
+    @Column(name = "SL_BT_SUM")
+    private BigDecimal slBtSum;
+    @Column(name = "SL_CD_SUM")
+    private BigDecimal slCdSum;
+    @Column(name = "SL_TD_SUM")
+    private BigDecimal slTdSum;
+    @Column(name = "SL_SG_SUM")
+    private BigDecimal slSgSum;
+    @Column(name = "SL_VC_SUM")
+    private BigDecimal slVcSum;
+    @Column(name = "SL_S3_QT")
+    private BigDecimal slS3Qt;
+    @Column(name = "USERID")
+    private String userid;
+    @Column(name = "SYS_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date sysDate;
+    @Column(name = "MA_DIEMDO_REF")
+    private String maDiemdoRef;
+    @Column(name = "ORGID_REF")
+    private String orgidRef;
+    @Column(name = "IS_LOCK")
+    private BigInteger isLock;
+
+    public MHistorySanluong() {
+    }
+
+    public MHistorySanluong(MHistorySanluongPK mHistorySanluongPK) {
+        this.mHistorySanluongPK = mHistorySanluongPK;
+    }
+
+    public MHistorySanluong(String maDiemdo, BigInteger thang, BigInteger nam, String loai) {
+        this.mHistorySanluongPK = new MHistorySanluongPK(maDiemdo, thang, nam, loai);
+    }
+
+    public MHistorySanluongPK getMHistorySanluongPK() {
+        return mHistorySanluongPK;
+    }
+
+    public void setMHistorySanluongPK(MHistorySanluongPK mHistorySanluongPK) {
+        this.mHistorySanluongPK = mHistorySanluongPK;
+    }
+
+    public String getKenh() {
+        return kenh;
+    }
+
+    public void setKenh(String kenh) {
+        this.kenh = kenh;
+    }
+
+    public BigInteger getStt() {
+        return stt;
+    }
+
+    public void setStt(BigInteger stt) {
+        this.stt = stt;
+    }
+
+    public BigDecimal getValBtDk() {
+        return valBtDk;
+    }
+
+    public void setValBtDk(BigDecimal valBtDk) {
+        this.valBtDk = valBtDk;
+    }
+
+    public BigDecimal getValBtCk() {
+        return valBtCk;
+    }
+
+    public void setValBtCk(BigDecimal valBtCk) {
+        this.valBtCk = valBtCk;
+    }
+
+    public BigDecimal getValCdDk() {
+        return valCdDk;
+    }
+
+    public void setValCdDk(BigDecimal valCdDk) {
+        this.valCdDk = valCdDk;
+    }
+
+    public BigDecimal getValCdCk() {
+        return valCdCk;
+    }
+
+    public void setValCdCk(BigDecimal valCdCk) {
+        this.valCdCk = valCdCk;
+    }
+
+    public BigDecimal getValTdDk() {
+        return valTdDk;
+    }
+
+    public void setValTdDk(BigDecimal valTdDk) {
+        this.valTdDk = valTdDk;
+    }
+
+    public BigDecimal getValTdCk() {
+        return valTdCk;
+    }
+
+    public void setValTdCk(BigDecimal valTdCk) {
+        this.valTdCk = valTdCk;
+    }
+
+    public BigDecimal getValSgDk() {
+        return valSgDk;
+    }
+
+    public void setValSgDk(BigDecimal valSgDk) {
+        this.valSgDk = valSgDk;
+    }
+
+    public BigDecimal getValSgCk() {
+        return valSgCk;
+    }
+
+    public void setValSgCk(BigDecimal valSgCk) {
+        this.valSgCk = valSgCk;
+    }
+
+    public BigDecimal getValVcDk() {
+        return valVcDk;
+    }
+
+    public void setValVcDk(BigDecimal valVcDk) {
+        this.valVcDk = valVcDk;
+    }
+
+    public BigDecimal getValVcCk() {
+        return valVcCk;
+    }
+
+    public void setValVcCk(BigDecimal valVcCk) {
+        this.valVcCk = valVcCk;
+    }
+
+    public BigDecimal getSlBtDd() {
+        return slBtDd;
+    }
+
+    public void setSlBtDd(BigDecimal slBtDd) {
+        this.slBtDd = slBtDd;
+    }
+
+    public BigDecimal getSlCdDd() {
+        return slCdDd;
+    }
+
+    public void setSlCdDd(BigDecimal slCdDd) {
+        this.slCdDd = slCdDd;
+    }
+
+    public BigDecimal getSlTdDd() {
+        return slTdDd;
+    }
+
+    public void setSlTdDd(BigDecimal slTdDd) {
+        this.slTdDd = slTdDd;
+    }
+
+    public BigDecimal getSlSgDd() {
+        return slSgDd;
+    }
+
+    public void setSlSgDd(BigDecimal slSgDd) {
+        this.slSgDd = slSgDd;
+    }
+
+    public BigDecimal getSlVcDd() {
+        return slVcDd;
+    }
+
+    public void setSlVcDd(BigDecimal slVcDd) {
+        this.slVcDd = slVcDd;
+    }
+
+    public BigDecimal getSlBtKdd() {
+        return slBtKdd;
+    }
+
+    public void setSlBtKdd(BigDecimal slBtKdd) {
+        this.slBtKdd = slBtKdd;
+    }
+
+    public BigDecimal getSlCdKdd() {
+        return slCdKdd;
+    }
+
+    public void setSlCdKdd(BigDecimal slCdKdd) {
+        this.slCdKdd = slCdKdd;
+    }
+
+    public BigDecimal getSlTdKdd() {
+        return slTdKdd;
+    }
+
+    public void setSlTdKdd(BigDecimal slTdKdd) {
+        this.slTdKdd = slTdKdd;
+    }
+
+    public BigDecimal getSlSgKdd() {
+        return slSgKdd;
+    }
+
+    public void setSlSgKdd(BigDecimal slSgKdd) {
+        this.slSgKdd = slSgKdd;
+    }
+
+    public BigDecimal getSlVcKdd() {
+        return slVcKdd;
+    }
+
+    public void setSlVcKdd(BigDecimal slVcKdd) {
+        this.slVcKdd = slVcKdd;
+    }
+
+    public BigDecimal getSlBtSum() {
+        return slBtSum;
+    }
+
+    public void setSlBtSum(BigDecimal slBtSum) {
+        this.slBtSum = slBtSum;
+    }
+
+    public BigDecimal getSlCdSum() {
+        return slCdSum;
+    }
+
+    public void setSlCdSum(BigDecimal slCdSum) {
+        this.slCdSum = slCdSum;
+    }
+
+    public BigDecimal getSlTdSum() {
+        return slTdSum;
+    }
+
+    public void setSlTdSum(BigDecimal slTdSum) {
+        this.slTdSum = slTdSum;
+    }
+
+    public BigDecimal getSlSgSum() {
+        return slSgSum;
+    }
+
+    public void setSlSgSum(BigDecimal slSgSum) {
+        this.slSgSum = slSgSum;
+    }
+
+    public BigDecimal getSlVcSum() {
+        return slVcSum;
+    }
+
+    public void setSlVcSum(BigDecimal slVcSum) {
+        this.slVcSum = slVcSum;
+    }
+
+    public BigDecimal getSlS3Qt() {
+        return slS3Qt;
+    }
+
+    public void setSlS3Qt(BigDecimal slS3Qt) {
+        this.slS3Qt = slS3Qt;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+    public Date getSysDate() {
+        return sysDate;
+    }
+
+    public void setSysDate(Date sysDate) {
+        this.sysDate = sysDate;
+    }
+
+    public String getMaDiemdoRef() {
+        return maDiemdoRef;
+    }
+
+    public void setMaDiemdoRef(String maDiemdoRef) {
+        this.maDiemdoRef = maDiemdoRef;
+    }
+
+    public String getOrgidRef() {
+        return orgidRef;
+    }
+
+    public void setOrgidRef(String orgidRef) {
+        this.orgidRef = orgidRef;
+    }
+
+    public BigInteger getIsLock() {
+        return isLock;
+    }
+
+    public void setIsLock(BigInteger isLock) {
+        this.isLock = isLock;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (mHistorySanluongPK != null ? mHistorySanluongPK.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof MHistorySanluong)) {
+            return false;
+        }
+        MHistorySanluong other = (MHistorySanluong) object;
+        if ((this.mHistorySanluongPK == null && other.mHistorySanluongPK != null) || (this.mHistorySanluongPK != null && !this.mHistorySanluongPK.equals(other.mHistorySanluongPK))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "dulieuthuthap.MHistorySanluong[ mHistorySanluongPK=" + mHistorySanluongPK + " ]";
+    }
+    
+}

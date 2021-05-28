@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"                
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <style>
+        .ui-datalist-content
+        {
+            border: none !important;
+        }
+        .ui-datalist-data
+        {
+            background: transparent !important;
+        }
+    </style>
+    <p:panel id="pnlAssetHis" style="border: 0px !important;">
+        <p:dataTable emptyMessage="Không có dữ liệu" id="dtAssetMoveHis" 
+                     value="#{assetHisViewBean.a_Asset_His_Move_Views}" 
+                     var="movehis1" paginator="true" 
+                     rows="100"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     paginatorPosition="bottom"
+                     scrollHeight="430"
+                     scrollable="true"                                 
+                     rowsPerPageTemplate="50,100,150,200">
+            <p:column filterBy="#{movehis1.assetdesc}" filterMatchMode="contains" filterStyle="width: 99%">                                
+                <h:outputText value="#{movehis1.type} "/>
+                <h:outputText value="#{movehis1.assetdesc}" style="font-weight: bold"/>                
+                <p:dataList value="#{movehis1.content}" style="border: none" var="itemData" type="unordered">
+                    <h:outputLabel escape="false" value="#{itemData}"/>
+                </p:dataList>                
+            </p:column>            
+    </p:dataTable>
+</p:panel>    
+</ui:composition>

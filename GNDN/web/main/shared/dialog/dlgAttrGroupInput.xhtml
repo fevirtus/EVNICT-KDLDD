@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Attributes Group</title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+        <f:loadBundle var="this" basename="main.web.shared.admin.prop.ObjGrantProp"/>
+    </h:head>
+    <h:body>
+    <h:form onsubmit="return false" id="formDlg">
+        <p:outputPanel id="msgInfo">
+            <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+            <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+        </p:outputPanel>
+        <h:inputHidden id="hfObjTypeId" value="#{attGroupInputDlgBean.objTypeId}"/>
+        <h:inputHidden id="hfObjId" value="#{attGroupInputDlgBean.objId}"/>
+        <h:inputHidden id="hfAttGroupHeight" value="400"/>
+        <h:inputHidden id="hfDlgAttGroup" value="true"/>
+        <ui:include src="..\inc\incAttGroup.xhtml"/>
+    </h:form>
+        
+    <script type="text/javascript">
+       function handleCmdAddObjRcvComplete(xhr, status, args) {
+          // alert(args.Method);
+            switch (args.Method)
+            {
+                case 'User':
+                    var f = document.getElementById('ifrdlgChooseRightRcvObj');
+                    f.src = "../dialog/dlgUser.jsf";
+                    PF('dlgChooseRightRcvObj').show();
+                    break;
+                case 'Role':
+                    var f = document.getElementById('ifrdlgChooseRightRcvObj');
+                    f.src = "../dialog/dlgRole.jsf";
+                    PF('dlgChooseRightRcvObj').show();
+                    break;
+                case 'Dept':
+                    var f = document.getElementById('ifrdlgChooseRightRcvObj');
+                    f.src = "../dialog/dlgDept.jsf";
+                    PF('dlgChooseRightRcvObj').show();
+                    break;
+            }
+        }
+    </script>
+    </h:body>
+</html>
+

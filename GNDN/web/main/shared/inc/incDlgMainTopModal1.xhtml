@@ -1,0 +1,40 @@
+<!--
+Xử lý hiện cửa sổ modal trùm lên các cửa sổ khác mà không bị giới hạn iframe của cửa sổ gọi
+Kích cỡ cửa sổ này cỡ lớn nhất
+Cách dùng: như incDlgNormalTopModal1.xhtml
+-->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgMainTopModal1" widgetVar="dlgMainTopModal1" width="1024" height="640" 
+              modal="true"
+              onHide="document.getElementById('ifrdlgMainTopModal1').src='';dlgMainTopModal1_isclosed=true;">
+        <iframe id="ifrdlgMainTopModal1" scrolling="auto"
+                frameborder="true"
+                width="100%" height="99%"
+                style="border: none">            
+        </iframe>
+    </p:dialog>
+
+    <script type="text/javascript">
+        var dlgMainTopModal1_isclosed = true;
+        function showdlgMainTopModal1(url) {
+            var f = document.getElementById('ifrdlgMainTopModal1');
+            f.src = url;
+            dlgMainTopModal1_isclosed = false;
+            PF('dlgMainTopModal1').show();
+        }
+
+        function dlgMainTopModal1_closed()
+        {
+            return dlgMainTopModal1_isclosed;
+        }
+
+        function closedlgMainTopModal1()
+        {
+            PF('dlgMainTopModal1').hide();
+        }
+    </script>
+</ui:composition>

@@ -1,0 +1,175 @@
+<ui:composition xmlns:h="http://java.sun.com/jsf/html"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="content">
+
+
+        <script type="text/javascript">
+            function OpenDlgBBMng(sUrl) {
+                var f = document.getElementById('ifrDlgBBMng');
+                f.src = sUrl;
+                PF('dlgBBMng').show();
+            }
+        </script>
+        <style>
+            .ui-scrollpanel-container
+            {
+                overflow: auto !important;
+            }
+        </style>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_BB_Prop" var="propSM_BB" />    
+        <p:panel id="#{pltSM_BB_Bean.getiSm_Portlet().pltid}" rendered="#{pltSM_BB_Bean.isShow}">
+            <f:facet name="header">               
+                <h:outputText value="#{propSM_BB.BBPltName}" />
+            </f:facet>
+            <f:facet name="options">
+                <p:menu>
+                    <p:submenu label="#{commonMessages.btnPanelSetting}">                    
+                        <p:menuitem value="#{commonMessages.btnPanelMoveRemove}" url="#" onclick="showDlgUpdatePortlet('pltBB')"
+                                    icon="/images/DataEditing/option.png"/>
+                    </p:submenu>
+                </p:menu>
+            </f:facet>
+            <h:panelGroup id="pnGrdBB">
+                <p:dataTable emptyMessage="Không có dữ liệu" id="grdBB" var="dt" value="#{pltSM_BB_Bean.pltSM_BB_DataModel}"
+                             selectionMode="single" selection="#{pltSM_BB_Bean.m_pbbCurrentBB}"
+                             scrollHeight="150"
+                             scrollable="true">
+                    <p:ajax event="rowSelect" listener="#{pltSM_BB_Bean.onpbbGrdRowSelect}" 
+                            update="dlgBBDetail"
+                            oncomplete="PF('dlgBBDetail').show()" />
+                    <p:column>
+                        <h:outputText value="#{dt.sendDTime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                        <h:outputText value=": "/>
+                        <h:graphicImage url="#{dt.htmlNewImg}" rendered="#{dt.htmlNewImg != ''}"/>
+                        <h:outputText value="#{dt.bbmsum}"/>
+                        <h:outputText value=" (#{dt.attachCount})"/>
+                    </p:column>
+                    <p:column width="80" style="text-align: center">
+                        <h:outputText value="#{dt.sender}">
+                            <f:convertDateTime pattern="#{settingsBean.dateMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                    </p:column>
+                    <f:facet name="footer">
+                    </f:facet>
+                </p:dataTable>
+            </h:panelGroup>
+        </p:panel>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" header="#{propSM_BB.BBDetail}" widgetVar="dlgBBDetail" id="dlgBBDetail"
+                  width="1024" height="640">        
+            <p:ajax event="close" listener="#{pltSM_BB_Bean.ondlgBBDetail}" update="grdBB"/>                            
+            <h:inputHidden id="hfObjTypeIdCVST" value="BBMSG"/>
+            <h:inputHidden id="hfObjIdCVST" value="#{pltSM_BB_Bean.hfObjId}"/>                            
+            <h:inputHidden id="hfAttGroupHeightCVST" value="100"/>
+            <table cellpadding="0" cellspacing="0" width="100%" style="margin-top: 5px;">
+                <tr>
+                    <td>
+                        <p:spacer width="10"/>
+                        <h:outputText value="#{pltSM_BB_Bean.m_pbbCurrentBB.bbmsum}" style="font-size: 20px !important;color: #2E6E9E;"/>
+                    </td>                
+                </tr>
+                <tr>
+                    <td style="height: 300px !important;">
+                        <p:scrollPanel id="pnBBDetail" style="width:98%;height:300px;padding-left: 10px !important;border: 1px solid #DBE9F5 !important;" mode="native">                        
+                            <h:outputText value="#{pltSM_BB_Bean.m_pbbCurrentBB.bbmdetail}" escape="false" />
+                        </p:scrollPanel>
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 99%;height: 300px;">
+                <tr>
+                    <td style="width: 400px;vertical-align: top;">                    
+                        <p:scrollPanel id="pnlFileAttach" style="border: 1px solid #DBE9F5 !important;width: 400px;height: 295px !important;">                                                                        
+                            <table>
+                                <c:forEach items="#{pltSM_BB_Bean.m_AfOther}" var="maf" >
+                                    <tr>
+                                        <td>
+                                            <h:panelGroup styleClass="ui-icon ui-icon-document" rendered="#{!maf.filetypeid.equals('IMG')}"/>
+                                            <h:panelGroup styleClass="ui-icon ui-icon-image" rendered="#{maf.filetypeid.equals('IMG')}"/>
+                                        </td>
+                                        <td>
+                                            <p:commandLink ajax="true" actionListener="#{pltSM_BB_Bean.FileDownloadView}" target="_blank" 
+                                                           oncomplete="handleCmdComplete(xhr, status, args)">                                            
+                                                <f:param name="afId" value="#{maf.affileid}" />                                                                                                                
+                                                <h:outputText value="#{maf.filename}"  style="font-style: italic;"/><br/>                                                                                                        
+                                            </p:commandLink>
+                                            <p:commandButton id="fakeReport" ajax="false" styleClass="reportButton" style="display: none;">
+                                                <p:fileDownload contentDisposition="inline" value="#{pltSM_BB_Bean.fileSelected}"/>                                                    
+                                            </p:commandButton>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </table>
+                        </p:scrollPanel>
+                    </td>
+
+                </tr>
+            </table>        
+        </p:dialog>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgBBMng" widgetVar="dlgBBMng" 
+                  width="1024" height="640" closable="true"
+                  resizable="true" modal="true" header="#{propSM_BB.BBTitle}">
+            <p:ajax event="close" listener="#{pltSM_BB_Bean.onpbbCloseDlgMan}" update="grdBB"/>
+            <iframe id="ifrDlgBBMng" scrolling="auto"
+                    frameborder="true"
+                    width="100%" height="#{settingsProp.MainDlgIFrameHeight}"
+                    style="border: none">
+            </iframe>
+            <h:panelGroup>
+                <p:commandButton value="#{commonMessages.btnClose}" icon="cancel" onclick="PF('dlgBBMng').hide();
+                    return false;" ajax="false"/>
+            </h:panelGroup>
+        </p:dialog>
+        <script type="text/javascript">
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'ViewFile':
+                            window.open('#{request.contextPath}/shared/system/S_ContentView.jsf?bid=' + args.bid + "&amp;pfid=" + args.pfid + "&amp;fid=" + args.fid + "&amp;nid=" + args.nid, '_blank');
+                            break;
+                        case 'DownFile':
+                            document.getElementById('formMain:fakeReport').click();
+                            break;
+                    }
+                }
+            }
+            function OpenAttachFileDialogFromParent(bbid) {
+                var url = "#{settingsBean.webRootPath}/shared/attach/dlgAfOtherImages.jsf";
+                var temp = "?";
+                url = url + temp + "ObjTypeID=BBMSG";
+                temp = '&amp;';
+                url = url + temp + "ObjID=" + bbid;
+                showdlgNormalTopModal1(url);
+            }
+
+            function OpenAttachFileDialog(bbid) {
+                var url = "#{settingsBean.webRootPath}/shared/attach/dlgAfOtherImages.jsf";
+                var temp = "?";
+                url = url + temp + "ObjTypeID=BBMSG";
+                temp = '&amp;';
+                url = url + temp + "ObjID=" + bbid;
+                //Gọi hàm mở cửa sổ không phải modal
+                var width = #{settingsProp.NormalDlgWidth};
+                var height = #{settingsProp.NormalDlgHeight};
+                var left = (screen.width - width) / 2;
+                var top = (screen.height - height) / 2;
+                var params = 'width=' + width + ', height=' + height;
+                params += ', top=' + top + ', left=' + left + ',scrollbars=yes,location=no,status=no';
+                newwin = window.open(url, 'popwindow', params);
+                if (window.focus) {
+                    newwin.focus()
+                }
+            }
+
+        </script>
+    </ui:define>
+</ui:composition>
+

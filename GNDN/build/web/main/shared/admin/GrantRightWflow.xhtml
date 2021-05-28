@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        </h:head>
+        <h:body>            
+            <h:form id="formDlg">
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogProp"
+                              var="dlgProp" />
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                </p:outputPanel>
+                <p:dataTable emptyMessage="Không có dữ liệu" var="dtFlow" 
+                             id="dtGrantRightFlowUser" 
+                             value="#{grantRightWflow.q_Function_WflowDataModel}"
+                             selection="#{grantRightWflow.lstQ_Pqfunction_FlowSelect}"
+                             paginator="true" rows="100"
+                             scrollable="true"
+                             scrollHeight="290"                             
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,500" widgetVar="dtFlow">
+                    <p:column selectionMode="multiple" style="text-align: center;" width="45"/>
+                    <p:column headerText="Nhóm" width="150">
+                        <h:outputText value="#{dtFlow.wflowCode}" />
+                    </p:column>
+                    <p:column headerText="Tên luồng nghiệp vụ">
+                        <h:outputText value="#{dtFlow.wflowDesc}" />
+                    </p:column>
+                </p:dataTable>
+                <center>
+                    <p:commandButton value="Ghi" actionListener="#{grantRightWflow.onSave}" update="msgInfo"/>
+                </center>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+
+    </script>
+</html>

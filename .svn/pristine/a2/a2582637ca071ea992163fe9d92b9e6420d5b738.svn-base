@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Homepage Portlet Add New</title>
+        <f:loadBundle basename="main.web.shared.system.prop.SM_HomepageProp" var="propSM_Homepage" />
+        <style type="text/css">
+            .hasDatepicker {
+                width: 90px;
+            }
+        </style>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+    </h:head>
+    <h:body>
+        <h:form onsubmit="return false" id="formDlg">
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+            </p:outputPanel>
+            <p:selectOneMenu id="chkPos" value="#{SM_HomepageBean.m_anPosID}" style="width: 150px;">
+                <f:selectItems value="#{SM_HomepageBean.anDsPltPos}" var="dt" itemLabel="#{dt.pposdesc}" itemValue="#{dt.pposid}"/>
+            </p:selectOneMenu>                                    
+            <p:dataTable emptyMessage="Không có dữ liệu" id="grdPlt" var="dt" value="#{SM_HomepageBean.pltSm_PortletDataModel}" 
+                         selection="#{SM_HomepageBean.m_anLstPortletChoose}"
+                         scrollHeight="300"
+                         scrollable="true"
+                         selectionMode="multiple"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         paginator="true" paginatorAlwaysVisible="true" paginatorPosition="bottom" 
+                         rows="10" rowsPerPageTemplate="50,100,150">
+                <p:ajax event="rowSelect" listener="#{SM_HomepageBean.onRowSelect}" update=":#{p:component('chkPos')}" />
+                <p:ajax event="rowUnselect" listener="#{SM_HomepageBean.onRowUnselect}" update=":#{p:component('chkPos')}" />
+                <p:column headerText="#{propSM_Homepage.ColPltID}" width="100" filterBy="pltid" filterMatchMode="contains" filterStyle="width:90%" sortBy="pltid">
+                    <h:outputText value="#{dt.pltid}"/>
+                </p:column>
+                <p:column headerText="#{propSM_Homepage.ColPltDesc}" filterBy="pltdesc" filterMatchMode="contains" filterStyle="width:90%" sortBy="pltdesc">
+                    <h:outputText value="#{dt.pltdesc}"/>
+                </p:column>
+                <p:column headerText="#{propSM_Homepage.ColIsFix}" width="70" style="text-align: center; width: 80px">
+                    <p:selectBooleanCheckbox value="#{dt.isfix}" disabled="true"/>
+                </p:column>
+            </p:dataTable>            
+            <br/>
+            <center>
+                <p:commandButton icon="save" value="#{commonMessages.btnSave}" actionListener="#{SM_HomepageBean.onAnBtnSave}" update="@([id$=msgInfo]) :formDlg:grdPlt"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="parent.hideDlgHomepagePltAddNew();" />
+            </center>
+        </h:form>
+        <script type="text/javascript">
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case '':
+                            //var f = document.getElementById('ifrdlgChoose');
+                            //f.src = "../dialog/dlgUser.jsf";
+                            //dlgChoose').show();
+                            break;
+                    }
+                }
+            }
+        </script>
+    </h:body>
+</html>
+

@@ -1,0 +1,235 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <body>
+        <ui:composition template="./../../templates/tplEAM_Main.xhtml">
+            <ui:define name="head">                
+                <f:loadBundle var="msgs" basename="evnit.tms.web.eam.lib.prop.DocumentLibraryProp"/>
+            </ui:define>
+
+            <style>
+                .ui-datatable .ui-datatable-header {
+                    text-align: left;
+                }
+                .ui-widget-header a {
+                    color:#000000;
+                }
+                .dgFolderCol1 {
+                    width: 50px;
+                }
+                .dgFolderCol2 {
+                    text-align: left;
+                }
+
+            </style>
+
+            <ui:define name="content">
+                <style type="text/css">
+                    .cancel {                        
+                        background-image: url(../images) !important;
+                    }                    
+                </style>
+                <p:toolbar style="margin-bottom: 5px;" id="tbMain">
+                    <p:toolbarGroup align="left">
+                        <!--Button Thêm mới --> 
+                        <p:commandButton id="btnAddFolder" 
+                                         styleClass="btnHeight" 
+                                         icon="addnewgroup" 
+                                         title="Thêm mới thư mục" 
+                                         update="msgInfo" 
+                                         disabled="#{s_Common_Type_CalalogBean.isroot==true?false:s_Common_Type_CalalogBean.isdisabled}"
+                                         actionListener="#{s_Common_Type_CalalogBean.onAddNewFolder}" 
+                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <!--Button Cập nhật thư mục hiện tại--> 
+                        <p:commandButton id="btnUpdateFolder" 
+                                         styleClass="btnHeight" 
+                                         icon="editgroup" 
+                                         update="msgInfo" 
+                                         disabled="#{s_Common_Type_CalalogBean.isroot==true?true:s_Common_Type_CalalogBean.isdisabled}"
+                                         actionListener="#{s_Common_Type_CalalogBean.onOpenFolderDetail}" 
+                                         oncomplete="handleCmdComplete(xhr, status, args)" 
+                                         title="Xem/Sửa thư mục" />                        
+                        <!--Button Xóa--> 
+                        <p:commandButton id="btnDelFolder" 
+                                         styleClass="btnHeight" 
+                                         icon="deletegroup" 
+                                         disabled="#{s_Common_Type_CalalogBean.isroot==true?true:s_Common_Type_CalalogBean.isdeldisabled}"
+                                         update="msgInfo msgPop dlgConfirmDelContent" 
+                                         actionListener="#{s_Common_Type_CalalogBean.onDeleteFolderStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)" 
+                                         title="Xóa thư mục"/>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" 
+                          modal="true" 
+                          header="#{commonMessages.headerDlgDelete}" 
+                          widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="dlgConfirmDelContent" 
+                                 columns="2" cellspacing="5" 
+                                 style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{s_Common_Type_CalalogBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" 
+                                     value="#{commonMessages.btnAccept}" 
+                                     oncomplete="PF('confirmDel').hide()"
+                                     actionListener="#{s_Common_Type_CalalogBean.onDeleteEnd}" 
+                                     update="treeFolder pnPath msgInfo" />
+                    <p:commandButton icon="cancel"  
+                                     value="#{commonMessages.btnCancel}" 
+                                     onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+                <p:outputPanel id="pnPath">
+                    <table style="width:80%" cellpadding="0" cellspacing="5">
+                        <tr>                            
+                            <td valign="middle">
+                                <h:panelGrid columns="30">
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(-1)}" update="tbMain pnPath msgInfo">
+                                        <h:outputLabel value="[+]" />
+                                    </p:commandLink>                                    
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(0)}"/>
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(0)}" update="tbMain pnPath msgInfo" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(0)}"><h:outputText value="#{s_Common_Type_CalalogBean.goObjLineDesc(0)}"/></p:commandLink>
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(1)}"/>
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(1)}" update="tbMain pnPath msgInfo" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(1)}"><h:outputText value="#{s_Common_Type_CalalogBean.goObjLineDesc(1)}"/></p:commandLink>
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(2)}"/>
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(2)}" update="tbMain pnPath msgInfo" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(2)}"><h:outputText value="#{s_Common_Type_CalalogBean.goObjLineDesc(2)}"/></p:commandLink>
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(3)}"/>
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(3)}" update="tbMain pnPath msgInfo" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(3)}"><h:outputText value="#{s_Common_Type_CalalogBean.goObjLineDesc(3)}"/></p:commandLink>
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(4)}"/>
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(4)}" update="tbMain pnPath msgInfo" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(4)}"><h:outputText value="#{s_Common_Type_CalalogBean.goObjLineDesc(4)}"/></p:commandLink>
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(5)}"/>
+                                    <p:commandLink actionListener="#{s_Common_Type_CalalogBean.onObjLineLink(5)}" update="tbMain pnPath msgInfo" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(5)}"><h:outputText value="#{s_Common_Type_CalalogBean.goObjLineDesc(5)}"/></p:commandLink>
+                                    <p:graphicImage url="/images/Arrow/linenext.gif" rendered="#{s_Common_Type_CalalogBean.goObjLineVisible(6)}"/>                                    
+                                </h:panelGrid>
+                            </td>
+                        </tr>
+                    </table>
+                </p:outputPanel>                
+                <p:tree id="treeFolder" style="width: 100%"
+                        value="#{s_Common_Type_CalalogBean.rootNode}" var="node" dynamic="true"
+                        selectionMode="single" selection="#{s_Common_Type_CalalogBean.selectedNodeFolder}">
+                    <p:ajax event="expand"/>
+                    <p:ajax event="select" listener="#{s_Common_Type_CalalogBean.onNodeFolderSelect}"
+                            update="@this :#{p:component('pnPath')} :#{p:component('tbMain')}"/>
+                    <p:treeNode collapsedIcon="ui-icon ui-icon-folder-collapsed"
+                                                                expandedIcon="ui-icon ui-icon-folder-open">
+                        <h:outputText value="#{node.libfolderdesc} (#{node.libfolderid})" />
+                    </p:treeNode>
+                </p:tree>
+                <br/>
+                <ui:include src="../../shared/incShortcut.xhtml"/>
+                <!-- Vùng dialog-->
+                <script type="text/javascript">
+//                    function OpenFolderDetail() {
+//                        var f = document.getElementById('browserContent1');
+//                            f.src = "../lib/DocumentLibrary_details.jsf";
+//                        PF('dlgOpenFolderDetail').show();
+//                    }
+
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            //alert(args.Method);
+                            switch (args.Method)
+                            {
+                                case 'AddNewFolder':
+                                    var f = document.getElementById('browserContent1');
+                                    //TuanNV giữ lại file cũ để không ảnh hưởng đến chức năng khác hoặc cũ                                    
+                                    f.src = "../../shared/system/S_Common_Type_CatalogDetail.jsf?folderParentID=" + args.folderParentID;
+                                    PF('dlgOpenFolderDetail').show();
+                                    break;
+                                case 'AddNew':
+                                    var f = document.getElementById('browserContent1');
+                                    //TuanNV giữ lại file cũ để không ảnh hưởng đến chức năng khác hoặc cũ                                    
+                                    f.src = "../../shared/system/S_Common_Type_CatalogDetail.jsf";
+                                    PF('dlgOpenFolderDetail').show();
+                                    break;
+                                case 'Edit':
+                                    //Tác giả: Nguyễn Văn Tuấn 
+                                    //Lời gọi cũ f.src = "../../eam/lib/DocumentLibrary_details.jsf?folderID="+args.folderID;                                    
+                                    var f = document.getElementById('browserContent1');
+                                    f.src = "../../shared/system/S_Common_Type_CatalogDetail.jsf?folderID=" + args.folderID;
+                                    PF('dlgOpenFolderDetail').show();
+                                    break;
+                                case 'EditChildRole':
+                                    var f = document.getElementById('browserContent3');
+                                    f.src = "../lib/DocumentLibrary_details.jsf?grantchild=true&amp;folderID=" + args.folderID;
+                                    PF('dlgOpenFolderDetail1').show();
+                                    break;
+                                case 'Delete':
+                                      PF('confirmDel').show();
+                                    break;
+                                case 'CloseDlgMoveItem':
+                                    PF('dlgMoveItem').hide();
+                                    break;
+                                case 'CopyFolderStruct':
+                                    PF('dlgCopyFolderStruct').show();
+                                    break;
+                                case 'CloseDlgCopyFolderStruct':
+                                    PF('dlgCopyFolderStruct').hide();
+                                    break;
+                                case 'ShowDlgReport':
+                                    PF('dlgReport').show();
+                                    break;
+                            }
+                        }
+                    }
+
+
+                    function handleCmdCompleteItem(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'Delete':
+                                      PF('confirmDel').show();
+                                case 'CloseDlgSearchAdvance':
+                                    PF('dlgSearchAdvance.hide()
+                                    break;
+                            }
+                        }
+                    }
+
+                    function OpenFolderDialog() {
+                        var f = document.getElementById('ifOpenFolderDlg');
+                        f.src = "./../../eam/dialog/dlgLibFolder.jsf?display=one";
+                        PF('dlgOpenFolderDialog').show();
+                    }
+
+                    function KeyEnterSelectFolder(event, control) {
+                        if (event.keyCode == 13) {
+                            if (control.id == "formMain:txtMiParentID") {
+                                OpenFolderDialog(control.value);
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenFolderDetail" widgetVar="dlgOpenFolderDetail" 
+                          width="#{settingsProp.MainDlgWidth}" height="500" closable="true"
+                          resizable="true" modal="true" header="Chi tiết chủng loại tài liệu">
+                    <p:ajax event="close" listener="#{s_Common_Type_CalalogBean.onCloseFolderDetail}" update="tbMain treeFolder pnPath msgInfo"/>
+                    <iframe id="browserContent1" scrolling="no"
+                            frameborder="true"
+                            width="100%" height="99%"
+                            style="border: none">
+                    </iframe>
+                </p:dialog>
+                <!--Lồng gọi các cửa sổ tham chiếu -->
+                <ui:include src="/shared/inc/incWLinkMain.xhtml"/>
+            </ui:define>
+        </ui:composition>
+    </body>
+</ui:composition>

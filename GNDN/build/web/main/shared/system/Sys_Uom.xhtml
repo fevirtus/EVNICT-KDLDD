@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{sys_UomBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+                #{sys_UomBean.assertFuncRight('02.13')}
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="Danh mục đơn vị tính" />
+                </h:panelGroup>
+                <p:toolbar style="margin-bottom: 5px;">
+                    <p:toolbarGroup align="left" rendered="#{sys_UomBean.renderedFuncEdit('02.13')}">
+                        <p:commandButton id="btnNew" styleClass="btnHeight" icon="addnew" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         onclick="OpenUomDetail('');"/>
+                        <p:commandButton id="btnUpdate" styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate} #{commonMessages.hkUpdate}"
+                                         actionListener="#{sys_UomBean.onEditUom}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         update="msgInfo dlgConfirmDelContent" actionListener="#{sys_UomBean.onDeleteUomStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left">
+                        <p:separator/>
+                        <p:commandButton icon="option" title="Quy đổi đơn vị tính"  rendered="#{sys_UomBean.renderedFuncEdit('02.13')}"
+                                         styleClass="btnHeight" onclick="openUomExchange()" />
+                        <p:commandButton icon="shortcut" title="#{commonMessages.btnAddShortcut}" styleClass="btnHeight"
+                                         onclick="showDlgAddShortcut('02','02.13')"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{sys_UomBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="confirmDel').hide();reApplyFilterGrd();"
+                                     actionListener="#{sys_UomBean.onDeleteUomEnd}" update="dtUom msgInfo" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+                <!-- Vùng Grid-->
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtUom" paginator="true" rows="10"
+                             value="#{sys_UomBean.dsS_UomForGrid}"
+                             selection="#{sys_UomBean.arrSelectUom}"
+                             widgetVar="dtUom" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="10,20,30,40,50">
+                    <p:column selectionMode="multiple" style="text-align: center;width:15px"/>
+                    <p:column style="text-align: center; width: 25px">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                         actionListener="#{sys_UomBean.onOpenDtail}" oncomplete="OpenUomDetail('#{s.uomid}');"/>
+                    </p:column>
+                    <p:column id="uomid" style="width:350px"
+                              headerText="#{commonTMSProp.ColID}"
+                              filterBy="#{s.uomid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.uomid}"/>
+                    </p:column>
+                    <p:column style="width:350px"
+                              headerText="#{commonTMSProp.ColDesc}"
+                              filterBy="#{s.uomdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.uomdesc}"/>
+                    </p:column>                   
+                </p:dataTable>
+                <br/>
+                <ui:include src="../incShortcut.xhtml"/>
+                <!-- Vùng dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenUomDetail" widgetVar="dlgOpenUomDetail" header="Chi tiết đơn vị tính"
+                          width="#{settingsProp.L3DlgWidth}" height="300"
+                          onHide="document.getElementById('frUomDetail').src=''"
+                          closable="true" modal="true" resizable="false">
+                    <p:ajax event="close" listener="#{sys_UomBean.onCloseUomDetail}" oncomplete="reApplyFilterGrd();" update="dtUom"/>
+                    <iframe id="frUomDetail" scrolling="no"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'Edit':
+                                    OpenUomDetail(args.uomid);
+                                    break;
+                                case 'Delete':
+                                      PF('confirmDel').show();
+                                    break;
+                            }
+                        }
+                    }
+                    function OpenUomDetail(uomid) {
+                        var f = document.getElementById('frUomDetail');
+                        if(uomid=="%")
+                            uomid=escape(uomid);
+                        if(uomid)
+                            f.src = "../system/Sys_Uom_details.jsf?uomid=" + uomid;
+                        else
+                            f.src = "../system/Sys_Uom_details.jsf";
+                        PF('dlgOpenUomDetail').show();
+                    }
+
+                    function openUomExchange()
+                    {
+                        window.location="Sys_Uom_Exchange.jsf";
+                    }
+                    
+                    function reApplyFilterGrd()
+                    {
+                        if (!#{settingsProp.FilterWhenCloseDlg})
+                        return;
+                        dtUom.filter();
+                    }
+                </script>
+                <style type="text/css">
+                    .hasDatepicker {
+                        width: 100px;
+                    }
+                </style>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,340 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.system.prop.S_AttributeProp"/>
+                #{s_AttributesMgtBean.assertFuncRight('02.17')}
+            </ui:define>
+            <ui:define name="content">                     
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{msgs.main_Title}" />
+                </h:panelGroup>
+                <p:toolbar id="tbrMain">
+                    <p:toolbarGroup align="left" rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}">
+                        <p:commandButton icon="addnewgroup" title="#{msgs.main_Tbar_BtnAddGroup}" styleClass="btnHeight"
+                                         actionListener="#{s_AttributesMgtBean.onAddNewGroup}" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <p:commandButton icon="editgroup" title="#{msgs.main_Tbar_BtnEditGroup}" styleClass="btnHeight"
+                                         actionListener="#{s_AttributesMgtBean.onEditGroup}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"
+                                         disabled="#{s_AttributesMgtBean.groupRowCount==0?true:false}"/>
+                        <p:commandButton icon="deletegroup" title="#{msgs.main_Tbar_BtnDeleteGroup}" styleClass="btnHeight"
+                                         actionListener="#{s_AttributesMgtBean.onDeleteGroupStart}"
+                                         update="msgInfo dlgConfirmDelContent" oncomplete="handleCmdComplete(xhr, status, args)"
+                                         disabled="#{s_AttributesMgtBean.groupRowCount==0?true:false}"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left">
+                        <h:panelGrid columns="2">
+                            <h:selectBooleanCheckbox id="cbfilter" valueChangeListener="#{s_AttributesMgtBean.onAGFilterRefresh}" value="#{s_AttributesMgtBean.filter}">
+                                <p:ajax event="valueChange" update="cbfilter formMain:dtAttGroup formMain:msgInfo"/>
+                            </h:selectBooleanCheckbox>
+                            <h:outputText value="Lọc các nhóm thuộc tính sử dụng chung "/>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left" rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}">
+                        <p:separator/>
+                        <p:commandButton id="btnNew" styleClass="btnHeight" icon="addnew" title="#{msgs.main_Tbar_BtnAddAtt} #{commonMessages.hkAddNew}"
+                                         actionListener="#{s_AttributesMgtBean.onAddAttribute}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"
+                                         disabled="#{s_AttributesMgtBean.attributeGroup==null?true:false}"/>
+                        <p:commandButton id="btnUpdate" styleClass="btnHeight" icon="edit" title="#{msgs.main_Tbar_BtnEditAtt} #{commonMessages.hkUpdate}"
+                                         actionListener="#{s_AttributesMgtBean.onEditAttribute}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"
+                                         disabled="#{s_AttributesMgtBean.attRowCount==0?true:false}"/>
+                        <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" title="#{msgs.main_Tbar_BtnDeleteAtt} #{commonMessages.hkDelete}"
+                                         update="msgInfo dlgConfirmDelContent" actionListener="#{s_AttributesMgtBean.onDeleteAttributeStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"
+                                         disabled="#{s_AttributesMgtBean.attRowCount==0?true:false}"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left">
+                        <p:separator/>
+                        <p:menuButton value="#{commonMessages.btnOtherAction}" style="height: 10px;" >
+                            <p:menuitem value="#{msgs.main_Tbar_BtnCopyGroup}"
+                                        actionListener="#{s_AttributesMgtBean.onCopyGroupStart}" 
+                                        update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"
+                                        rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"/>
+                            <p:menuitem value="#{msgs.main_Tbar_BtnViewGroupAssObj}"
+                                        actionListener="#{s_AttributesMgtBean.onViewGroupAssObjStart}"
+                                        update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        </p:menuButton>
+                        <p:commandButton icon="shortcut" title="#{commonMessages.btnAddShortcut}" styleClass="btnHeight"
+                                         onclick="showDlgAddShortcut('04', '02.17')"/>
+                    </p:toolbarGroup>
+                </p:toolbar>   
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                    
+                </p:outputPanel>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="dlgConfirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{s_AttributesMgtBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                     actionListener="#{s_AttributesMgtBean.onDeleteEnd}" update="msgInfo formMain:dtAttGroup formMain:dtAttribute" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+
+                <table cellpadding="0" cellspacing="0" width="100%" style="margin-top: 5px;">
+                    <tr>
+                        <td id="left" valign="top" style="width: 400px;">
+                            <p:outputPanel id="pnlAttGroup">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <h:outputText value="#{msgs.main_group_Title}" style="#{settingsProp.StyleNote_Bold}"/>
+                                        </td>
+                                        <td>
+                                            <p:selectOneMenu id="cboAttGroup" value="#{s_AttributesMgtBean.usingby}"
+                                                             onchange=""
+                                                             style="width: 280px;">
+                                                <f:selectItems value="#{s_AttributesGroupDetailBean.dsLstObjs}"
+                                                               var="o" itemLabel="#{o.objname}"
+                                                               itemValue="#{o.objtypeid}"/>
+                                                <p:ajax event="valueChange" listener="#{s_AttributesMgtBean.onChangeAttGroup}"
+                                                        update="dtAttGroup"/>
+                                            </p:selectOneMenu> 
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                                               
+                                                            
+                                <p:dataTable emptyMessage="Không có dữ liệu" id="dtAttGroup" widgetVar="dtAttGroup" 
+                                             var="s" paginator="true" rows="250" 
+                                             value="#{s_AttributesMgtBean.dstAttribute_Groups}"
+                                             scrollHeight="410"
+                                             scrollable="true"
+                                             scrollWidth="400"   
+                                             rowKey="#{s.attrgroupid}"
+                                             selectionMode="single" selection="#{s_AttributesMgtBean.attributeGroupSelected}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="250,500" paginatorPosition="bottom" >
+                                    <p:ajax event="rowSelect" listener="#{s_AttributesMgtBean.onRowGroupSelect}" update=":formMain:pnlAttribute :formMain:tbrMain"/>
+                                    <p:column style="text-align: center;" width="35">
+                                        <f:facet name="header">
+                                            <h:selectBooleanCheckbox value="#{s_AttributesMgtBean.bcheckAll}">
+                                                <p:ajax event="valueChange" listener="#{s_AttributesMgtBean.onChkAllGroupChange}" update=":formMain:pnlAttGroup"/>
+                                            </h:selectBooleanCheckbox>
+                                        </f:facet>
+                                        <h:selectBooleanCheckbox value="#{s.bChecked}"/>
+                                    </p:column>
+                                    <p:column style="text-align: center;"  width="35">
+                                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{msgs.main_Tbar_BtnEditGroup}"
+                                                         actionListener="#{s_AttributesMgtBean.onEditGroupFromGrid}"
+                                                         oncomplete="OpenAttGroupDetail('#{s.attrgroupid}');"/>
+                                    </p:column>
+                                    <p:column headerText="#{commonTMSProp.ColID}"  width="75"
+                                              filterBy="#{s.attrgroupid}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.attrgroupid}"/>
+                                    </p:column>
+                                    <p:column headerText="#{commonTMSProp.ColDesc}" style="white-space: nowrap;"
+                                              filterBy="#{s.attrgroupdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.attrgroupdesc}"/>
+                                    </p:column>  
+                                </p:dataTable>
+                            </p:outputPanel>
+                        </td>
+                        <td valign="top" align="left">
+                            <p:outputPanel id="pnlAttribute">
+                                <table>
+                                    <tr style="height: 28px">
+                                        <td>
+                                            <h:outputText value="#{msgs.main_Att_Title}: #{s_AttributesMgtBean.attributeHeaderGrd}" style="#{settingsProp.StyleNote_Bold}"/>
+                                        </td>
+                                        <td>
+                                            
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <p:dataTable emptyMessage="Không có dữ liệu" id="dtAttribute" var="s" paginator="true" rows="100" 
+                                             selection="#{s_AttributesMgtBean.arrSelectAttributes}"
+                                             value="#{s_AttributesMgtBean.dstAttributes}"
+                                             scrollHeight="410"
+                                             scrollable="true"
+                                             rowKey="#{s.attrid}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="100,250,500" paginatorPosition="bottom">
+                                    <p:column selectionMode="multiple" style="text-align: center;" width="35"/>
+                                    <p:column style="text-align: center;" width="35">
+                                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{msgs.main_Tbar_BtnEditAtt}"
+                                                         actionListener="#{s_AttributesMgtBean.onEditAttributeFromGrid}"
+                                                         oncomplete="OpenAttributeDetail('#{s.attrid}');"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.main_Att_STT}" width="35" style="padding-left: #{s.paddingLeft}px;text-align: center">
+                                        <h:outputText value="#{s.attrord}"/>
+                                    </p:column>
+                                    <p:column headerText="#{commonTMSProp.ColID}" width="85"
+                                              filterBy="#{s.attrid}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.attrid}"/>
+                                    </p:column>
+                                    <p:column headerText="#{commonTMSProp.ColDesc}" width="135" style="white-space: nowrap;padding-left: #{s.paddingLeft}px;"
+                                              filterBy="#{s.attrdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.attrdesc}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.main_Att_ColType}" width="85"
+                                              filterBy="#{s.coldatatypeid}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.sLstDatatype.datatypedesc}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.main_Att_ColAllowNull}"  width="55" style="text-align: center;"
+                                              filterBy="#{s.collallownull}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:selectBooleanCheckbox value="#{s.collallownull}" disabled="true"/>
+                                    </p:column>
+                                    <p:column headerText="#{commonTMSProp.LblActive}"  width="55" style="text-align: center;"
+                                              filterBy="#{s.enable}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:selectBooleanCheckbox value="#{s.enable}" disabled="true"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.main_Att_UomID}" width="55" style="white-space: nowrap;"
+                                              filterBy="#{s.uomid}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.uomid}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.main_Att_Sign}" width="55" style="white-space: nowrap;"
+                                              filterBy="#{s.sign}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.sign}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.main_Att_AtttypeID}" width="55" style="white-space: nowrap;"
+                                              filterBy="#{s.attTypeid}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s.attributeType.attdesc}"/>
+                                    </p:column>                                    
+                                </p:dataTable>
+                            </p:outputPanel>
+                        </td>
+                        <td id="left" valign="top" style="width: 70px;">
+                            <p:outputPanel id="pnlAttribute_RowOrder">
+                                <h:panelGrid columns="1" style="margin-top: 18px;">
+                                    <p:commandButton rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"
+                                                     icon="moverow_first" title="#{commonMessages.btnMoveFirst}" styleClass="btnHeight"
+                                                     disabled="#{s_AttributesMgtBean.disableButtonRowSort}"
+                                                     update="pnlAttribute msgInfo" actionListener="#{s_AttributesMgtBean.onMoveAttributeFirst}"/>
+                                    <p:commandButton rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"
+                                                     icon="moverow_up" title="#{commonMessages.btnUp}" styleClass="btnHeight"
+                                                     disabled="#{s_AttributesMgtBean.disableButtonRowSort}"
+                                                     update="pnlAttribute msgInfo" actionListener="#{s_AttributesMgtBean.onMoveAttributeUp}"/>
+                                    <p:commandButton rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"
+                                                     icon="moverow_down" title="#{commonMessages.btnDown}" styleClass="btnHeight"
+                                                     disabled="#{s_AttributesMgtBean.disableButtonRowSort}"
+                                                     update="pnlAttribute msgInfo" actionListener="#{s_AttributesMgtBean.onMoveAttributeDown}"/>
+                                    <p:commandButton rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"
+                                                     icon="moverow_last" title="#{commonMessages.btnMoveLast}" styleClass="btnHeight"
+                                                     disabled="#{s_AttributesMgtBean.disableButtonRowSort}"
+                                                     update="pnlAttribute msgInfo" actionListener="#{s_AttributesMgtBean.onMoveAttributeLast}"/>
+                                    <p:commandButton rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"
+                                                     icon="moverow_right" title="#{commonMessages.btnMoveIn}" styleClass="btnHeight"
+
+                                                     update="pnlAttribute msgPop" actionListener="#{s_AttributesMgtBean.onAttributeMoveIn}"/>
+                                    <p:commandButton rendered="#{s_AttributesMgtBean.renderedFuncEdit('02.17')}"
+                                                     icon="moverow_left" title="#{commonMessages.btnMoveOut}" styleClass="btnHeight"
+
+                                                     update="pnlAttribute msgPop" actionListener="#{s_AttributesMgtBean.onAttributeMoveOut}"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <ui:include src="../../shared/incShortcut.xhtml"/>
+                <!-- Vùng dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAttGroupDetail" widgetVar="dlgAttGroupDetail"
+                          header="#{msgs.dlg_group_Header}"
+                          width="1024" height="640"
+                          onHide="document.getElementById('dlgAttGroupDetailBC').src=''"
+                          closable="true" resizable="false">
+                    <p:ajax event="close" listener="#{s_AttributesMgtBean.onCloseDetailAttributeGroup}" update="pnlAttGroup tbrMain pnlAttribute"/>
+                    <iframe id="dlgAttGroupDetailBC"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAttDetail" widgetVar="dlgAttDetail" header="#{msgs.dlg_att_Header}"
+                          width="1024" height="640"
+                          onHide="document.getElementById('dlgAttDetailBC').src=''"
+                          closable="true" resizable="false">
+                    <p:ajax event="close" listener="#{s_AttributesMgtBean.onCloseDetailAttribute}" update="tbrMain pnlAttribute pnlAttribute_RowOrder"/>
+                    <iframe id="dlgAttDetailBC"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAttGroupAssObj" widgetVar="dlgAttGroupAssObj"
+                          header="#{msgs.main_Tbar_BtnViewGroupAssObj}"
+                          width="#{settingsProp.MainDlgWidth}" height="#{settingsProp.NormalDlgHeight}"
+                          onHide="document.getElementById('dlgAttGroupAssObjBC').src=''"
+                          closable="true" resizable="false">
+                    <p:ajax event="close" listener="#{s_AttributesMgtBean.onCloseDetailAttributeGroup}" update="pnlAttGroup tbrMain pnlAttribute"/>
+                    <iframe id="dlgAttGroupAssObjBC" scrolling="no"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'eGroupAdd':
+                                    OpenAttGroupDetail('', '');
+                                    break;
+                                case 'eGroupEdit':
+                                    OpenAttGroupDetail(args.id, '');
+                                    break;
+                                case 'eGroupCopy':
+                                    OpenAttGroupDetail(args.id, args.id);
+                                    break;
+                                case 'eGroupAssObj':
+                                    OpenAttGroupAssObj(args.id);
+                                    break;
+                                case 'eAttAdd':
+                                    OpenAttributeDetail('', args.Attrgroupid);
+                                    break;
+                                case 'eAttEdit':
+                                    OpenAttributeDetail(args.id, '');
+                                    break;
+                                case 'eGroupDelete':
+                                      PF('confirmDel').show();
+                                    break;
+                                case 'eAttDelete':
+                                      PF('confirmDel').show();
+                                    break;
+                            }
+                        }
+                    }
+                    function OpenAttGroupDetail(id, copy) {
+                        var f = document.getElementById('dlgAttGroupDetailBC');
+                        if (id) {
+                            var url = "#{settingsBean.webRootPath}/shared/system/dlgAttributesGroupDetail.jsf?attrgroupid=" + id;
+                            if (copy)
+                                url = url + '&amp;' + 'copy=true'
+                            f.src = url;
+                        }
+                        else
+                            f.src = "#{settingsBean.webRootPath}/shared/system/dlgAttributesGroupDetail.jsf";
+                        PF('dlgAttGroupDetail').show();
+                    }
+
+                    function OpenAttributeDetail(attrid, attrgroupid) {
+                        var f = document.getElementById('dlgAttDetailBC');
+                        if (attrid)
+                            f.src = "#{settingsBean.webRootPath}/shared/system/dlgAttributesDetail.jsf?attrid=" + attrid;
+                        if (attrgroupid)
+                            f.src = "#{settingsBean.webRootPath}/shared/system/dlgAttributesDetail.jsf?attrgroupid=" + attrgroupid;
+                        PF('dlgAttDetail').show();
+                    }
+
+                    function OpenAttGroupAssObj(id) {
+                        var f = document.getElementById('dlgAttGroupAssObjBC');
+                        if (id) {
+                            var url = "#{settingsBean.webRootPath}/shared/system/dlgAttributesGroupAssObj.jsf?attrgroupid=" + id;
+                            f.src = url;
+                        }
+                        PF('dlgAttGroupAssObj').show();
+                    }
+                </script>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

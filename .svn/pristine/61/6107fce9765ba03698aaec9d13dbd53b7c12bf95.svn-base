@@ -1,0 +1,209 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">                
+                <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+            </ui:define>
+            <ui:define name="content"> 
+                <h:form id="formBienDong">
+                    <div class="p-grid p-dir-col">
+                        <p:growl id="messages" showDetail="true" /> 
+                        <div class="p-col" style="padding-bottom: 0">
+                            <p:toolbar id="TBlSearch" style="border: none; border: 1px solid #F1F3F6; padding: 0;">
+                                <f:facet name="right">
+                                    <p:selectOneMenu id="orgid" value="#{duLieuThuThapBean.orgIdSelected}"
+                                                     style="width: 380px; margin-right: 10px; vertical-align: middle;" 
+                                                     filterMatchMode="contains" filter="true">
+                                        <f:selectItems value="#{quanLyBienDongDDThangBean.listOrgSelected}"
+                                                       var="a" itemLabel="#{a.orgdesc}" itemValue="#{a.orgid}">
+                                        </f:selectItems>
+                                    </p:selectOneMenu>
+
+                                    <p:selectOneMenu style="margin-right: 10px; vertical-align: middle;"
+                                                     value="#{quanLyBienDongDDThangBean.monthLoad}">
+                                        <f:selectItem itemLabel="Tháng" itemValue="" />
+                                        <f:selectItem itemLabel="Tháng một" itemValue="1" />
+                                        <f:selectItem itemLabel="Tháng hai" itemValue="2" />
+                                        <f:selectItem itemLabel="Tháng ba" itemValue="3" />
+                                        <f:selectItem itemLabel="Tháng bốn" itemValue="4" />
+                                        <f:selectItem itemLabel="Tháng năm" itemValue="5" />
+                                        <f:selectItem itemLabel="Tháng sáu" itemValue="6" />
+                                        <f:selectItem itemLabel="Tháng bảy" itemValue="7" />
+                                        <f:selectItem itemLabel="Tháng tám" itemValue="8" />
+                                        <f:selectItem itemLabel="Tháng chín" itemValue="9" />
+                                        <f:selectItem itemLabel="Tháng mười" itemValue="10" />
+                                        <f:selectItem itemLabel="Tháng mười một" itemValue="11" />
+                                        <f:selectItem itemLabel="Tháng mười hai" itemValue="12" />
+                                    </p:selectOneMenu>
+
+                                    <p:selectOneMenu style="width: 100px; margin-right: 10px; vertical-align: middle;"
+                                                     value="#{quanLyBienDongDDThangBean.yearLoad}">
+                                        <f:selectItem itemLabel="Năm" itemValue="" />
+                                        <f:selectItem itemLabel="2010" itemValue="2010" />
+                                        <f:selectItem itemLabel="2011" itemValue="2011" />
+                                        <f:selectItem itemLabel="2012" itemValue="2012" />
+                                        <f:selectItem itemLabel="2013" itemValue="2013" />
+                                        <f:selectItem itemLabel="2014" itemValue="2014" />
+                                        <f:selectItem itemLabel="2015" itemValue="2015" />
+                                        <f:selectItem itemLabel="2016" itemValue="2016" />
+                                        <f:selectItem itemLabel="2017" itemValue="2017" />
+                                        <f:selectItem itemLabel="2018" itemValue="2018" />
+                                        <f:selectItem itemLabel="2019" itemValue="2019" />
+                                        <f:selectItem itemLabel="2020" itemValue="2020" />
+                                        <f:selectItem itemLabel="2021" itemValue="2021" />
+                                        <f:selectItem itemLabel="2022" itemValue="2022" />
+                                        <f:selectItem itemLabel="2023" itemValue="2023" />
+                                        <f:selectItem itemLabel="2024" itemValue="2024" />
+                                        <f:selectItem itemLabel="2025" itemValue="2025" />
+                                        <f:selectItem itemLabel="2026" itemValue="2026" />
+                                    </p:selectOneMenu>
+
+                                    <p:commandButton value="Lấy dữ liệu" 
+                                                     styleClass="primary-button"
+                                                     style="margin-right: .5rem; vertical-align: middle;"
+                                                     actionListener="#{quanLyBienDongDDThangBean.onLoadData}" update="@all">                                    
+                                    </p:commandButton>
+
+                                </f:facet>
+                            </p:toolbar>
+                        </div>
+                        <div class="p-col grid-demo" style="padding-bottom: 0">
+                            <div class="card">
+                                <div class="p-grid">
+                                    <div class="p-col">
+                                        <p:outputLabel for="maDiemdo" value="Nhà máy điện/ Trạm biến áp" style="padding-top: 0px;"/>
+                                        <p:inputText id="maDiemdo" style="width: 100%"/>
+                                    </div>
+                                    <div class="p-col">
+                                        <p:outputLabel for="x" value="Nhà máy điện/ Trạm biến áp" style="padding-top: 0px;"/>
+                                        <p:inputText id="x" style="width: 100%"/>
+                                    </div>
+                                    <div class="p-col">
+                                        <p:outputLabel for="tenDiemdo" value="Tên điểm đo" style="padding-top: 0px;"/>
+                                        <p:inputText id="tenDiemdo" style="width: 100%"/>                                                           
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-col" style="padding-bottom: 0">
+                            <div class="card">
+                                <p:dataTable widgetVar="listDiemDo" id="listDiemDo" var="itemx" 
+                                             value="#{diemDoBean.listDiemdoMix}" 
+                                             selection="#{diemDoBean.listDiemDoMixSelected}" 
+                                             rowKey="#{itemx.maDiemdo}" scrollable="true"
+                                             paginator="true" rows="10" reflow="true"
+                                             paginatorPosition="bottom"
+                                             paginatorTemplate="Tổng:#{diemDoBean.listDiemdoMix.size()} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                             styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                    <p:ajax event="rowSelect" />
+                                    <p:ajax event="rowUnselect" />
+
+                                    <f:facet name="header">
+                                        <div class="customers-table-header">
+                                            <span style="font-weight: bold">#{diemDoBean.displayTitle()}</span>
+
+                                            <span class="ui-input-icon-left filter-container">
+                                                <i class="pi pi-search"></i>
+                                                <p:inputText id="globalFilter" onkeyup="PF('listDiemDo').filter()" placeholder="Tìm kiếm"/>
+                                            </span>
+                                        </div>
+                                    </f:facet>
+                                    <p:column selectionMode="multiple" style="text-align: center; width: 40px;"/>
+                                    <p:column exportable="false" style="width: 38px;">
+                                        <p:commandButton icon="pi pi-pencil" actionListener="#{diemDoBean.onEdiDiemDo(itemx.maDiemdo)}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"
+                                                         styleClass="edit-button rounded-button success-button" process="@this"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nhóm" style="text-align: center;"
+                                              filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.tenNhomDD}">
+                                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{itemx.tenNhomDD}" />
+                                    </p:column>
+                                    <p:column headerText="Mã điểm đo" style="text-align: center;" 
+                                              filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.maDiemdo}">
+                                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{itemx.maDiemdo}"/>
+                                    </p:column>
+                                    <p:column headerText="Tên điểm đo" style="text-align: center;"
+                                              filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.tenDiemdo}">
+                                        <h:outputText value="#{itemx.tenDiemdo}" />
+                                    </p:column>
+                                    <p:column headerText="Loại điểm đo" style="text-align: center;"
+                                              filterStyle="display:none; visibility:hidden;" filterBy="#{itemx.tenLoaiDD}">
+                                        <h:outputText style="vertical-align: middle; margin-left: .5rem" value="#{itemx.tenLoaiDD}" />
+                                    </p:column>
+                                    <p:column headerText="Tính chất" style="text-align: center;">
+                                        <h:outputText value="#{itemx.tenTcDD}" style="vertical-align: middle; margin-left: .5rem"/>
+                                    </p:column>
+                                    <p:column headerText="Cấp điện áp" style="text-align: center;">
+                                        <h:outputText value="#{itemx.ulevelDesc}" style="vertical-align: middle; margin-left: .5rem"/>
+                                    </p:column>
+                                    <p:column headerText="Đơn vị quản lý" style="text-align: center;">
+                                        <h:outputText value="#{itemx.orgDesc}" style="vertical-align: middle; margin-left: .5rem"/>
+                                    </p:column>
+                                    <p:column headerText="Ngày hiệu lực" style="text-align: center;">
+                                        <h:outputText value="#{itemx.ngayVh}" style="vertical-align: middle; margin-left: .5rem">
+                                            <f:convertDateTime pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Trạng thái" style="text-align: center;" width="2rem;">
+                                        <p:selectBooleanCheckbox value="#{itemx.trangThaiToBoolean}" disabled="true"
+                                                                 style="vertical-align: middle;"/>                                   
+                                    </p:column>
+                                    <p:column headerText="Ánh xạ" style="text-align: center;" width="2rem;">
+                                        <p:selectBooleanCheckbox value="#{itemx.isAx}" disabled="true" 
+                                                                 style="vertical-align: middle;"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+
+
+                        <script type="text/javascript">
+                            function handleCmdComplete(xhr, status, args) {
+                                if (args.Method)
+                                {
+                                    switch (args.Method)
+                                    {
+                                        case 'openDialogTariff':
+                                            var f = document.getElementById('iframeTariff');
+                                            f.src = "./diemdo_tariffdetail.jsf";
+                                            PF('tariffDialog').show();
+                                            break;
+                                        case 'openEditDialogTariff':
+                                            var f = document.getElementById('iframeTariff');
+                                            f.src = "./diemdo_tariffdetail.jsf?maDD=" + args.maDD + "&amp;thang=" + args.thang + "&amp;nam=" + args.nam + "&amp;dateId=" + args.dateId;
+                                            PF('tariffDialog').show();
+                                            break;
+                                    }
+                                }
+                            }
+                        </script>
+                        <style type="text/css">                                        
+                            .products-buttonbar{
+                                margin-bottom: 10px;
+                                display: flex !important;
+                            }
+                            .ui-dialog-titlebar{
+                                background-color: #f4f7f9 !important;
+                            }
+                            .ui-dialog-content{
+                                background-color: #f4f7f9 !important;
+                            }
+                            .ui-widget-content{
+                                padding-top: 5px !important;
+                            }
+                        </style>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

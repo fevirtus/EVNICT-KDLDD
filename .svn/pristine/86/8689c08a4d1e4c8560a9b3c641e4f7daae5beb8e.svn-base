@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+        </h:head>
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #FFFFFF">
+            <h:form onsubmit="return false" id="AXForm">
+                <p:growl id="messages" showDetail="true" />  
+                <p:outputPanel id="manage-content" class="ui-fluid" style="padding-top: 0;">
+
+
+                    <div class="p-grid">
+                        <div class="p-col-7">
+                            <p:dataTable widgetVar="listAx" id="listAx" var="item" 
+                                         value="#{dialog_AX.listAx}" 
+                                         selectionMode="single" 
+                                         selection="#{dialog_AX.ax}" 
+                                         rowKey="#{item.ADiemdoAxPK.dateid}" 
+                                         paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom"
+                                         styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines"
+                                         style="text-align: center;">
+                                <p:ajax event="rowSelect"
+                                        update="AXForm"/>
+                                 <p:ajax event="rowUnselect"
+                                        update="AXForm"/>
+                                <p:column headerText="Đơn vị CCSL" sortBy="#{item.ADiemdoAxPK.orgidRef}" width="40%" style="height: 50px;">
+                                    <h:outputText value="#{item.ADiemdoAxPK.orgidRef}" style="p-col-4"/>
+                                </p:column>
+                                <p:column headerText="Điểm đo CCSL" sortBy="#{item.ADiemdoAxPK.maDiemdoRef}" width="40%">
+                                    <h:outputText style="p-col-4" value="#{item.ADiemdoAxPK.maDiemdoRef}" />
+                                </p:column>
+                                <p:column headerText="Ngày bắt đầu" sortBy="#{item.ngay}" width="40%">
+                                    <h:outputText style="p-col-4" value="#{item.ngay}">
+                                        <f:convertDateTime parent="dd.MM.yyyy HH:mm"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Ngày kết thúc" sortBy="#{item.ngayKt}" width="40%">
+                                    <h:outputText style="p-col-4" value="#{item.ngayKt}">
+                                        <f:convertDateTime parent="dd.MM.yyyy HH:mm"/>
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Mô tả" sortBy="#{item.moTa}" width="40%">
+                                    <h:outputText style="p-col-4" value="#{item.moTa}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+
+
+                        <div class="p-col-5 p-field" id="infoForm">
+                            <div class="p-col" style="padding-top: 0;">
+                                <p:outputLabel for="maDiemdo">Mã điểm đo</p:outputLabel>
+                                <p:inputText id="maDiemdo" disabled="true"
+                                             value="#{dialog_AX.diemDo.maDiemdo}"/>
+                            </div>
+                            <div class="p-col">
+                                <p:outputLabel for="tenDiemdo">Tên điểm đo</p:outputLabel>
+                                <p:inputText id="tenDiemdo" disabled="true"
+                                             value="#{dialog_AX.diemDo.tenDiemdo}"/>
+                            </div>
+
+                            <div class="p-col">
+                                <p:outputLabel for="orgidRef">Đơn vị cung cấp số liệu</p:outputLabel>
+                                <p:inputText id="orgidRef" value="#{dialog_AX.ax.ADiemdoAxPK.orgidRef}"
+                                             required="true" disabled="#{dialog_AX.lockInput}"/>
+                            </div>
+                            <div class="p-col">
+                                <p:outputLabel for="maDiemdoREF">Mã điểm đo bên cung cấp số liệu</p:outputLabel>
+                                <p:inputText id="maDiemdoREF" value="#{dialog_AX.ax.ADiemdoAxPK.maDiemdoRef}" 
+                                             required="true" disabled="#{dialog_AX.lockInput}"/>
+                            </div>
+                            <div class="p-col">
+                                <p:outputLabel for="moTa">Mô tả thay đổi</p:outputLabel>
+                                <p:inputText id="moTa" value="#{dialog_AX.ax.moTa}" />
+                            </div>
+                            <div class="p-col">
+                                <p:outputLabel for="ngay">Ngày bắt đầu</p:outputLabel>
+                                <p:calendar id="ngay" value="#{dialog_AX.ax.ngay}" disabled="#{dialog_AX.lockInput}"
+                                            showOn="button" showButtonPanel="true"/> 
+                            </div>
+                            <div class="p-col">
+                                <p:outputLabel for="ngayKt" >Ngày kết thúc</p:outputLabel>
+                                <p:calendar id="ngayKt" value="#{dialog_AX.ax.ngayKt}"
+                                            showOn="button" showButtonPanel="true"/>s
+                            </div>
+                            <div class="p-grid" style="padding: 14px;">
+                                <div class="p-col" style="padding-top: 22px;">
+                                    <p:outputLabel for="modeSwitch" style=" padding-left: 8px;">Thêm mới</p:outputLabel>
+                                    <p:inputSwitch id="modeSwitch" style="margin-left: 13px;"  disabled="#{dialog_AX.disableSwitch}"
+                                                   value="#{dialog_AX.modeSwitch}">
+                                        <p:ajax listener="#{dialog_AX.onSwitch}" update="AXForm:orgidRef AXForm:maDiemdoREF AXForm:moTa AXForm:ngay AXForm:ngayKt" />s
+                                    </p:inputSwitch>
+                                </div>
+                                <div class="p-col">
+                                    <p:toolbar id="tlBar" style="border: none; padding: 0; background: #ffffff;">
+                                        <f:facet name="right">
+                                            <p:commandButton value="Lưu thay đổi" icon="pi pi-check"                                                     
+                                                             actionListener ="#{dialog_AX.saveChange}"/>
+                                        </f:facet>
+                                    </p:toolbar>                                                
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>                    
+                </p:outputPanel>
+            </h:form>
+            <style type="text/css">
+                .p-field {
+                    background: #ffffff;
+                    color: #4B576F;
+                    font-weight: 700;
+                    margin-bottom: 0;
+                }
+            </style>
+        </h:body>
+    </f:view>
+</html>

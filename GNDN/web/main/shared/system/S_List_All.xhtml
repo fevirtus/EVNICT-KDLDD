@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="./../../templates/tplEAM_Main.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+    <ui:define name="head">
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        
+    </ui:define>
+    <ui:define name="content">
+        <p:outputPanel id="msgInfo">
+            <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>                   
+        </p:outputPanel>  
+        <h:panelGroup styleClass="header">
+            <h:outputText value="Danh mục dùng chung" />
+        </h:panelGroup>
+        <!--Lồng phím tắt -->
+        <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+        <p:toolbar style="margin-bottom: 5px;" >
+            <p:toolbarGroup align="left">
+                <p:commandButton id="btnNew" styleClass="btnHeight" icon="addnew" 
+                                 title="#{commonMessages.btnAddNew}"
+                                 actionListener="#{danhMucDungChungBean.addNewSListFieldALL}"
+                                 update="msgInfo confirmDelContent" 
+                                 oncomplete="handleCmdComplete(xhr, status, args)"/> 
+                <p:commandButton id="btnUpdate" styleClass="btnHeight" icon="edit" 
+                                 title="#{commonMessages.btnViewUpdate}"
+                                 actionListener="#{danhMucDungChungBean.editSListFieldALL}"
+                                 update="msgInfo confirmDelContent" 
+                                 oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" 
+                                 title="#{commonMessages.btnDelete}"
+                                 update="msgInfo confirmDelContent" 
+                                 actionListener="#{danhMucDungChungBean.deleteSListFieldALLStart}"
+                                 oncomplete="handleCmdComplete(xhr, status, args)"/>
+            </p:toolbarGroup>                                  
+        </p:toolbar>
+
+        <p:layout id="layoutCategory" style="height:500px;" >
+
+
+            <p:layoutUnit id="layoutCategory1" gutter="1" position="west" size="400" resizable="true" collapsible="true">
+                <p:contextMenu for="treeCategory">  
+                    <p:menuitem value="Thêm mới nhóm" actionListener="#{danhMucDungChungBean.onAddNewGroupInTree}"
+                                oncomplete="handleCmdComplete(xhr, status, args)" process="@this" icon="ui-icon-document" />
+                    <p:menuitem value="Thêm mới danh mục" actionListener="#{danhMucDungChungBean.onAddNewInTree}"
+                                oncomplete="handleCmdComplete(xhr, status, args)" process="@this" icon="ui-icon-document" />
+                    <p:menuitem value="Sửa" actionListener="#{danhMucDungChungBean.onEditInTree}"
+                                update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)" process="@this" icon="ui-icon-wrench"/>
+                </p:contextMenu>                
+                <p:tree id="treeCategory" style="width:1000px;height: auto;border: 0px"
+                        value="#{danhMucDungChungBean.rootTreeNode}" var="node"
+                        dynamic="true" cache="false"
+                        selectionMode="single" selection="#{danhMucDungChungBean.selectedTreeNode}">
+                    <p:ajax event="expand" />  
+                    <p:ajax event="collapse" /> 
+                    <p:ajax event="select" process="treeCategory" listener="#{danhMucDungChungBean.displaySelectedSingle}"
+                            update="@this,:#{p:component('dtSListFieldALL')},:#{p:component('dlgOpenSListFieldALLDetail')}"
+                            oncomplete="PF('wgSListFieldALL').clearFilters();"
+                            />                    
+                    <p:treeNode collapsedIcon="ui-icon-folder-collapsed" expandedIcon="ui-icon-folder-open" type="GroupList"
+                                >
+                        <h:outputText value="#{node.grouplistdesc} (#{node.grouplistid})"/>                                
+                    </p:treeNode>
+                    <p:treeNode collapsedIcon="ui-icon-contact" expandedIcon="ui-icon-contact" type="List">
+                        <h:outputText value="#{node.listdesc} (#{node.listid})"/>                                
+                    </p:treeNode>
+                </p:tree>
+
+            </p:layoutUnit>
+            <p:layoutUnit id="layoutCategory2" gutter="1" position="center" collapsible="true" style="width:100px;">
+
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtSListFieldALL" 
+                             paginator="true" widgetVar="wgSListFieldALL"
+                             value="#{danhMucDungChungBean.tableDataModel}"
+                             rows="100" 
+                             scrollable="true"
+                             scrollHeight="420"
+                             rowKey="#{s.fieldid}"
+                             filteredValue="#{danhMucDungChungBean.filterValue}"
+                             selection="#{danhMucDungChungBean.selectionSListFieldALL}"
+                             currentPageReportTemplate="Hiển thị {startRecord}-{endRecord} trong {totalRecords}"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,250,500" paginatorPosition="bottom">
+                    <p:column width="45" selectionMode="multiple" style="text-align: center;"/>
+                    <p:column width="45" style="text-align: center;">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{assetProp.headerDlgCategoryDetail}"
+                                         onclick="OpenSListFieldALLDetail('#{s.listid}', '#{s.fieldid}');"/>
+                    </p:column>
+                    <p:column width="30" id="cmstt" headerText="Stt">
+                        <h:outputText value="#{s.fieldord}"/>
+                    </p:column>
+                    <p:column rendered="false" width="70" id="cmfieldid" headerText="ID"
+                              filterBy="#{s.fieldid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.fieldid}"/>
+                    </p:column>
+                    <p:column  width="150" id="cmcode" headerText="Mã"
+                               filterBy="#{s.fieldcode}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.fieldcode}"/>
+                    </p:column>
+                    <p:column headerText="Tên"
+                              filterBy="#{s.fielddesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.fielddesc}"/>
+                    </p:column> 
+                    <p:column headerText="Ghi chú"
+                              filterBy="#{s.note}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.note}"/>
+                    </p:column> 
+                    
+                </p:dataTable>
+            </p:layoutUnit>
+        </p:layout>
+        <br/>
+        <!-- Vùng dialog-->
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+            <h:panelGrid id="confirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{danhMucDungChungBean.m_sDeleteMsg}"/>
+            </h:panelGrid>
+            <p:commandButton icon="accept" value="#{commonMessages.btnAccept}"
+                             actionListener="#{danhMucDungChungBean.deleteSListFieldALLEnd}" update=":#{p:component('dtSListFieldALL')}" 
+                             oncomplete="confirmDel').hide();PF('wgSListFieldALL').clearFilters();"/>
+            <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+        </p:dialog>
+        <!-- Format form chi tiết-->
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenSListFieldALLDetail" widgetVar="dlgOpenSListFieldALLDetail" header="Chi tiết danh mục[#{danhMucDungChungBean.g_SListALL.listid}]-[#{danhMucDungChungBean.g_SListALL.listdesc}]" 
+                  width="600px" height="300px"                          
+                  closable="true" modal="true" resizable="true">
+            <p:ajax event="close" listener="#{danhMucDungChungBean.onCloseAssetCategoryDetail}"
+                    update=":#{p:component('dtSListFieldALL')}" oncomplete="PF('wgSListFieldALL').clearFilters();"/>
+            <iframe id="frCategoryDetail" scrolling="no"
+                    frameborder="0" width="100%" height="99%">
+            </iframe>
+        </p:dialog>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenListGroupDetail" widgetVar="dlgOpenListGroupDetail" header="Chi tiết nhóm danh mục" 
+                  width="600px" height="300px"                          
+                  closable="true" modal="true" resizable="true">
+            <p:ajax event="close" listener="#{danhMucDungChungBean.onCloseListGroup}"
+                    update="treeCategory"/>
+            <iframe id="ifOpenListGroupDetail" scrolling="no"
+                    frameborder="0" width="100%" height="99%">
+            </iframe>
+        </p:dialog>
+        <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenListDetail" widgetVar="dlgOpenListDetail" header="Chi tiết danh mục" 
+                  width="700px" height="400px"                          
+                  closable="true" modal="true" resizable="true">
+            <p:ajax event="close" listener="#{danhMucDungChungBean.onCloseListGroup}"
+                    update="treeCategory"/>
+            <iframe id="ifOpenListDetail" scrolling="no"
+                    frameborder="0" width="100%" height="99%">
+            </iframe>
+        </p:dialog>
+        <script type="text/javascript">
+            function reApplyFilterGrd()
+            {
+                if (!#{settingsProp.FilterWhenCloseDlg})
+                    return;
+                wgCategory.filter();
+            }
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'AddNew':
+                            OpenSListFieldALLDetail(args.listid, '');
+                            break;
+                        case 'Edit':
+                            OpenSListFieldALLDetail(args.listid, args.fieldid);
+                            break;
+                        case 'Delete':
+                              PF('confirmDel').show();
+                            break;
+                        case 'AddNewGroupInTree':
+                            if (args.Status)
+                            {
+                                OpenSListFieldGroupALLDetail('', args.parentId);
+                            }
+                            break;
+                        case 'AddNewInTree':
+                            if (args.Status)
+                            {
+                                OpenSListFieldFunALLDetail('', args.parentId);
+                            }
+                            break;
+                        case 'EditGroupInTree':
+                            if (args.type == 'GroupList')
+                            {
+                                OpenSListFieldGroupALLDetail(args.id, args.parentId);
+                            }
+                            if (args.type == 'List')
+                            {
+                                OpenSListFieldFunALLDetail(args.id, args.parentId);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            function OpenSListFieldALLDetail(strlistid, strfieldid) {
+                var f = document.getElementById('frCategoryDetail');
+                if (strfieldid)
+                    f.src = "../system/S_List_All_details.jsf?listid=" + strlistid + "&amp;fieldid=" + strfieldid;
+                else
+                    f.src = "../system/S_List_All_details.jsf?listid=" + strlistid;
+                PF('dlgOpenSListFieldALLDetail').show();
+            }
+            function OpenSListFieldGroupALLDetail(id, parentId) {
+                var f = document.getElementById('ifOpenListGroupDetail');
+                if (id)
+                    f.src = "../system/S_List_Group_All_details.jsf?id=" + id + "&amp;parentId=" + parentId;
+                else
+                    f.src = "../system/S_List_Group_All_details.jsf?parentId=" + parentId;
+                PF('dlgOpenListGroupDetail').show();
+            }
+            function OpenSListFieldFunALLDetail(id, parentId) {
+                var f = document.getElementById('ifOpenListDetail');
+                if (id)
+                    f.src = "../system/S_List_All_Fun_details.jsf?id=" + id + "&amp;parentId=" + parentId;
+                else
+                    f.src = "../system/S_List_All_Fun_details.jsf?parentId=" + parentId;
+                PF('dlgOpenListDetail').show();
+            }
+        </script>
+        <ui:include src="../../shared/incShortcut.xhtml"/>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+            <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+        </h:head>               
+
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #f4f7f9; margin: 15px;">
+            <h:form onsubmit="return false" id="CreateNhomForm">
+
+                <p:growl id="messages" showDetail="true" />  
+                <div class="card">
+                    <p:outputPanel id="manage-content" class="ui-fluid">
+                        <div class="p-field">
+                            <p:outputLabel value="Kiểu" for="typeid"/>
+                            <p:selectOneMenu id="typeid" value="#{diemDo_NhomDetailBean.diemDoNhom.typeid}" 
+                                             filterMatchMode="contains" filter="true">
+                                <p:ajax event="itemSelect" 
+                                        update="CreateNhomForm:categoryid"
+                                        listener="#{diemDo_NhomDetailBean.onKieuChange}"/>
+                                <f:selectItems value="#{diemDo_NhomDetailBean.listType}"
+                                               var="a" itemLabel="#{a.typedesc}" itemValue="#{a.typeid}"/>
+                            </p:selectOneMenu>  
+                        </div>
+
+                        <div class="p-field">
+                            <p:outputLabel value="Loại" for="categoryid"/>
+                            <p:selectOneMenu id="categoryid" value="#{diemDo_NhomDetailBean.diemDoNhom.categoryid}" 
+                                             filterMatchMode="contains" filter="true">
+                                <f:selectItems value="#{diemDo_NhomDetailBean.listCategory}"
+                                               var="a" itemLabel="#{a.categorydesc}" itemValue="#{a.categoryid}"/>
+                            </p:selectOneMenu> 
+                        </div>
+
+                        <div class="p-field">
+                            <p:outputLabel for="maNhomDd">Mã</p:outputLabel>
+                            <p:inputText id="maNhomDd" disabled="#{!diemDo_NhomDetailBean.isAdd}"
+                                         value="#{diemDo_NhomDetailBean.diemDoNhom.maNhomDd}" required="true" />
+                        </div>
+                        <div class="p-field">
+                            <p:outputLabel for="tenNhomDd">Tên</p:outputLabel>
+                            <p:inputText id="tenNhomDd" required="true"
+                                         value="#{diemDo_NhomDetailBean.diemDoNhom.tenNhomDd}"/>
+                        </div>
+                        <div class="p-field">
+                            <p:outputLabel for="stt">Số thứ tự</p:outputLabel>
+                            <p:inputText id="stt" value="#{diemDo_NhomDetailBean.diemDoNhom.stt}"/>
+                        </div>
+                        <div class="p-field">
+                            <p:outputLabel for="ulevelid">Sử dụng</p:outputLabel>
+                            <p:inputText id="ulevelid" value="#{diemDo_NhomDetailBean.diemDoNhom.ulevelid}"/>
+                        </div>
+                    </p:outputPanel>
+
+                    <div>
+                        <p:toolbar id="tlBar" style="background: #ffffff; border: none; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+                            <f:facet name="right">
+                                <p:commandButton value="Lưu" icon="pi pi-check"
+                                                 actionListener ="#{diemDo_NhomDetailBean.onSaveNhom()}"/>
+                            </f:facet>                        
+                        </p:toolbar>
+                    </div>
+                </div>
+            </h:form>
+            <style type="text/css">
+                .p-field {
+
+                    color: #4B576F;
+                    font-weight: 700;
+                }
+
+            </style>
+        </h:body>
+    </f:view>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+            #{sys_DeptBean.assertFuncRight('02.0102')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{sys_DeptBean.renderedFuncEdit('02.0102')}">
+                        <p:commandButton id="btnNew" disabled="#{sys_Dept_Details.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" ajax="false" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         actionListener="#{sys_Dept_Details.onAddNewDept}" />
+                        <p:commandButton id="btnUpdate" disabled="#{sys_Dept_Details.dtIsDisabledSaveMain}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{sys_Dept_Details.onSaveDept}" />
+                        <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" ajax="false" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         disabled="#{sys_Dept_Details.dtIsDisabledEditDataMain}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDeleteDeptDetail}');"
+                                         actionListener="#{sys_Dept_Details.onDeleteDept}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first" ajax="false" title="#{commonMessages.btnFirst}"
+                                                 disabled="#{sys_Dept_Details.m_bFirst}" update="tbrHeader msgInfo pnlContent"
+                                                 actionListener="#{sys_Dept_Details.onNavigatorFirst}"/>
+                                <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{sys_Dept_Details.m_bPrevious}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_previous" ajax="false" title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{sys_Dept_Details.onNavigatorPrevious}"/>
+                                <p:commandButton id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{sys_Dept_Details.m_bNext}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_next" ajax="false" title="#{commonMessages.btnNext}"
+                                                 actionListener="#{sys_Dept_Details.onNavigatorNext}"/>
+                                <p:commandButton id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{sys_Dept_Details.m_bLast}" update="tbrHeader msgInfo pnlContent"
+                                                 icon="resultset_last" ajax="false" title="#{commonMessages.btnLast}"
+                                                 actionListener="#{sys_Dept_Details.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>                
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>                
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">
+                    <p:focus for="txtDeptID"/>
+                    <table>
+                        <tr style="height: 25px">
+                            <td width="180px" align="right">
+                        <h:outputText value="#{msgs.detail_LblDept_dept}*"
+                                      styleClass="#{sys_Dept_Details.style_TxtCMID}"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtDeptID" style="width: 180px;"
+                                     readonly="#{sys_Dept_Details.txtCMIDReadOnly}"
+                                     value="#{sys_Dept_Details.dept.deptid}"/>
+                        </td>
+                        <td/>
+                        <td >
+                        <h:inputText id="txtDeptDesc" style="width: 350px;"
+                                     value="#{sys_Dept_Details.dept.deptdesc}"/>
+                        </td>                                
+                        </tr>
+                        <tr style="height: 25px">
+                            <td width="110px" align="right">
+                        <h:outputText value="#{msgs.detail_LblOrg_dept}*"
+                                      styleClass="#{sys_Dept_Details.style_TxtORGID}"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtOrgID" style="width: 180px;"
+                                     value="#{sys_Dept_Details.dept.orgid}" onkeydown="return KeyEnterSelectOrg(event, this);"/>
+                        </td>                                
+                        <td>
+                            <!--                            <p:commandButton styleClass="btnHeight"
+                                                                         icon="ui-icon ui-icon-search" onclick="OpenOrgDialog()">
+                                                        </p:commandButton>-->
+                            <a href="javascript:void(0)"><h:graphicImage title="#{commonMessages.btnOpen}" url="/images/find.gif" onclick="OpenOrgDialog()"/></a>
+                        </td>
+                        <td>
+                        <h:inputText id="txtOrgDesc" style="width: 350px;" readonly="true"
+                                     value="#{sys_Dept_Details.orgDesc}"/>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.main_grd_deptid_parent_dept}" styleClass="#{sys_Dept_Details.style_TxtMeterID}"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtDeptParentID" style="width: 180px;"
+                                     value="#{sys_Dept_Details.dept.deptidParent}"
+                                     onkeydown="return KeyEnterSelectDept(event, this);"/>
+                        </td>
+                        <td>
+                            <!--                            <p:commandButton styleClass="btnHeight"
+                                                                         icon="ui-icon ui-icon-search" onclick="OpenDeptDialog()">
+                                                        </p:commandButton>-->
+                            <a href="javascript:void(0)"><h:graphicImage title="#{commonMessages.btnOpen}" url="/images/find.gif" onclick="OpenDeptDialog()"/></a>
+                        </td>
+                        <td >
+                        <h:inputText id="txtDeptParentDesc" style="width: 350px;" readonly="true"
+                                     value="#{sys_Dept_Details.deptDesc}"/>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="Tên viết tắt"/>
+                        </td>                                                    
+                        <td colspan="2" valign="top">
+                        <h:inputText id="txtDeptCode" style="width: 180px;"
+                                     value="#{sys_Dept_Details.dept.deptcode}"/>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="#{msgs.detail_LblTypeDept_dept}"/>
+                        </td>                                                    
+                        <td colspan="2" valign="top">
+                        <h:selectManyListbox id="slbDeptType" style="width: 98%;" size="4"
+                                             value="#{sys_Dept_Details.m_ArrDeptTypeIDSelected}">
+                            <f:selectItems value="#{sys_Dept_Details.dsDeptTypeForListBox}"
+                                           var="a" itemLabel="#{a.depttypeid} - #{a.depttypedesc}"
+                                           itemValue="#{a.depttypeid}"/>
+                        </h:selectManyListbox>
+                        </td>
+                        <td align="left" valign="middle">
+                        <h:panelGrid columns="1">                                                            
+                            <p:commandButton id="btnDeleteDeptType" icon="delete" value="#{commonMessages.btnDelete}" style="width: 70px"
+                                             disabled="#{sys_Dept_Details.dtIsDisabledEditDataMain}" update="slbDeptType cbDeptType"
+                                             actionListener="#{sys_Dept_Details.onRemoveDeptTypeInListBox}"/>
+                        </h:panelGrid>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td colspan="2">
+                        <p:selectOneMenu id="cbDeptType" value="#{sys_Dept_Details.selectedTypeDept}"
+                                         style="margin-right:10px;font-size:12px;width: 98%">
+                            <f:selectItems value="#{sys_Dept_Details.dsDeptTypeForCombo}"
+                                           var="a" itemLabel="#{a.depttypeid} - #{a.depttypedesc}"
+                                           itemValue="#{a.depttypeid}"/>
+                        </p:selectOneMenu>
+                        </td>
+                        <td align="left">
+                        <h:panelGrid columns="1">
+                            <p:commandButton id="btnAddDeptType" icon="addnew" value="#{commonMessages.btnAdd}" style="width: 70px"
+                                             disabled="#{sys_Dept_Details.dtIsDisabledEditDataMain}" update="slbDeptType msgInfo cbDeptType"
+                                             actionListener="#{sys_Dept_Details.onAddDeptTypeInListBox}"/>
+                        </h:panelGrid>
+                        </td>
+                        </tr>
+                    </table>
+
+                </p:outputPanel>                   
+
+                <script type="text/javascript">
+                    function OpenDeptDialog() {
+                        var f = document.getElementById('browserContent2');
+                        f.src = "./../../shared/dialog/dlgDept.jsf?display=one";
+                        PF('dlgOpenDeptDialog').show();
+                    }
+                    function KeyEnterSelectAsset(event, control) {
+                        if (event.keyCode == 13) {
+                            if (control.id == ":formDlg:txtAssetID_Org") {
+                                OpenSelectAsset(control.value);
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+                    function OpenOrgDialog() {
+                        var f = document.getElementById('browserContent1');
+                        f.src = "./../../shared/dialog/dlgOrganization.jsf?display=one";
+                        PF('dlgOpenOrgDialog').show();
+                    }
+                    function OpenOrgDialog() {
+                        var f = document.getElementById('browserContent1');
+                        f.src = "./../../shared/dialog/dlgOrganization.jsf?display=one";
+                        PF('dlgOpenOrgDialog').show();
+                    }
+                    function KeyEnterSelectOrg(event, control) {
+                        if (event.keyCode == 13) {
+                            if (control.id == ":formDlg:txtOrgID") {
+                                OpenSelectOrg(control.value);
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+                    function OpenSelectOrg(filterValue) {
+                        var f = document.getElementById('browserContent1');
+                        if (f) {
+                            var url = "./../../shared/dialog/dlgOrganization.jsf";
+                            var temp = "?";
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgOpenOrgDialog').show();
+                        }
+                        return false
+                    }
+                    function KeyEnterSelectDept(event, control) {
+                        if (event.keyCode == 13) {
+                            if (control.id == ":formDlg:txtDeptParentID") {
+                                OpenSelectDept(control.value);
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+                    function OpenSelectDept(filterValue) {
+                        var f = document.getElementById('browserContent2');
+                        if (f) {
+                            var url = "./../../shared/dialog/dlgDept.jsf";
+                            var temp = "?";
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgOpenDeptDialog').show();
+                        }
+                        return false
+                    }
+                </script>                
+                <!-- Dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenDeptDialog" widgetVar="dlgOpenDeptDialog"
+                          width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" closable="true"
+                          resizable="true" modal="true" header="Chọn phòng ban/bộ phận">
+                    <p:ajax event="close" update="txtDeptParentID txtDeptParentDesc"/>
+                    <iframe id="browserContent2" scrolling="no"
+                            frameborder="true"
+                            width="100%" height="#{settingsProp.L3DlgHeight-40}"
+                            style="border: none">
+                    </iframe>
+                    <center>
+                        <p:commandButton value="Đồng ý" actionListener="#{sys_Dept_Details.onAcceptDeptClick}" oncomplete="PF('dlgOpenDeptDialog').hide();"/>
+                        <p:commandButton value="Hủy bỏ" onclick="PF('dlgOpenDeptDialog').hide();" />
+                    </center>
+                </p:dialog>
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenOrgDialog" widgetVar="dlgOpenOrgDialog"
+                          width="#{settingsProp.L3DlgWidth}" height="#{settingsProp.L3DlgHeight}" closable="true"
+                          resizable="true" modal="true" header="Chọn đơn vị">
+                    <p:ajax event="close" update="txtOrgID txtDeptDesc"/>
+                    <iframe id="browserContent1" scrolling="no"
+                            frameborder="true"
+                            width="100%" height="#{settingsProp.L3DlgHeight-40}"
+                            style="border: none">
+                    </iframe>
+                    <center>
+                        <p:commandButton value="Đồng ý" oncomplete="PF('dlgOpenOrgDialog').hide();" actionListener="#{sys_Dept_Details.onAcceptOrganizationClick}"/>
+                        <p:commandButton value="Hủy bỏ" onclick="PF('dlgOpenOrgDialog').hide();" />
+                    </center>
+                </p:dialog>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

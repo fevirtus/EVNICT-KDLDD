@@ -1,0 +1,253 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package vanhanh.web.bean;
+
+import dulieuthuthap.MHistoryChiso;
+import dulieuthuthap.MHistorySanluong;
+import dulieuthuthap.countThuThap;
+import main.web.common.bean.BasePageCommon;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import main.ContextResources.EjbContext;
+import main.entity.shared.system.S_Assets;
+import main.web.common.bean.WorkingContext;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.AxesGridLines;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
+import org.primefaces.model.charts.bar.BarChartDataSet;
+import org.primefaces.model.charts.bar.BarChartModel;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.optionconfig.legend.Legend;
+import org.primefaces.model.charts.optionconfig.legend.LegendLabel;
+import org.primefaces.model.charts.optionconfig.title.Title;
+import vanhanh.remote.IDuLieuThuThapRemote;
+
+/**
+ *
+ * @author Admin
+ */
+@ManagedBean
+@ViewScoped
+public class DuLieuThuThapBean extends BasePageCommon implements Serializable {
+
+    //Du lieu lay cac group function la du lieu tuong minh cuoi cung
+    private IDuLieuThuThapRemote iDuLieuThuThapRemote;
+    private BarChartModel barModel;
+    private String userId;
+    private countThuThap counttt;
+    private int monthLoad = 1;
+    private int yearLoad = 2020;
+    private List<S_Assets> listOrgByUserId = new ArrayList<>();
+    private List<String> listLabelBarModel = new ArrayList<>();
+
+    /**
+     * Creates a new instance of DuLieuThuThapBean
+     */
+    public DuLieuThuThapBean() {
+
+        userId = WorkingContext.getUserName();
+        listOrgByUserId = getiDuLieuThuThapRemote().getAllOrgByUserId(userId);
+        if (listOrgByUserId.get(0).getOrgid().equals("NPT")) {
+            int tong = 0;
+            int thuthap = 0;
+            for (S_Assets item : listOrgByUserId) {
+                tong += getiDuLieuThuThapRemote().getCountTotalChiSoDD(monthLoad, yearLoad, item.getOrgid());
+                thuthap += getiDuLieuThuThapRemote().getCountChiSoThuThapDD(monthLoad, yearLoad, item.getOrgid());
+            }
+            counttt = new countThuThap("NPT", tong, thuthap, tong - thuthap);
+        } else {
+            int tong = getiDuLieuThuThapRemote().getCountTotalChiSoDD(monthLoad, yearLoad, listOrgByUserId.get(0).getOrgid());
+            int thuthap = getiDuLieuThuThapRemote().getCountChiSoThuThapDD(monthLoad, yearLoad, listOrgByUserId.get(0).getOrgid());
+            counttt = new countThuThap(listOrgByUserId.get(0).getOrgid(), tong, thuthap, tong - thuthap);
+        }
+
+        createBarModel();
+    }
+
+    public void onLoadData() {
+        try {
+            createBarModel();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public double getTongDiemDo() {
+        int tong = 0;
+        int thuthap = 0;
+        for (S_Assets item : listOrgByUserId) {
+            tong += getiDuLieuThuThapRemote().getCountTotalChiSoDD(monthLoad, yearLoad, item.getOrgid());
+            thuthap += getiDuLieuThuThapRemote().getCountChiSoThuThapDD(monthLoad, yearLoad, item.getOrgid());
+        }
+        double result = (double) thuthap * 100 / tong;
+        return result;
+    }
+
+    public void createBarModel() {
+        barModel = new BarChartModel();
+        ChartData data = new ChartData();
+
+        BarChartDataSet barDataSet = new BarChartDataSet();
+        barDataSet.getLabel();
+
+        int totalChiSoDD;
+        int chiSoThuThapDD;
+
+        List<Number> values = new ArrayList<>();
+        for (S_Assets item : listOrgByUserId) {
+            if (item.getOrgid().equals("NPT")) {
+                values.add(getTongDiemDo());
+            } else {
+                totalChiSoDD = getiDuLieuThuThapRemote().getCountTotalChiSoDD(monthLoad, yearLoad, item.getOrgid());
+                chiSoThuThapDD = getiDuLieuThuThapRemote().getCountChiSoThuThapDD(monthLoad, yearLoad, item.getOrgid());
+                values.add((double) chiSoThuThapDD * 100 / totalChiSoDD);
+            }
+        }
+        barDataSet.setData(values);
+
+        List<String> bgColor = new ArrayList<>();
+        bgColor.add("rgba(86, 167, 245,0.2)");
+        barDataSet.setBackgroundColor(bgColor);
+
+        List<String> borderColor = new ArrayList<>();
+        borderColor.add("rgb(86, 167, 245)");
+        barDataSet.setBorderColor(borderColor);
+        barDataSet.setBorderWidth(1);
+
+        data.addChartDataSet(barDataSet);
+
+        //set list label for chart
+        for (S_Assets item : listOrgByUserId) {
+            listLabelBarModel.add(item.getOrgcode());
+        }
+        data.setLabels(listLabelBarModel);
+        barModel.setData(data);
+
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        AxesGridLines gridLines = new AxesGridLines();
+        gridLines.setColor("rgba(126, 146, 185, .3)");
+        linearAxes.setGridLines(gridLines);
+        linearAxes.setOffset(true);
+        CartesianLinearTicks ticks = new CartesianLinearTicks();
+        linearAxes.setTicks(ticks);
+        cScales.addYAxesData(linearAxes);
+
+        CartesianLinearAxes xaxes = new CartesianLinearAxes();
+        xaxes.setGridLines(gridLines);
+        cScales.addXAxesData(xaxes);
+        options.setScales(cScales);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Tỷ lệ thu thập số liệu");
+        options.setTitle(title);
+
+        Legend legend = new Legend();
+        legend.setDisplay(true);
+        legend.setPosition("top");
+        LegendLabel legendLabels = new LegendLabel();
+        legendLabels.setFontStyle("bold");
+        legendLabels.setFontColor("#7e92b9");
+        legend.setLabels(legendLabels);
+        options.setLegend(legend);
+
+        barModel.setOptions(options);
+    }
+
+    public void test1() {
+        long start = System.nanoTime();
+
+        List<MHistoryChiso> list1 = getiDuLieuThuThapRemote().getAllHistoryChiSo();
+        List<MHistoryChiso> result = new ArrayList<>();
+        List<MHistorySanluong> list2 = getiDuLieuThuThapRemote().getAllHistorySanLuong();
+
+        for (MHistoryChiso item1 : list1) {
+            for (MHistorySanluong item2 : list2) {
+                if (item1.getMHistoryChisoPK().getMaDiemdo() == item2.getMHistorySanluongPK().getMaDiemdo()) {
+                    result.add(item1);
+                }
+            }
+        }
+        long end = System.nanoTime();
+        long execution = end - start;
+        System.out.println("Execution time: " + execution + " nanoseconds");
+
+    }
+
+    public void test2() {
+
+        long start = System.nanoTime();
+
+        getiDuLieuThuThapRemote().test();
+
+        long end = System.nanoTime();
+        long execution = end - start;
+        System.out.println("Execution time: " + execution + " nanoseconds");
+    }
+
+    public IDuLieuThuThapRemote getiDuLieuThuThapRemote() {
+        try {
+            if (iDuLieuThuThapRemote == null) {
+                iDuLieuThuThapRemote = (IDuLieuThuThapRemote) EjbContext.getLocalEJBRemote(IDuLieuThuThapRemote.class.getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iDuLieuThuThapRemote;
+    }
+
+    public countThuThap getCounttt() {
+        return counttt;
+    }
+
+    public void setCounttt(countThuThap counttt) {
+        this.counttt = counttt;
+    }
+
+    public int getMonthLoad() {
+        return monthLoad;
+    }
+
+    public void setMonthLoad(int monthLoad) {
+        this.monthLoad = monthLoad;
+    }
+
+    public int getYearLoad() {
+        return yearLoad;
+    }
+
+    public void setYearLoad(int yearLoad) {
+        this.yearLoad = yearLoad;
+    }
+
+    public List<S_Assets> getListOrgByUserId() {
+        return listOrgByUserId;
+    }
+
+    public void setListOrgByUserId(List<S_Assets> listOrgByUserId) {
+        this.listOrgByUserId = listOrgByUserId;
+    }
+
+    public BarChartModel getBarModel() {
+        return barModel;
+    }
+
+    public void setBarModel(BarChartModel barModel) {
+        this.barModel = barModel;
+    }
+
+}

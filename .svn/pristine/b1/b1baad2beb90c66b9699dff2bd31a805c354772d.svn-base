@@ -1,0 +1,93 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package vanhanh.web.bean;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import main.ContextResources.EjbContext;
+import main.entity.shared.system.S_Assets;
+import main.web.common.bean.BasePageCommon;
+import main.web.common.bean.WorkingContext;
+import vanhanh.remote.IVanHanhRemote;
+
+/**
+ *
+ * @author Admin
+ */
+@ManagedBean
+@ViewScoped
+public class QuanLyBienDongDDThangBean extends BasePageCommon implements Serializable {
+
+    private IVanHanhRemote iVanHanhRemote;
+    private String userId;
+    private String orgIdSelected;
+    private int monthLoad;
+    private int yearLoad;
+    private List<S_Assets> listOrgSelected = new ArrayList<>();
+
+    public QuanLyBienDongDDThangBean() {
+        userId = WorkingContext.getUserName();
+        listOrgSelected = getiVanHanhRemote().getAllOrgTreetable(userId);
+    }
+
+    public void onLoadData() {
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public IVanHanhRemote
+            getiVanHanhRemote() {
+        try {
+            if (iVanHanhRemote == null) {
+                iVanHanhRemote = (IVanHanhRemote) EjbContext.getLocalEJBRemote(IVanHanhRemote.class
+                        .getSimpleName());
+            } else {
+                EjbContext.LoginEJB();//Login lại khi gọi ejb
+            }
+        } catch (Exception ex) {
+            return null;
+        }
+        return iVanHanhRemote;
+    }
+
+    public String getOrgIdSelected() {
+        return orgIdSelected;
+    }
+
+    public void setOrgIdSelected(String orgIdSelected) {
+        this.orgIdSelected = orgIdSelected;
+    }
+
+    public List<S_Assets> getListOrgSelected() {
+        return listOrgSelected;
+    }
+
+    public void setListOrgSelected(List<S_Assets> listOrgSelected) {
+        this.listOrgSelected = listOrgSelected;
+    }
+
+    public int getMonthLoad() {
+        return monthLoad;
+    }
+
+    public void setMonthLoad(int monthLoad) {
+        this.monthLoad = monthLoad;
+    }
+
+    public int getYearLoad() {
+        return yearLoad;
+    }
+
+    public void setYearLoad(int yearLoad) {
+        this.yearLoad = yearLoad;
+    }
+}

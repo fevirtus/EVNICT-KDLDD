@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Thay đổi ảnh Login</title>
+        <f:loadBundle basename="evnit.tms.web.eam.work.prop.WorderDtProp" var="propThis" />
+        <f:loadBundle basename="evnit.tms.web.eam.preventive.prop.MaintPlanProp" var="propPM" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+        <script type="text/javascript" src="#{request.contextPath}/script/common.js"></script>
+    </h:head>
+    <h:body>
+        <h:form id="formDlg">
+            <script type="text/javascript">
+                setLocale('#{settingsBean.dateLocale}');
+            </script>            
+            <!--Lồng phím tắt -->
+            <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+            </p:outputPanel>
+
+            <table width="100%" cellpadding="0"  cellspacing="5" border="0">
+                <tr>
+                    <td align="left" style="width:120px">
+                        <p:fileUpload mode="advanced" multiple="true" update="msgInfo"
+                                      label="#{commonMessages.btnChooseFile}"
+                                      sizeLimit="104857600"
+                                      allowTypes="/(\.|\/)(jpg|jpeg|png?x)$/"
+                                      cancelLabel="#{commonMessages.btnDelete}" 
+                                      uploadLabel="#{commonMessages.btnUpload}" fileUploadListener="#{changeImageLoginBean.onImageUpload}"
+                                      widgetVar="fuUpload"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font face="verdana" color="red">Chú ý: Kích thước ảnh phải là (431x484). Dung lượng tối đa (4MB) </font></td>
+                </tr>
+            </table>
+        </h:form>
+    </h:body>
+</html>

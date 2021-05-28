@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{sys_OrganizationBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                <f:loadBundle var="msgs" basename="main.web.shared.system.prop.SystemProp"/>
+                #{sys_OrganizationBean.assertFuncRight('02.01')}
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="#{msgs.title}" />                        
+                </h:panelGroup>
+                <p:toolbar style="margin-bottom: 5px;">
+                    <p:toolbarGroup align="left" rendered="#{sys_OrganizationBean.renderedFuncEdit('02.01')}">
+                        <p:commandButton id="btnNew" styleClass="btnHeight" icon="addnew" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         onclick="OpenOrganizationDetail('');"/>
+                        <p:commandButton id="btnUpdate" styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate} #{commonMessages.hkUpdate}"
+                                         actionListener="#{sys_OrganizationBean.onEditOrganization}"
+                                         update="msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                        <p:commandButton id="btnDel" styleClass="btnHeight" icon="delete" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         update="msgInfo confirmDelContent" actionListener="#{sys_OrganizationBean.onDeleteOrganizationStart}"
+                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="left">
+                        <p:separator/>
+                        <p:commandButton icon="shortcut" title="#{commonMessages.btnAddShortcut}" styleClass="btnHeight"
+                                         onclick="showDlgAddShortcut('04', '02.01')"/>
+                    </p:toolbarGroup>
+                </p:toolbar>        
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+
+                
+
+
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="confirmDel" modal="true" header="#{commonMessages.headerDlgDelete}" widgetVar="confirmDel" resizable="false">
+                    <h:panelGrid id="confirmDelContent" columns="2" cellspacing="5" style="padding-top: 5px;margin-bottom: 10px">
+                        <h:graphicImage url="/images/global/ConfirmDel.gif"/> <h:outputText value="#{sys_OrganizationBean.m_sDeleteMsg}"/>
+                    </h:panelGrid>
+                    <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" oncomplete="PF('confirmDel').hide()"
+                                     actionListener="#{sys_OrganizationBean.onDeleteOrganizationEnd}" update="dtOrganization msgInfo" />
+                    <p:commandButton icon="cancel"  value="#{commonMessages.btnCancel}" onclick="PF('confirmDel').hide()"/>
+                </p:dialog>
+
+
+
+                <!-- Vùng Grid-->                
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtOrganization" paginator="true" rows="100"
+                             value="#{sys_OrganizationBean.s_OrganizationDataModel}"
+                             selection="#{sys_OrganizationBean.arrSelectOrganization}"
+                             scrollable="true"
+                             scrollHeight="350"
+                             rowKey="#{s.orgid}"
+                             paginatorPosition="bottom"
+                             widgetVar="dtOrganization" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,300,400,500">
+                    <p:column selectionMode="multiple" width="35" style="text-align: center;"/>
+                    <p:column style="text-align: center;" width="35">
+                        <p:commandButton styleClass="btnHeight" icon="edit" title="#{commonMessages.btnViewUpdate}"
+                                         actionListener="#{sys_OrganizationBean.onOpenOrgCmdClick}" oncomplete="OpenOrganizationDetail('#{s.orgid}');"/>
+                    </p:column>
+                    <p:column id="cmid" headerText="#{msgs.main_grd_id}" width="100"
+                              filterBy="#{s.orgid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgid}"/>
+                    </p:column>
+                    <p:column   style="padding-left: #{s.paddingLeft}px; width:300px"
+                                headerText="#{msgs.main_grd_desc}"
+                                filterBy="#{s.orgdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgdesc}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.main_grd_code}" width="100"
+                              filterBy="#{s.orgcode}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgcode}"/>
+                    </p:column>
+                    <p:column headerText="#{msgs.main_grd_orgid_parent}"
+                              filterBy="#{s.orgidParent}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.sOrgidParent.orgdesc}"/>
+                    </p:column>                    
+                    <p:column headerText="#{msgs.main_grd_active}" style="text-align: center;" width="80"
+                              filterBy="#{s.active}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.active}" disabled="true"/>
+                    </p:column>
+                    <p:column headerText="Vận hành" style="text-align: center;" width="80"
+                              filterBy="#{s.isop}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.isop}" disabled="true"/>
+                    </p:column>
+                    <p:column headerText="Sửa chữa" style="text-align: center;" width="80"
+                              filterBy="#{s.ispm}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.ispm}" disabled="true"/>
+                    </p:column>
+                    <p:column headerText="Thí nghiệm" style="text-align: center;" width="80"
+                              filterBy="#{s.islab}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.islab}" disabled="true"/>
+                    </p:column>
+                    <p:column headerText="Cắt điện" style="text-align: center;" width="80"
+                              filterBy="#{s.islab}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:selectBooleanCheckbox value="#{s.iscd}" disabled="true"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <ui:include src="../../shared/incShortcut.xhtml"/>
+                <!-- Vùng dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenOrganizationDetail" widgetVar="dlgOpenOrganizationDetail" header="#{msgs.detail_Header}"
+                          width="#{settingsProp.MainDlgWidth}" height="450"
+                          onHide="document.getElementById('frOrganizationDetail').src=''"
+                          closable="true"  modal="true" resizable="false">
+                    <p:ajax event="close" listener="#{sys_OrganizationBean.onCloseOrganizationDetail}" oncomplete="reApplyFilterGrd();" update="dtOrganization"/>
+                    <iframe id="frOrganizationDetail" scrolling="no"
+                            frameborder="0" width="100%" height="99%">
+                    </iframe>
+                </p:dialog>
+
+                <script type="text/javascript">
+                    function handleCmdComplete(xhr, status, args) {
+                        if (args.Method)
+                        {
+                            switch (args.Method)
+                            {
+                                case 'Edit':
+                                    OpenOrganizationDetail(args.orgid);
+                                    break;
+                                case 'Delete':
+                                    PF('confirmDel').show();
+                                    break;
+                            }
+                        }
+                    }
+                    function OpenOrganizationDetail(orgid) {
+
+                        var f = document.getElementById('frOrganizationDetail');
+                        if (orgid)
+                            f.src = "../system/Sys_Organization_details.jsf?ORGID=" + orgid;
+                        else
+                            f.src = "../system/Sys_Organization_details.jsf";
+                        PF('dlgOpenOrganizationDetail').show();
+                    }
+                    function reApplyFilterGrd()
+                    {
+                        if (!#{settingsProp.FilterWhenCloseDlg})
+                            return;
+                        dtOrganization.filter();
+                    }
+                </script>
+                <style type="text/css">
+                    .hasDatepicker {
+                        width: 100px;
+                    }
+                </style>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

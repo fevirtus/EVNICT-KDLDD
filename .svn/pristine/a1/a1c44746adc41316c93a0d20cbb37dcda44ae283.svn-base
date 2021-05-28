@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.S_AttributeProp"/>
+            #{s_AttributesDetailBean.assertFuncRight('02.17')}
+            <style>
+                .cke_bottom
+                {
+                    display: none !important;
+                }
+                .cke
+                {                            
+                    border: none !important;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form id="formDlg">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{s_AttributesDetailBean.renderedFuncEdit('02.17')}">
+                        <p:commandButton id="btnNew" disabled="#{s_AttributesDetailBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew} #{commonMessages.hkAddNew}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{s_AttributesDetailBean.onAddNewDetail}" />
+                        <p:commandButton id="btnUpdate" disabled="#{s_AttributesDetailBean.dtIsDisabledSaveMain}" 
+                                         styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{s_AttributesDetailBean.onSaveDetail}" />
+                        <p:commandButton id="btnDel" disabled="#{s_AttributesDetailBean.dtIsDisabledEditDataMain}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}"
+                                         onclick="return window.confirm('#{msgs.dlg_att_MsgComfirmDelete}');"
+                                         actionListener="#{s_AttributesDetailBean.onDeleteDetail}" />
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="2">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <h:panelGroup id="tbNavigator">
+                                <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                                 icon="resultset_first" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnFirst}"
+                                                 disabled="#{s_AttributesDetailBean.m_bFirst}"
+                                                 actionListener="#{s_AttributesDetailBean.onNavigatorFirst}"/>
+                                <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                                 disabled="#{s_AttributesDetailBean.m_bPrevious}"
+                                                 icon="resultset_previous" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnPrevious}"
+                                                 actionListener="#{s_AttributesDetailBean.onNavigatorPrevious}"/>
+                                <p:commandButton id="btnNext" styleClass="btnHeight"
+                                                 disabled="#{s_AttributesDetailBean.m_bNext}"
+                                                 icon="resultset_next" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnNext}"
+                                                 actionListener="#{s_AttributesDetailBean.onNavigatorNext}"/>
+                                <p:commandButton id="btnLast" styleClass="btnHeight"
+                                                 disabled="#{s_AttributesDetailBean.m_bLast}"
+                                                 icon="resultset_last" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnLast}"
+                                                 actionListener="#{s_AttributesDetailBean.onNavigatorLast}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">
+                    <p:focus />
+                    <table style="margin-top: 10px;">
+                        <tr style="height: 25px">
+                            <td width="120px" align="right">
+                        <h:outputText value="#{msgs.dlg_att_LblAttribute}*"
+                                      styleClass="#{s_AttributesDetailBean.style_TxtID}"/>
+                        </td>
+                        <td >
+                        <h:inputText style="width: 180px;"  
+                                     readonly="#{s_AttributesDetailBean.txtIDReadOnly}" maxlength="25"
+                                     value="#{s_AttributesDetailBean.m_Attribute.attrid}"/>
+                        </td>                            
+                        <td colspan="2">
+                        <h:inputText style="width: 400px;"   maxlength="255"
+                                     value="#{s_AttributesDetailBean.m_Attribute.attrdesc}"/>
+                        </td>                            
+                        </tr>
+                        <tr style="height: 25px">  
+                            <td width="120px" align="right">
+                        <h:outputText value="Diễn giải"/>
+                        </td>
+                        <td colspan="4">
+                        <h:inputText style="width: 590px;"   maxlength="255"
+                                     value="#{s_AttributesDetailBean.m_Attribute.attrnote}"/>
+                        </td>                            
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.main_group_Title}*"
+                                      styleClass="#{s_AttributesDetailBean.style_TxtGroup}"/>
+                        </td>
+                        <td >
+                        <h:inputText style="width: 180px;" readonly="true"
+                                     value="#{s_AttributesDetailBean.m_Attribute.attributeGroup.attrgroupid}"
+                                     />
+                        </td>                            
+                        <td colspan="2">
+                        <h:inputText style="width: 400px;" readonly="true"
+                                     value="#{s_AttributesDetailBean.m_Attribute.attributeGroup.attrgroupdesc}"
+                                     />
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="#{msgs.main_Att_AtttypeID}*"
+                                      styleClass="#{s_AttributesDetailBean.style_TxtAttTypeID}"/>
+                        </td>
+                        <td>
+                        <p:selectOneMenu value="#{s_AttributesDetailBean.m_Attribute.attTypeid}" disabled="#{s_AttributesDetailBean.isAdd==0?false:true}">
+                            <f:selectItems value="#{s_AttributesDetailBean.dsAttType}" var="s"
+                                           itemLabel="#{s.attdesc}" itemValue="#{s.attypeid}"/>
+                            <p:ajax event="valueChange" listener="#{s_AttributesDetailBean.onChangeAttType}" update="cbDataType toogleInfo"/>
+                        </p:selectOneMenu>
+                        </td>
+                        <td align="left">
+                        <h:outputText style="width: 150px" value="#{msgs.main_Att_AttrId_Parent}"/>
+                        <h:inputText style="width: 310px" readonly="true" value="#{s_AttributesDetailBean.m_Attribute.attridParent}"/>
+                        </td>
+                        </tr>                        
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.dlg_att_LblColName}"
+                                      styleClass="#{s_AttributesDetailBean.style_TxtColName}"/>
+                        </td>
+                        <td>
+                        <h:inputText style="width: 180px;" maxlength="255"
+                                     value="#{s_AttributesDetailBean.m_Attribute.colname}"
+                                     />
+                        </td>
+                        <td >
+                        <h:outputText value="#{msgs.dlg_att_LblColNote}" style="#{settingsProp.StyleNote_Italic}"/>
+                        <!--                                <h:outputText value="{commonTMSProp.LblOrder}" style="margin-left: 20px; margin-right: 5px;"/>
+                                                        <h:inputText style="width: 50px;" converterMessage="{commonTMSProp.LblOrder}: {commonMessages.msgDecimalInvalid}"
+                                                                     value="{s_AttributesDetailBean.m_Attribute.attrord}"
+                                                                     />-->
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.main_Att_ColType}"
+                                      styleClass="#{s_AttributesDetailBean.style_TxtColType}"/>
+                        </td>
+                        <td>
+                        <p:selectOneMenu id="cbDataType" value="#{s_AttributesDetailBean.m_Attribute.coldatatypeid}">
+                            <f:selectItems value="#{s_AttributesDetailBean.dsLstDatatypes}" var="s"
+                                           itemLabel="#{s.datatypedesc}" itemValue="#{s.datatypeid}"/>
+                            <p:ajax event="valueChange" update="toogleTemplHtml panelColdefault pnlColLength pnlColHeight pnlColNum pnlColDefault_Date pnlColDefault_STR pnlColDefault_Bool"/>
+                        </p:selectOneMenu>
+                        </td>
+                        <td >
+                        <p:outputPanel id="pnlColHeight" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='STR'?'run-in':'none'}">
+                            <h:outputText value="#{msgs.dlg_att_LblColLen}" style="margin-left: 10px; margin-right: 5px;"
+                                          styleClass="#{s_AttributesDetailBean.style_TxtColLen}"/>
+                            <h:inputText style="width: 100px;" maxlength="10"
+                                         converterMessage="#{msgs.dlg_att_LblColLen}: #{commonMessages.msgDecimalInvalid}"
+                                         value="#{s_AttributesDetailBean.m_Attribute.collength}"
+                                         />
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlColLength" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='HTML'?'run-in':'none'}">
+                            <h:outputText value="Độ cao hiển thị" style="margin-left: 10px; margin-right: 5px;"
+                                          styleClass="#{s_AttributesDetailBean.style_TxtColHeight}"/>
+                            <h:inputText style="width: 100px;" maxlength="10"
+                                         converterMessage="Độ cao hiển thị không tồn tại"
+                                         value="#{s_AttributesDetailBean.m_Attribute.colheight}"
+                                         />
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlColNum" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='NUM'?'run-in':'none'}">
+                            <h:outputText value="#{msgs.dlg_att_LblColPrecision}*" style="margin-left: 10px; margin-right: 5px;"
+                                          styleClass="#{s_AttributesDetailBean.style_TxtColPrecision}"/>
+                            <h:inputText style="width: 100px;" maxlength="10"
+                                         converterMessage="#{msgs.dlg_att_LblColPrecision}: #{commonMessages.msgDecimalInvalid}"
+                                         value="#{s_AttributesDetailBean.m_Attribute.colprecision}"
+                                         />
+                            <h:outputText value="#{msgs.dlg_att_LblColScale}*" style="margin-left: 8px; margin-right: 5px;"
+                                          styleClass="#{s_AttributesDetailBean.style_TxtColScale}"/>
+                            <h:inputText style="width: 100px;" maxlength="10"
+                                         converterMessage="#{msgs.dlg_att_LblColScale}: #{commonMessages.msgDecimalInvalid}"
+                                         value="#{s_AttributesDetailBean.m_Attribute.colscale}"
+                                         />
+                        </p:outputPanel>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.dlg_att_LblColNull}"/>
+                        </td>
+                        <td >
+                        <p:selectBooleanCheckbox value="#{s_AttributesDetailBean.m_Attribute.collallownull}"/>                                
+                        </td>
+                        <td >
+                        <p:outputPanel id="panelColdefault" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid!='HTML'?'run-in':'none'}">
+                            <h:outputText id="lblColdefault" value="#{msgs.dlg_att_LblColDefault}" style="margin-left: 10px; margin-right: 5px;"/>
+                            <h:inputText id="txtColdefault" style="width: 180px;" maxlength="50"
+                                         value="#{s_AttributesDetailBean.m_Attribute.coldefault}"/>
+                        </p:outputPanel>
+                        </td>
+                        </tr>
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.dlg_att_LblEnable}"/>
+                        </td>
+                        <td >
+                        <p:selectBooleanCheckbox value="#{s_AttributesDetailBean.m_Attribute.enable}"/>
+                        </td>
+                        <td align="center">
+                        <p:outputPanel id="pnlColDefault_Bool" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='BOOL'?'run-in':'none'}">
+                            <h:outputText value="(#{msgs.dlg_att_MsgColDefault_Bool})" style="#{settingsProp.StyleNote_Italic}"/>
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlColDefault_Date" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='DATE'?'run-in':'none'}">
+                            <h:outputText value="(#{msgs.dlg_att_LblColDefault_Date})" style="#{settingsProp.StyleNote_Italic}"/>
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlColDefault_STR" style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='STR'?'run-in':'none'}">
+                            <h:outputText value="(#{msgs.dlg_att_LblColDefault_Str})" style="#{settingsProp.StyleNote_Italic}"/>
+                        </p:outputPanel>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td align="right">
+                        <h:outputText value="#{msgs.main_Att_UomID}"
+                                      styleClass="#{s_AttributesDetailBean.style_TxtUomID}"/>
+                        </td>
+                        <td>
+                        <p:selectOneMenu value="#{s_AttributesDetailBean.m_Attribute.uomid}">
+                            <f:selectItems value="#{s_AttributesDetailBean.dsLstUom}" var="s"
+                                           itemLabel="#{s.uomdesc}" itemValue="#{s.uomid}"/>
+                        </p:selectOneMenu>
+                        </td>
+                        <td>
+                        <h:outputText value="#{msgs.main_Att_Sign}" style="margin-left: 10px; margin-right: 5px;"/>
+                        <h:inputText style="width: 240px;" maxlength="50"
+                                     value="#{s_AttributesDetailBean.m_Attribute.sign}"/>
+                        </td>
+                        </tr>
+                        <tr>
+
+                        </tr>
+                        <tr>
+                            <td/>
+                            <td align="left" colspan="2">
+                        <p:selectBooleanCheckbox value="#{s_AttributesDetailBean.check}"/>
+                        <h:outputText value="#{msgs.dlg_att_CreatePhysicalCol}"/>
+                        <p:selectBooleanCheckbox value="#{s_AttributesDetailBean.m_Attribute.assetview}"/>
+                        <h:outputText value="Cho phép tổng hợp vào bảng thiết bị"/>
+                        <p:selectBooleanCheckbox value="#{s_AttributesDetailBean.m_Attribute.assetsimilar}"/>
+                        <h:outputText value="Cho phép tìm kiểm thiết bị tương đồng"/>
+                        </td>                            
+                        </tr>                        
+                    </table>                    
+                    <p:fieldset id="toogleInfo" toggleable="false" style="display: #{s_AttributesDetailBean.visible==1?'run-in':'none'};overflow-y: scroll;height: 240px;"
+                                legend="Thông tin truy vấn dữ liệu">                        
+                        <p:outputPanel id="pnlQuery" style="display: #{s_AttributesDetailBean.m_Attribute.attTypeid=='COUNT'?'none':'run-in'}">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <h:outputLabel value="Kiểu*"/>
+                                    </td>
+                                    <td>
+                                <p:selectOneMenu id="ctrType" value="#{s_AttributesDetailBean.m_Attribute.ctrlType}">
+                                    <f:selectItem itemValue="" itemLabel="Mặc định"/>                        
+                                    <f:selectItem itemValue="CBO" itemLabel="Combo"/>                        
+                                    <f:selectItem itemValue="RADIO"  itemLabel="Radio"/>
+                                </p:selectOneMenu>
+                                </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" width="70px"><h:outputLabel value="Câu lệnh*" styleClass="#{s_AttributesDetailBean.style_TxtDataQueryLst}"/></td>
+                                <td align="left"><h:inputTextarea title="#{msgs.note_lbl_QueryLst}" style="width: 700px" rows="2" value="#{s_AttributesDetailBean.m_Attribute.dataquerylst}"/></td>
+                                <td align="center">
+                                    <table cellpadding="0" cellspacing="3">
+                                        <tr>
+                                            <td>
+                                        <h:outputLabel value="#{msgs.lbl_FieldValue}*" styleClass="#{s_AttributesDetailBean.style_TxtDataFieldValue}"/>
+                                </td>
+                                <td>
+                                <h:outputLabel value="#{msgs.lbl_FieldDesc}*" styleClass="#{s_AttributesDetailBean.style_TxtDataFieldDesc}"/>
+                                </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                <h:inputText title="#{msgs.note_lbl_FieldValue}" style="width: 50px" value="#{s_AttributesDetailBean.m_Attribute.datafieldvalue}"/>
+                                </td>
+                                <td>
+                                <h:inputText title="#{msgs.note_lbl_FieldDesc}" style="width: 50px" value="#{s_AttributesDetailBean.m_Attribute.datafielddesc}"/>
+                                </td>
+                                </tr>
+                            </table>
+                            </td>
+                            </tr>
+                            <!-- Bỏ qua phần nhập header lst vì chưa sử dụng
+                            <tr>
+                                <td align="left"><h:outputLabel value="{msgs.lbl_HeaderLst}" styleClass="{s_AttributesDetailBean.style_TxtDataHeaderLst}"/></td>
+                                <td align="left"><h:inputTextarea title="{msgs.note_lbl_HeaderLst}" style="width: 350px" rows="1" value="{s_AttributesDetailBean.m_Attribute.dataheaderlst}"/></td>
+                                <td align="left" style="font-size: 8pt;">{msgs.lbl_FieldDesc_More}</td>
+                            </tr>
+                            -->
+                            </table>                            
+                        </p:outputPanel>
+                        <p:outputPanel id="pnlQueryOne">
+                            <table border="0" width="100%">
+                                <tr>
+                                    <td align="left" width="70px"><h:outputLabel value="Kết quả*" styleClass="#{s_AttributesDetailBean.style_TxtDataQueryOne}"/></td>
+                                <td align="left"><h:inputTextarea title="#{msgs.note_lbl_QueryOne}" style="width: 700px;" rows="2" value="#{s_AttributesDetailBean.m_Attribute.dataqueryone}"/></td>
+                                <td align="left" style="font-size: 8pt;">#{msgs.lbl_QueryOneMore}</td>
+                                </tr>
+                            </table>
+                        </p:outputPanel>
+                        <table border="0" width="100%" cellpadding="5px" cellspacing="5px">
+                            <tr>
+                                <td align="left" style="color: #0000FF">#{msgs.note_lbl}</td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="font-size: 8pt;">#{msgs.note_lbl_var_one}</td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="font-size: 8pt;">#{msgs.note_lbl_var_fieldval}</td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="font-size: 8pt;">#{msgs.note_lbl_var_lst}</td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="font-size: 8pt;">#{msgs.note_lbl_var_fieldvalCombo}</td>
+                            </tr>
+                            <tr>
+                                <td align="left" style="font-size: 8pt;">#{msgs.note_lbl_var_fieldvalComboWork}</td>
+                            </tr>
+                        </table>
+                    </p:fieldset>
+                    <p:fieldset id="toogleTemplHtml" toggleable="false" 
+                                style="display: #{s_AttributesDetailBean.m_Attribute.coldatatypeid=='HTML'?'run-in':'none'};
+                                overflow-y: scroll;height: 240px;"
+                                legend="Giá trị ngầm định">
+                        <pe:ckEditor language="vi" value="#{s_AttributesDetailBean.m_Attribute.coldefault}" toolbar="[['Bold','Italic','Underline'],['Table'],['Copy','Cut','Paste','PasteText','PasteFromWord'],['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],[ 'Styles', 'Format', 'Font', 'FontSize' ],[ 'TextColor', 'BGColor' ],[ 'Maximize', 'ShowBlocks' ] ]"
+                                     rendered="#{s_AttributesDetailBean.m_Attribute.coldatatypeid=='HTML'}" width="100%" height="150" >
+                        </pe:ckEditor>                        
+                    </p:fieldset>
+                </p:outputPanel>
+                <!-- Dialog-->               
+
+                <script type="text/javascript">
+                    function KeyEnter(event) {
+                        if (event.keyCode == 13) {
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

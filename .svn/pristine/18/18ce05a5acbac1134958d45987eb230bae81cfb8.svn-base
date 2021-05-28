@@ -1,0 +1,166 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtDMVT" 
+                             value="#{dMVTDialog.lazyModel}" lazy="true"
+                              paginator="true" rows="#{dMVTDialog.pageSize}"
+                              scrollHeight="295"
+                              scrollable="true"
+                              paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="50,100,150,200" widgetVar="dtDMVT">
+                    <p:column headerText="Chọn" style="text-align: center;" width="45">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{dMVTDialog.bCheckAll}" rendered="#{dMVTDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{dMVTDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{s.bChecked}">
+                            <p:ajax listener="#{dMVTDialog.updateVT}"  />
+                            <!--                            <p:ajax event="valueChange" listener="{assetDialog.updateAsset}" update=":formDlg:dtAsset"/>
+                                                        <f:param name="assetid" value="{asset.assetid}"/>-->
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="ma_vattu" headerText="Mã Vật tư" width="100" filterBy="#{s.maVattu}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Mã Vật tư"/><br/>
+                            <h:inputText id="test" onkeydown="return press(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{s.maVattu}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="Tên vật tư" filterBy="#{asset.tenVattu}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Tên vật tư"/><br/>
+                            <h:inputText id="test1" onkeydown="return press1(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{s.tenVattu}" />
+                    </p:column>
+                    <p:column id="dvt" headerText="Đơn vị tính" filterBy="#{s.donviTinh}" filterMatchMode="contains" filterStyle="width:100%;display:none">
+                        <f:facet name="header">
+                            <h:outputText value="Đơn vị tính"/><br/>
+                            <h:inputText id="test2" onkeydown="return press2(event);" style="width:100%"/>
+                        </f:facet>
+                        <h:outputText value="#{s.donviTinh}" />
+                    </p:column>
+                    <p:column id="qlvt" headerText="QLVT?" style="text-align: center;width: 40px;">
+                        <f:facet name="header">
+                            <h:outputText value="QLVT?" style="margin-left: -5px;"/>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{s.isqlvt}" disabled="true"/>
+                    </p:column>
+                    <p:column id="dm" headerText="ĐM?" style="text-align: center;width: 30px">
+                        <p:selectBooleanCheckbox value="#{s.isdm}" disabled="true"/>
+                    </p:column>
+                    <p:column id="tb" headerText="GTB?" style="text-align: center;width: 35px">
+                        <p:selectBooleanCheckbox value="#{s.istb}" disabled="true"/>
+                    </p:column>
+                    <p:column id="ps" headerText="PS?" style="text-align: center;width: 30px">
+                        <p:selectBooleanCheckbox value="#{s.isps}" disabled="true"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+        function  init()
+        {
+            if(!#{dMVTDialog.isPostBack})
+            {
+                if ("#{dMVTDialog.initFilter}" != "")
+                {
+                    var oFilter;
+                    var oTest;
+                    oFilter=document.getElementById('formDlg:dtDMVT:ma_vattu_filter');
+                    oTest=document.getElementById('formDlg:dtDMVT:test');
+                    if (oFilter)
+                    {
+                        oFilter.value= '#{dMVTDialog.initFilter}';
+                        oTest.value= '#{dMVTDialog.initFilter}';
+                        dtDMVT.filter();
+                    }
+                }
+            }
+        }
+        function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMVT:ma_vattu_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMVT:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMVT.update = "chk rowIndexVar";
+                dtDMVT.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMVT:desc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMVT:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMVT.update = "chk rowIndexVar";
+                dtDMVT.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtDMVT:dvt_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtDMVT:test2');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtDMVT.update = "chk rowIndexVar";
+                dtDMVT.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+       
+        function filterByEnter(e){
+            var unicode=e.keyCode? e.keyCode : e.charCode
+            if (unicode==13)
+            {
+                dtData.filter();
+            }
+        }
+
+        function replaceFilter()
+        {
+            var oFilter;
+            oFilter=document.getElementById('formDlg:dtAsset:assetid_filter');
+            if (oFilter)
+            {
+                oFilter.onkeyup = function () {filterByEnter(event);};
+            }
+
+        }
+        init();
+        //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

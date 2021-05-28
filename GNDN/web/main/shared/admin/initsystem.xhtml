@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="#{userBean.templateForShared}">
+            <ui:define name="head">
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+                                
+            </ui:define>
+            <ui:define name="content">
+                <h:panelGroup styleClass="header">
+                    <h:outputText value="Khởi tạo hệ thống" />
+                </h:panelGroup>
+
+                <h:selectOneRadio value="#{initSystemBean.typeaddorg}">
+                    <f:selectItem itemValue="0" itemLabel="Chọn đơn vị trong danh sách" />
+                    <f:selectItem itemValue="1" itemLabel="Đơn vị mới"/>
+                    <p:ajax event="change" update ="op1 op2"/>
+                </h:selectOneRadio>
+
+                <p:outputPanel id="op1">
+                <!-- Vùng Grid-->     
+                <p:dataTable var="s" id="dtOrg" scrollHeight="360" scrollable="true" style="width: 1100px;"
+                             value="#{initSystemBean.orgInitDataModel}"
+                             selection="#{initSystemBean.selectionOrgInit}"
+                             widgetVar="dtOrg" rendered="#{initSystemBean.typeaddorg==0?true:false}">
+                    <p:column selectionMode="single" style="text-align: center; width: 10px"/>
+                    <p:column id="cmid" headerText="Mã đơn vị" sortBy="#{s.orgid}" style="width: 100px"
+                              filterBy="#{s.orgid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgid}"/>
+                    </p:column>
+                    <p:column headerText="Tên đơn vị" sortBy="#{s.orgdesc}" style="width: 500px"
+                              filterBy="#{s.orgdesc}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgdesc}"/>
+                    </p:column>
+                    <p:column headerText="Tên viết tắt" sortBy="#{s.orgcode}" style="width: 150px"
+                              filterBy="#{s.orgcode}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgcode}"/>
+                    </p:column>
+                    <p:column headerText="Tiền tố định danh mã" sortBy="#{s.orgdbid}" style="width: 150px"
+                              filterBy="#{s.orgdbid}" filterMatchMode="contains" filterStyle="width:90%">
+                        <h:outputText value="#{s.orgdbid}"/>
+                    </p:column>
+                </p:dataTable>
+                </p:outputPanel>
+
+                <p:outputPanel id="op2">
+                    <h:panelGroup rendered="#{initSystemBean.typeaddorg==1?true:false}">
+                    <table>
+                        <tr>
+                            <td>
+                                Đơn vị
+                            </td>
+                            <td>
+                                <h:inputText value="#{initSystemBean.sOrgID}" style="width: 100px" />
+                                <h:inputText value="#{initSystemBean.sOrgDesc}" style="width: 500px" rendered="#{initSystemBean.typeaddorg==1?true:false}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Tên viết tắt
+                            </td>
+                            <td>
+                                <h:inputText value="#{initSystemBean.sOrgCode}" rendered="#{initSystemBean.typeaddorg==1?true:false}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Tiền tố định danh mã
+                            </td>
+                            <td>
+                                <h:inputText value="#{initSystemBean.sOrgDBID}" rendered="#{initSystemBean.typeaddorg==1?true:false}"/>
+                            </td>
+                        </tr>
+                    </table>
+                        </h:panelGroup>
+                </p:outputPanel>
+                <br></br>
+                <p:commandButton styleClass="btnHeight" icon="addnew" value="Khởi tạo đơn vị" actionListener="#{initSystemBean.onSaveNewOrg}"/>
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

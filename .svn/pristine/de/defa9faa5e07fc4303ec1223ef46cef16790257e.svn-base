@@ -1,0 +1,11 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+     xmlns:h="http://java.sun.com/jsf/html"
+     xmlns:f="http://java.sun.com/jsf/core"
+     xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:p="http://primefaces.org/ui">
+    <h:panelGrid columns="2" id="pnLabelSAR">
+         <h:outputText value="#{labelSARBean.labelSAR}" rendered="#{labelSARBean.bSAR}" style="font-weight: bold; color: #000080;"/>
+         <h:inputText value="#{labelSARBean.descSAR}" style="width: 300px;background-color: #EDEDED" rendered="#{labelSARBean.bSAR}" readonly="true"/>
+     </h:panelGrid>
+</ui:composition>

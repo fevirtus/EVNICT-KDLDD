@@ -1,0 +1,288 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="/WEB-INF/template_GNDN.xhtml">
+            <ui:define name="head">                
+                <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+            </ui:define>
+            <ui:define name="content"> 
+                <h:form id="formBienDong">
+                    <div class="p-grid p-dir-col">
+                        <p:growl id="messages" showDetail="true" /> 
+                        <div class="p-col" style="padding-bottom: 0">
+                            <p:toolbar id="TBlSearch" style="border: none; border: 1px solid #F1F3F6; padding: 0;">
+                                <f:facet name="left">
+                                    <p:selectOneMenu id="orgid" value="#{quanLyBienDongDDThangBean.orgIdSelected.orgid}"
+                                                     style="width: 380px; margin-right: 10px; vertical-align: middle;" 
+                                                     filterMatchMode="contains" filter="true">
+                                        <p:ajax event="itemSelect" 
+                                                update="formBienDong:maNhomDD formBienDong:maDiemdo formBienDong:tenDiemdo"
+                                                listener="#{quanLyBienDongDDThangBean.onOrgidChange}"/>
+                                        <f:selectItems value="#{quanLyBienDongDDThangBean.listOrg}"
+                                                       var="a" itemLabel="#{a.orgdesc}" itemValue="#{a.orgid}">
+                                        </f:selectItems>
+                                    </p:selectOneMenu>
+
+                                    <p:selectOneMenu style="margin-right: 10px; vertical-align: middle;"
+                                                     value="#{quanLyBienDongDDThangBean.monthLoad}">
+                                        <f:selectItem itemLabel="Tháng" itemValue="" />
+                                        <f:selectItem itemLabel="Tháng 1" itemValue="1" />
+                                        <f:selectItem itemLabel="Tháng 2" itemValue="2" />
+                                        <f:selectItem itemLabel="Tháng 3" itemValue="3" />
+                                        <f:selectItem itemLabel="Tháng 4" itemValue="4" />
+                                        <f:selectItem itemLabel="Tháng 5" itemValue="5" />
+                                        <f:selectItem itemLabel="Tháng 6" itemValue="6" />
+                                        <f:selectItem itemLabel="Tháng 7" itemValue="7" />
+                                        <f:selectItem itemLabel="Tháng 8" itemValue="8" />
+                                        <f:selectItem itemLabel="Tháng 9" itemValue="9" />
+                                        <f:selectItem itemLabel="Tháng 10" itemValue="10" />
+                                        <f:selectItem itemLabel="Tháng 11" itemValue="11" />
+                                        <f:selectItem itemLabel="Tháng 12" itemValue="12" />
+                                    </p:selectOneMenu>
+
+                                    <p:selectOneMenu style="width: 100px; margin-right: 10px; vertical-align: middle;"
+                                                     value="#{quanLyBienDongDDThangBean.yearLoad}">
+                                        <f:selectItem itemLabel="Năm" itemValue="" />
+                                        <f:selectItem itemLabel="2010" itemValue="2010" />
+                                        <f:selectItem itemLabel="2011" itemValue="2011" />
+                                        <f:selectItem itemLabel="2012" itemValue="2012" />
+                                        <f:selectItem itemLabel="2013" itemValue="2013" />
+                                        <f:selectItem itemLabel="2014" itemValue="2014" />
+                                        <f:selectItem itemLabel="2015" itemValue="2015" />
+                                        <f:selectItem itemLabel="2016" itemValue="2016" />
+                                        <f:selectItem itemLabel="2017" itemValue="2017" />
+                                        <f:selectItem itemLabel="2018" itemValue="2018" />
+                                        <f:selectItem itemLabel="2019" itemValue="2019" />
+                                        <f:selectItem itemLabel="2020" itemValue="2020" />
+                                        <f:selectItem itemLabel="2021" itemValue="2021" />
+                                        <f:selectItem itemLabel="2022" itemValue="2022" />
+                                        <f:selectItem itemLabel="2023" itemValue="2023" />
+                                        <f:selectItem itemLabel="2024" itemValue="2024" />
+                                        <f:selectItem itemLabel="2025" itemValue="2025" />
+                                        <f:selectItem itemLabel="2026" itemValue="2026" />
+                                    </p:selectOneMenu>
+
+                                    <p:commandButton value="Lấy dữ liệu" 
+                                                     styleClass="primary-button"
+                                                     style="margin-right: .5rem; vertical-align: middle;"
+                                                     actionListener="#{quanLyBienDongDDThangBean.onLoadData}" update="formBienDong:listBienDong">                                    
+                                    </p:commandButton>
+
+                                </f:facet>
+                            </p:toolbar>
+                        </div>
+                        <div class="p-col grid-demo" style="padding-bottom: 0">
+                            <div class="card">
+                                <div class="p-grid">
+                                    <div class="p-col">
+                                        <p:outputLabel for="maNhomDD" value="Nhà máy điện/ Trạm biến áp" style="padding-top: 0px;"/>
+                                        <p:selectOneMenu id="maNhomDD" value="#{quanLyBienDongDDThangBean.nhomDDSelected.maNhomDd}" 
+                                                         style="width: 100%" filterMatchMode="contains" filter="true">
+                                            <p:ajax event="itemSelect" 
+                                                    update="formBienDong:maDiemdo formBienDong:tenDiemdo"
+                                                    listener="#{quanLyBienDongDDThangBean.onMaNhomDDChange}"/>
+                                            <f:selectItems value="#{quanLyBienDongDDThangBean.listDiemDoNhomSorted}" 
+                                                           var="a" itemLabel="#{a.tenNhomDd}" itemValue="#{a.maNhomDd}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="p-col">
+                                        <p:outputLabel for="maDiemdo" value="Mã điểm đo" style="padding-top: 0px;"/>
+                                        <p:selectOneMenu id="maDiemdo" value="#{quanLyBienDongDDThangBean.diemDoSelected.maDiemdo}" 
+                                                         style="width: 100%" filterMatchMode="contains" filter="true">
+                                            <p:ajax event="itemSelect" 
+                                                    update="formBienDong:tenDiemdo"/>
+                                            <f:selectItems value="#{quanLyBienDongDDThangBean.listDiemDoSorted}" 
+                                                           var="a" itemLabel="#{a.maDiemdo}" itemValue="#{a.maDiemdo}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="p-col">
+                                        <p:outputLabel for="tenDiemdo" value="Tên điểm đo" style="padding-top: 0px;"/>
+                                        <p:inputText id="tenDiemdo" value="#{quanLyBienDongDDThangBean.diemDoSelected.tenDiemdo}"
+                                                     style="width: 100%" disabled="true"/>                                                           
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-col" style="padding-bottom: 0">
+                            <div class="card">
+                                <p:toolbar id="tlBarNhom" style="border: none; padding-top: 0; background: #FFFFFF">
+                                    <f:facet name="left">
+                                        <p:commandButton value="Thêm mới" icon="pi pi-plus" 
+                                                         styleClass="success-button" 
+                                                         style="margin-right: .5rem"
+                                                         actionListener="#{quanLyBienDongDDThangBean.onAdd}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                        <p:commandButton value="Sửa" icon="pi pi-plus" 
+                                                         styleClass="primary-button"
+                                                         style="margin-right: .5rem"
+                                                         update="@this"
+                                                         actionListener="#{quanLyBienDongDDThangBean.onEdit}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)">
+                                        </p:commandButton>
+                                        <p:commandButton value="Xóa" icon="pi pi-trash" 
+                                                         styleClass="danger-button" 
+                                                         actionListener="#{quanLyBienDongDDThangBean.onDelete}"                                                                                                                                              style="margin-right: .5rem"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)">
+                                        </p:commandButton>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandButton value="Tính toán sản lượng" icon="pi pi-plus" 
+                                                         styleClass="success-button" 
+                                                         style="margin-right: .5rem"
+                                                         actionListener="#{quanLyBienDongDDThangBean.onCalculate}"
+                                                         oncomplete="handleCmdComplete(xhr, status, args)"/>
+                                    </f:facet>
+                                </p:toolbar>
+                                <p:dataTable widgetVar="listBienDong" id="listBienDong" var="item" 
+                                             value="#{quanLyBienDongDDThangBean.listBDDD}" 
+                                             selection="#{quanLyBienDongDDThangBean.listBDDDSelected}" 
+                                             rowKey="#{item.MHistoryBdddPK.maDiemdo}" scrollable="true"
+                                             paginator="true" rows="10" reflow="true"
+                                             paginatorPosition="bottom"
+                                             paginatorTemplate="Tổng:#{quanLyBienDongDDThangBean.listBDDD.size()} {CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                             styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines">
+                                    <p:ajax event="rowSelect" />
+                                    <p:ajax event="rowUnselect" />
+
+                                    <f:facet name="header">
+                                        <div class="customers-table-header">                                          
+                                            <span class="ui-input-icon-left filter-container">
+                                                <i class="pi pi-search"></i>
+                                                <p:inputText id="globalFilter" onkeyup="PF('listDiemDo').filter()" placeholder="Tìm kiếm"/>
+                                            </span>
+                                        </div>
+                                    </f:facet>
+                                    <p:columnGroup type="header" >
+                                        <p:row>
+                                            <p:column rowspan="2" selectionMode="multiple" style="text-align: center"/>
+                                            <p:column rowspan="2" headerText="Loại chỉ số" style="text-align: center"/>
+                                            <p:column rowspan="2" headerText="Ngày" style="text-align: center"/>
+
+                                            <p:column colspan="5" headerText="Kênh giao" style="text-align: center"/>
+                                            <p:column colspan="5" headerText="Kênh nhận" style="text-align: center"/>
+
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column headerText="Tổng" style="text-align: center"/>
+                                            <p:column headerText="B1" style="text-align: center"/>
+                                            <p:column headerText="B2" style="text-align: center"/>
+                                            <p:column headerText="B3" style="text-align: center"/>
+                                            <p:column headerText="Vô công" style="text-align: center"/>
+                                            <p:column headerText="Tổng" style="text-align: center"/>
+                                            <p:column headerText="B1" style="text-align: center"/>
+                                            <p:column headerText="B2" style="text-align: center"/>
+                                            <p:column headerText="B3" style="text-align: center"/>
+                                            <p:column headerText="Vô công" style="text-align: center"/>
+                                        </p:row>
+                                    </p:columnGroup>
+                                    <!--content of datatable-->
+                                    <p:column selectionMode="multiple" style="text-align: center; width: 40px;"></p:column>
+                                    <p:column style="text-align: right;">
+                                        <h:outputText value="#{item.tenLoaiCso}" style="p-col-4"/>
+                                    </p:column>
+                                    <p:column style="text-align: center;">
+                                        <h:outputText value="#{item.ngay}" style="vertical-align: middle; margin-left: .5rem">
+                                            <f:convertDateTime pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.sgg}" />
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.b1g}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.b2g}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.b3g}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.vcg}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.sgn}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.b1n}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.b2n}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.b3n}"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <h:outputText value="#{item.vcn}"/>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                        <p:dialog header="Quản lý biến động đo đếm tháng" width="1000px" height="610px" showEffect="fade" 
+                                  modal="true" widgetVar="DialogBDDD" id="DialogBDDD"
+                                  responsive="true" appendTo="@(body)" closeOnEscape="true" styleClass="background-color: #f4f7f9">
+                            <iframe id="iframeBDDD" scrolling="no" style="overflow: hidden;"
+                                    frameborder="0" width="100%" height="600px"></iframe>
+                            <p:ajax event="close" update="formBienDong:listBienDong" listener="#{quanLyBienDongDDThangBean.onClose}"/>
+                        </p:dialog>
+
+                        <script type="text/javascript">
+                            function handleCmdComplete(xhr, status, args) {
+                                if (args.Method)
+                                {
+                                    switch (args.Method)
+                                    {
+                                        case 'openDialogAdd':
+                                            var f = document.getElementById('iframeBDDD');
+                                            f.src = "./quanlybiendongddthangdetail.jsf?maDiemDo=" + args.maDiemDo + "&amp;thang=" + args.thang + "&amp;nam=" + args.nam;
+                                            PF('DialogBDDD').show();
+                                            break;
+                                        case 'openDialogEdit':
+                                            var f = document.getElementById('iframeBDDD');
+                                            f.src = "./quanlybiendongddthangdetail.jsf?maDiemDo=" + args.maDiemDo + "&amp;thang=" + args.thang + "&amp;nam=" + args.nam + "&amp;dateid=" + args.dateid + "&amp;maloai=" + args.maloai;
+                                            PF('DialogBDDD').show();
+                                            break;
+                                    }
+                                }
+                            }
+                        </script>
+                        <style type="text/css">                                        
+                            .products-buttonbar{
+                                margin-bottom: 10px;
+                                display: flex !important;
+                            }
+                            .ui-dialog-titlebar{
+                                background-color: #f4f7f9 !important;
+                            }
+                            .ui-dialog-content{
+                                background-color: #f4f7f9 !important;
+                            }
+                            .ui-widget-content{
+                                padding: 0px !important;
+                            }
+                        </style>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

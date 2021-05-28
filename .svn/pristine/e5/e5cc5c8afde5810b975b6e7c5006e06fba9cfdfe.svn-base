@@ -1,0 +1,185 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            <f:loadBundle var="documentLibraryProp" basename="evnit.tms.web.eam.lib.prop.DocumentLibraryProp"/>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left">
+                        <!--Button Thêm mới thư mục--> 
+                        <p:commandButton styleClass="btnHeight" 
+                                         icon="addnew" 
+                                         ajax="false"
+                                         title="#{commonMessages.btnAdd} #{commonMessages.hkAddNew}" 
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onAddNewFolder}"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.m_bAddNew}"/>
+                        <!--Button Cập nhật--> 
+                        <p:commandButton styleClass="btnHeight" 
+                                         icon="save" 
+                                         ajax="false" 
+                                         update="msgInfo"
+                                         title="#{commonMessages.btnSave} #{commonMessages.hkUpdate}" 
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onSaveFolder}"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.isDisabledSave}"/>
+                        <!--Button Xóa --> 
+                        <p:commandButton styleClass="btnHeight" 
+                                         icon="delete" 
+                                         ajax="false"
+                                         title="#{commonMessages.btnDelete} #{commonMessages.hkDelete}" 
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onDeleteFolder}"
+                                         onclick="return window.confirm('#{commonMessages.msgDlgDelete}');"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.isDisabledDeleteData}"/>
+                    </p:toolbarGroup>
+                    <!-- Các nút điều khiển tua phải, tua trái --> 
+                    <p:toolbarGroup align="right">
+                        <p:commandButton icon="resultset_first" ajax="false"
+                                         title="#{commonMessages.btnFirst}" styleClass="btnHeight"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.m_bFirst}"
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onNavigatorFirst}"/>
+                        <p:commandButton icon="resultset_previous" ajax="false"
+                                         title="#{commonMessages.btnPrevious}" styleClass="btnHeight"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.m_bPrevious}"
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onNavigatorPrevious}"/>
+                        <p:commandButton icon="resultset_next" ajax="false"
+                                         title="#{commonMessages.btnNext}" styleClass="btnHeight"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.m_bNext}"
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onNavigatorNext}"/>
+                        <p:commandButton icon="resultset_last" ajax="false"
+                                         title="#{commonMessages.btnLast}" styleClass="btnHeight"
+                                         disabled="#{s_Common_Type_CatalogDetailBean.m_bLast}"
+                                         actionListener="#{s_Common_Type_CatalogDetailBean.onNavigatorLast}"/>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>
+                <h:inputHidden id="hfObjTypeId" value="LIBFOLDER"/>
+                <h:inputHidden id="hfDlgAttGroup" value="true"/>
+                <div style="height: #{settingsProp.MainDlgContentHeight}px;overflow:auto; margin-top: 5px;margin-bottom: 5px">
+                    <p:outputPanel id="msgInfo">
+                        <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                    </p:outputPanel>
+
+                    <p:outputPanel id="pnlContent">
+                        <p:focus/>
+                        <table border="0" width="100%">
+                            <tbody>                       
+                                <!-- Tác giả: Nguyễn Văn Tuấn 
+                                Thư mục con 
+                                -->                            
+                                <tr>
+                                    <!--Label Mã thư mục con --> 
+                                    <td align="right" style="vertical-align: top;">
+                                        <h:outputLabel value="#{documentLibraryProp.lblFolder}"
+                                                       styleClass="#{s_Common_Type_CatalogDetailBean.style_TxtFolderID}"/>
+                                    </td>
+                                    <!--Text box Mã thư mục con --> 
+                                    <td style="vertical-align: top;">
+                                        <h:inputText id="txtFolderID" 
+                                                     readonly="#{s_Common_Type_CatalogDetailBean.txtFolderIDReadOnly}"
+                                                     style="width: 200px;" 
+                                                     value="#{s_Common_Type_CatalogDetailBean.folder.libfolderid}"/>
+                                    </td>                      
+                                    <!-- Ô trống --> 
+                                    <td></td>
+                                    <!-- Text box Tên thư mục con --> 
+                                    <td>
+                                        <h:inputTextarea id="txtFolderDesc" style="width: 540px;height: 150px;"
+                                                         value="#{s_Common_Type_CatalogDetailBean.folder.libfolderdesc}"/>
+                                    </td>
+                                </tr>                  
+
+                                <!--Tác giả: Nguyễn Văn Tuấn 
+                                Thư mục cha
+                                Mã  Tìm kiếm Tên
+                                --> 
+                                <tr>
+                                    <!-- Label  Mã thư mục cha -->
+                                    <td align="right">
+                                        <h:outputLabel value="#{documentLibraryProp.lblParent}" 
+                                                       rendered="#{!s_Common_Type_CatalogDetailBean.ischild()}"
+                                                       styleClass="#{s_Common_Type_CatalogDetailBean.style_TxtParentID}"/>
+                                    </td>
+                                    <!-- Text box Mã thư mục cha --> 
+                                    <td width="200px">
+                                        <h:inputText style="width: 200px;" 
+                                                     id="txtParentID" 
+                                                     readonly="true"
+                                                     rendered="#{!s_Common_Type_CatalogDetailBean.ischild()}"
+                                                     onkeydown="return KeyEnterSelectParent(event, this);"
+                                                     value="#{s_Common_Type_CatalogDetailBean.folder.libfolderidParent}"/>
+                                    </td>
+                                    <!-- Nút tìm kiếm các node trên cây thư mục
+                                    Thay rendered="#{!s_Common_Type_CatalogDetailBean.ischild()}" 
+                                    bằng 
+                                    --> 
+                                    <td align="center">
+                                        <p:commandButton styleClass="btnHeight"
+                                                         icon="ui-icon ui-icon-search" onclick="OpenParentFolderDialog()">
+                                        </p:commandButton>
+                                    </td>
+                                    <!--Text box Tên thư mục cha--> 
+                                    <td>
+                                        <h:inputText rendered="#{!s_Common_Type_CatalogDetailBean.ischild()}" 
+                                                     style="width: 540px;" 
+                                                     readonly="true" 
+                                                     id="txtParentDesc" 
+                                                     value="#{s_Common_Type_CatalogDetailBean.libFolderParentDesc}"/>
+                                    </td>
+                                </tr>
+                                <tr style="height: 200px;">
+                                    <td>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p:outputPanel>                
+
+                    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenParentFolderDialog" widgetVar="dlgOpenParentFolderDialog" 
+                              width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                              resizable="true" modal="true" header="Chọn chủng loại tài liệu" >
+                        <p:ajax event="close"/>
+                        <iframe id="browserContent1" scrolling="auto"
+                                frameborder="true"
+                                width="100%" height="#{settingsProp.NormalDlgHeight-50}"
+                                style="border: none">
+                        </iframe>
+                        <center>
+                            <p:commandButton icon="accept" value="#{commonMessages.btnAccept}" actionListener="#{s_Common_Type_CatalogDetailBean.onAcceptParentFolderClick}" oncomplete="PF('dlgOpenParentFolderDialog').hide();" update="txtParentID txtParentDesc"/>
+                            <p:commandButton icon="closebtn" value="#{commonMessages.btnClose}" onclick="PF('dlgOpenParentFolderDialog').hide();
+                                    return false;" />                            
+                        </center>
+                    </p:dialog>
+                    <script type="text/javascript">
+
+                        function OpenParentFolderDialog() {
+                            var f = document.getElementById('browserContent1');
+                            //if(precautionid)
+                            //  f.src = "./../../shared/dialog/dlgCollection.jsf?id=" + precautionid;
+                            //else
+                            f.src = "./../../shared/dialog/dlgTypeCatalog.jsf?display=one";
+                            PF('dlgOpenParentFolderDialog').show();
+                        }
+                        function KeyEnterSelectParent(event, control) {
+                            if (event.keyCode == 13) {
+                                if (control.id == ":formDlg:txtParentID") {
+                                    OpenSelectParent(control.value);
+                                }
+                                return false;
+                            }
+                            return true;
+                        }
+                    </script>
+                </div>
+            </h:form>
+        </h:body>
+    </f:view>
+</ui:composition>

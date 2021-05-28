@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+        </h:head>
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #f4f7f9; margin: 15px;">
+            <p:focus context="AXForm"/>
+            <h:form onsubmit="return false" id="AXForm">
+                <p:growl id="messages" showDetail="true" />  
+                <p:outputPanel id="manage-content" class="ui-fluid" style="padding-top: 0;">
+
+                    <div class="p-grid ui-fluid">
+                        <div class="p-col-7">
+
+                            <div class="card">
+                                <div class="p-col">
+                                    <p:outputLabel for="maDiemdo" value="Mã điểm đo" style="padding-top: 0px;"/>
+                                    <p:inputText id="maDiemdo" disabled="true"
+                                                 value="#{diemDo_AXBean.diemDo.maDiemdo}"/>
+                                </div>
+                                <div class="p-col">
+                                    <p:outputLabel for="tenDiemdo" value="Tên điểm đo" style="padding-top: 0px;"/>
+                                    <p:inputText id="tenDiemdo" disabled="true"
+                                                 value="#{diemDo_AXBean.diemDo.tenDiemdo}"/>                           
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <p:dataTable widgetVar="listAx" id="listAx" var="item" 
+                                             value="#{diemDo_AXBean.listAx}" 
+                                             selectionMode="single" 
+                                             selection="#{diemDo_AXBean.selectAx}" 
+                                             rowKey="#{item.ADiemdoAxPK.dateid}" 
+                                             paginator="true" rows="2" rowSelectMode="add" paginatorPosition="bottom"
+                                             styleClass="ui-datatable-striped ui-datatable-sm ui-datatable-gridlines"
+                                             style="text-align: center;" sortBy="#{item.ngayKt}">
+                                    <p:ajax event="rowSelect" listener="#{diemDo_AXBean.onRowSelected()}"
+                                            update="AXForm"/>
+                                    <p:ajax event="rowUnselect" listener="#{diemDo_AXBean.onRowSelected()}"
+                                            update="AXForm"/>
+                                    <p:column headerText="Đơn vị CCSL" width="40%" style="height: 50px;">
+                                        <h:outputText value="#{item.ADiemdoAxPK.orgidRef}" style="p-col-4" />
+                                    </p:column>
+                                    <p:column headerText="Điểm đo CCSL" width="40%">
+                                        <h:outputText style="p-col-4" value="#{item.ADiemdoAxPK.maDiemdoRef}" />
+                                    </p:column>
+                                    <p:column headerText="Ngày bắt đầu" width="40%">
+                                        <h:outputText style="p-col-4" value="#{item.ngay}">
+                                            <f:convertDateTime pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Ngày kết thúc" width="40%">
+                                        <h:outputText style="p-col-4" value="#{item.ngayKt}">
+                                            <f:convertDateTime pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column headerText="Mô tả" width="40%">
+                                        <h:outputText style="p-col-4" value="#{item.moTa}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+
+                        <div class="p-col-5 p-field" id="infoForm" style="padding: 1rem;">
+
+                            <div class="card">
+                                <div class="p-col">
+                                    <p:outputLabel for="orgidRef" value="Đơn vị cung cấp số liệu" />
+                                    <p:selectOneMenu id="orgidRef" value="#{diemDo_AXBean.temp_Ax.ADiemdoAxPK.orgidRef}" 
+                                                     required="true" disabled="#{diemDo_AXBean.lockInput}" style="min-width: 0" >
+                                        <f:selectItems value="#{diemDo_AXBean.listOrganization}"
+                                                       var="a" itemLabel="#{a.orgdesc}" itemValue="#{a.orgid}"/>
+                                    </p:selectOneMenu>                   
+                                </div>
+
+                                <div class="p-col">
+                                    <p:outputLabel for="maDiemdoREF" value="Mã điểm đo bên cung cấp số liệu" />
+                                    <p:inputText id="maDiemdoREF" value="#{diemDo_AXBean.temp_Ax.ADiemdoAxPK.maDiemdoRef}" 
+                                                 required="true" disabled="#{diemDo_AXBean.lockInput}"/>
+                                </div>
+
+                                <div class="p-col">      
+                                    <p:outputLabel for="ngay" value="Ngày bắt đầu"/>
+                                    <p:calendar id="ngay" value="#{diemDo_AXBean.temp_Ax.ngay}" disabled="#{diemDo_AXBean.lockInput}" 
+                                                pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"
+                                                showOn="button" showButtonPanel="true">
+                                    </p:calendar>       
+                                </div>
+
+                                <div class="p-col" >          
+                                    <p:outputLabel for="ngayKt" value="Ngày kết thúc"/>
+                                    <p:calendar id="ngayKt" value="#{diemDo_AXBean.temp_Ax.ngayKt}" pattern="#{settingsProp.DateMask}" timeZone="#{settingsBean.timeZone}"
+                                                showOn="button" showButtonPanel="true" disabled="#{diemDo_AXBean.lockOther}">
+
+                                    </p:calendar>
+                                </div>
+
+                                <div class="p-col">
+                                    <p:outputLabel for="moTa" value="Mô tả thay đổi" />
+                                    <p:inputText id="moTa" value="#{diemDo_AXBean.temp_Ax.moTa}" disabled="#{diemDo_AXBean.lockOther}"/>
+                                </div>
+
+                                <div class="p-grid" style="padding: 14px; padding-bottom: 0;">
+                                    <div class="p-col">
+                                        <p:commandButton value="Thêm mới" icon="pi pi-check" disabled="#{diemDo_AXBean.disableThemMoi}"                                                   
+                                                         actionListener="#{diemDo_AXBean.onThemMoi}" update="AXForm:orgidRef AXForm:maDiemdoREF AXForm:moTa AXForm:ngay AXForm:ngayKt AXForm:luuButton"/>
+                                    </div>
+                                    <div class="p-col">
+                                        <p:commandButton value="Lưu" id="luuButton" icon="pi pi-check" disabled="#{diemDo_AXBean.lockOther}"                                                   
+                                                         actionListener="#{diemDo_AXBean.saveChange}"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </p:outputPanel>
+            </h:form>
+            <style type="text/css">
+                .p-field {
+                    background: #f4f7f9;
+                    color: #4B576F;
+                    font-weight: 700;
+                    margin-bottom: 0;
+                }
+            </style>
+        </h:body>
+    </f:view>
+</html>

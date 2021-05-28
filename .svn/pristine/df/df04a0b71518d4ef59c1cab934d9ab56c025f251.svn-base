@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Copy Quyền Báo cáo theo User</title>
+        <f:loadBundle basename="evnit.tms.web.eam.work.prop.WorderDtProp" var="propThis" />
+        <f:loadBundle basename="evnit.tms.web.eam.preventive.prop.MaintPlanProp" var="propMP" />
+        <style type="text/css">
+            .hasDatepicker {
+                width: 90px;
+            }
+        </style>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+    </h:head>
+    <h:body>
+        <h:form id="formDlg">
+            <p:outputPanel id="msgInfo">
+                <!--<h:outputText id="lblError" styleClass="error" value="{SM_BB_Bean.error}" escape="false"/>-->
+                <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <!--<p:messages id="msgThis" showDetail="true"/>-->
+            </p:outputPanel>
+            <p:focus/>
+            <fieldset>               
+                <table>
+                    <tr>
+                        <td width="25%">Người dùng</td>
+                        <td><p:inputText id="userCopy" value="#{grantReportRightCopyBean.userCopy}" disabled="true"/></td>
+                        <td><p:inputText id="userCopyName" value="#{grantReportRightCopyBean.userCopyName}" disabled="true"/></td>
+                    </tr>
+                    <tr>
+                        <td width="25%">Người dùng Copy</td>
+                        <td colspan="2">
+                            <p:autoComplete id="users" multiple="true" value="#{grantReportRightCopyBean.selectedUsers}"
+                                                completeMethod="#{grantReportRightCopyBean.completeUsers}"
+                                                var="dt" itemLabel="+ #{dt.userid} - (#{dt.username})" itemValue="#{dt}" 
+                                                dropdown="true"                                                
+                                                converter="userConverter" forceSelection="true" scrollHeight="250">
+                            </p:autoComplete>
+                        </td>
+                    </tr>                    
+                    
+                </table>
+            </fieldset>            
+            <br/>
+            <center>
+                <p:commandButton id="btnUpdate" icon="save" 
+                                 title="#{commonMessages.btnSave}"
+                                 value="#{commonMessages.btnSave}"
+                                 actionListener="#{grantReportRightCopyBean.onSave}" update="formDlg:msgInfo" oncomplete="handleCmdComplete(xhr, status, args)"/>
+                <p:commandButton icon="cancel" title="#{commonMessages.btnClose}" onclick="parent.hideDlgChangeStatus()" value="#{commonMessages.btnClose}"/>
+            </center>
+
+        </h:form>
+        <script type="text/javascript">
+            function handleCmdComplete(xhr, status, args) {
+                if (args.Method)
+                {
+                    switch (args.Method)
+                    {
+                        case 'CloseDlgChangeStatus':
+                            // if (args.Msg)
+                            //    alert(args.Msg);
+                            //parent.hideDlgChangeStatus();
+                            break;
+                    }
+                }
+            }
+        </script>
+    </h:body>
+</html>

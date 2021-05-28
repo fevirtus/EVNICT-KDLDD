@@ -1,0 +1,153 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <f:loadBundle basename="main.web.shared.dialog.prop.DialogProp"
+                              var="dlgProp" />
+                <p:dataTable emptyMessage="Không có dữ liệu" var="item" id="dtOrganization" value="#{organizationDialog.dsS_OrganizationForGrid}"
+                              paginator="true" rows="100"
+                              scrollHeight="236"
+                              scrollable="true"
+                              paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,500" widgetVar="dtOrganization" rowIndexVar="0">
+                    <p:column headerText="Chọn" width="45" style="text-align: center;">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{organizationDialog.bCheckAll}" rendered="#{organizationDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{organizationDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{item.bChecked}" id="chk">
+                            <p:ajax listener="#{organizationDialog.updateOrganization}" />
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="orgid" width="100" headerText="#{dlgProp.orgid}" filterBy="#{item.orgid}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{item.orgid}"/>
+                    </p:column>
+                    <p:column  headerText="#{dlgProp.desc}" filterBy="#{item.orgdesc}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{item.orgdesc}" />
+                    </p:column>                   
+                    <p:column headerText="Đơn vị cha" filterBy="#{item.sOrgidParent.orgdesc}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{item.sOrgidParent.orgdesc}" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+    <script type="text/javascript">
+        function press(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtOrganization:orgid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtOrganization:test');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtOrganization.update = "chk rowIndexVar";
+                dtOrganization.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press2(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtOrganization:parentid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtOrganization:test2');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtOrganization.update = "chk rowIndexVar";
+                dtOrganization.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+        function press1(e){
+            if(e.keyCode==13){
+                var oFilter;
+                oFilter=document.getElementById('formDlg:dtOrganization:desc_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtOrganization:test1');
+                oFilter.value=oTest.value;
+                //alert(oFilter.value);
+                dtOrganization.update = "chk rowIndexVar";
+                dtOrganization.filter();
+                //dtSite.update = "chk rowIndexVar";
+                return false;
+            }
+        }
+      function  init()
+       {
+           if(!#{organizationDialog.isPostBack})
+           {
+               if ("#{organizationDialog.initFilter}" != "")
+               {
+                   var oFilter;
+                   oFilter=document.getElementById('formDlg:dtOrganization:orgid_filter');
+//                   var oDesc;
+//                   oDesc=document.getElementById('formDlg:dtOrganization:desc_filter');
+//                   var oParent;
+//                   oParent=document.getElementById('formDlg:dtOrganization:parentid_filter');
+                var oTest;
+                oTest=document.getElementById('formDlg:dtOrganization:test');
+                   if (oFilter){
+                       oFilter.value= '#{organizationDialog.initFilter}';
+                       oTest.value= '#{organizationDialog.initFilter}';
+                       dtOrganization.filter();
+                   }
+//                   oFilter.onkeyup = null;
+//                   oFilter.onkeydown = function(event) {return EnterFilter(event); };
+//                   oDesc.onkeyup = null;
+//                   oDesc.onkeydown = function(event) {return EnterFilter(event); };
+//                   oParent.onkeyup = null;
+//                   oParent.onkeydown = function(event) {return EnterFilter(event); };
+               };
+           }
+       }
+       function EnterFilter(event){
+             if (event.keyCode == 13){
+                 dtOrganization.filter();
+                 return false;
+             }
+             return true;
+       }
+       function filterByEnter(e){
+        var unicode=e.keyCode? e.keyCode : e.charCode
+        if (unicode==13)
+        {
+            dtData.filter();
+        }
+       }
+
+       function replaceFilter()
+       {
+           var oFilter;
+           oFilter=document.getElementById('formDlg:dtOrganization:orgid_filter');
+           if (oFilter)
+           {
+               oFilter.onkeyup = function () {filterByEnter(event);};
+           }
+
+       }
+       init();
+       //replaceFilter(); //Hàm này không có tác dụng trên firefox. Còn trên IE thì có tác dụng nhưng chậm
+    </script>
+</html>

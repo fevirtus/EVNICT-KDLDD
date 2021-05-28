@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:pm="http://primefaces.org/mobile">
+    <f:view contentType="text/html" renderKitId="PRIMEFACES_MOBILE">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/defaultM.css" />
+        </h:head>
+        <h:body>
+            <h:form id="formDlg">                
+                <p:growl id="msgInfo" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                <h:inputHidden id="rId" value="#{s_ReportResultBean.objId}"/>
+                <h:inputHidden id="hfObjTypeId" value="RPT"/>
+                <h:inputHidden id="hfObjId" value="#{s_ReportResultBean.objId}"/>                        
+                <ui:include id="incAG" src="/shared/report/AttGroupReportM.xhtml"/>
+                <p:selectOneMenu value="#{s_ReportResultBean.reportFormSelect}">
+                    <f:selectItems value="#{s_ReportResultBean.lstReportForm}"
+                                   var="item"
+                                   itemLabel="#{item.rptformdesc}" itemValue="#{item.rptformid}" />
+                </p:selectOneMenu>
+                <i>
+                    <h:outputText style="color: blue" value="#{s_ReportResultBean.report.note}"></h:outputText>
+                </i>
+                <p:commandButton id="cmdView" value="Tổng hợp" ajax="true" 
+                                 actionListener="#{s_ReportResultBean.exportHtml}" 
+                                 oncomplete="viewReport();" update=":#{p:component('pnlOutput')}"/>
+                <p:outputPanel id="pnlOutput" style="vertical-align: top">                    
+                    <center>
+                        <p:commandLink id="cmdViewReport" value="Xem báo cáo" style="display: #{!s_ReportResultBean.bShowReport?'none':'run-in'}" rel="external">
+
+                        </p:commandLink>
+                    </center>
+                </p:outputPanel>
+            </h:form>
+            <script type="text/javascript">
+
+                function viewReport()
+                {
+                    var deviceAgent = navigator.userAgent;
+                    var ios = deviceAgent.toLowerCase().match(/(iphone|ipod|ipad)/);
+                    if (ios) {
+                        $(document).ready(function () {
+                            $('a[rel="external"]').click(function () {
+                                window.open('#{request.contextPath}/shared/report/S_ReportResultView.jsf');
+                                return false;
+                            });
+                        });
+                    } else {
+                        window.open('#{request.contextPath}/shared/report/S_ReportResultView.jsf', '_blank');
+                    }
+                }
+                function handleCmdCompleteCT(xhr, status, args) {
+                    if (args.Method)
+                    {
+                        switch (args.Method)
+                        {
+                            case 'Report':
+                                if (args.status)
+                                    document.getElementById('formDlg:fakeReport').click();
+                                break;
+                        }
+                    }
+                }
+            </script>
+        </h:body>
+
+    </f:view>
+</html>

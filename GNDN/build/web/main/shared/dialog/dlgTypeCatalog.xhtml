@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            
+            <style type="text/css">
+                .ui-datatable .ui-datatable-data td {
+                    border-color:inherit;
+                    border-style:solid;
+                    border-width:1px;
+                    padding:4px 10px;
+                }
+            </style>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <p:dataTable emptyMessage="Không có dữ liệu" var="org" id="dtTypeCatalog" value="#{typeCatalogDialog.lstTypeCatalog}"
+                              paginator="true" rows="100"
+                              scrollHeight="310"
+                              scrollable="true"
+                              paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="100,200,500" widgetVar="dtTypeCatalog" rowIndexVar="0">
+                    <p:column headerText="Chọn" width="45" style="text-align: center;">
+                        <f:facet name="header">
+                            <p:selectBooleanCheckbox id="chkCheckAll" value="#{typeCatalogDialog.bCheckAll}" rendered="#{typeCatalogDialog.m_visibleChkAll}">
+                                <p:ajax listener="#{typeCatalogDialog.onCheckAllChange}" />
+                            </p:selectBooleanCheckbox>
+                        </f:facet>
+                        <p:selectBooleanCheckbox value="#{org.bChecked}" id="chk">
+                            <p:ajax listener="#{typeCatalogDialog.updateTypeCatalog}" />
+                        </p:selectBooleanCheckbox>
+                    </p:column>
+                    <p:column id="orgid" width="100" headerText="Mã chủng loại" filterBy="#{org.libfolderid}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{org.libfolderid}"/>
+                    </p:column>
+                    <p:column id="desc" headerText="Chủng loại" filterBy="#{org.libfolderdesc}" filterMatchMode="contains" filterStyle="width:90%;">
+                        <h:outputText value="#{org.libfolderdesc}" />
+                    </p:column>                    
+                </p:dataTable>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

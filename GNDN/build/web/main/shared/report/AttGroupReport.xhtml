@@ -1,0 +1,167 @@
+<!--Dùng cho nhiều mục đích: tích hợp thành một tab của form, gọi thông qua Dialog -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:panelGroup id="panelAG">
+        <f:loadBundle basename="main.web.shared.report.prop.AttGroupReportProp" var="attProp" />
+        <table width="100%">
+            <tr>
+                <td valign="top" style="height: 280px">
+                    <style type="text/css">
+                        .attrGroup {
+                            font-weight: bold;
+                            background-color: #eeeeee;
+                            background-image: none !important;
+                            display: none;
+                        }
+                        .scroll_box{
+                            width: 100%;
+                            overflow:auto;
+                        }
+                        .ui-autocomplete-panel
+                        {
+                            border: 1px solid #A6C9E2!important;
+                            width: 300px !important;
+                        }
+                        .ui-autocomplete-panel table td
+                        {
+                            border: none !important;
+                        }
+                        .ui-autocomplete-panel table tr
+                        {
+                            border: none !important;
+                        }
+                        .ui-autocomplete-panel table
+                        {
+                            width: 99% !important;
+                        }
+                        .ui-datatable-data tr
+                        {
+                            border: 0px white solid !important;
+                            background-color: white !important;
+                        }
+                        .ui-datatable-scrollable-body table tbody
+                        {
+                            border: 0px white solid !important;
+                        }
+                        .ui-datatable-scrollable-header-box
+                        {
+                            border: 0px white solid !important;
+                        }
+                    </style>
+                    <p:dataTable emptyMessage="Không có dữ liệu" var="attr" id="dtAttGroup" 
+                                 rowStyleClass="#{attr.colInt1 ==0 ? 'attrGroup' : null}"                                  
+                                 disabledSelection="true"
+                                 value="#{s_ReportResultBean.m_dmAttGroup}" 
+                                 style="border: none !important;"
+                                 scrollable="true" scrollHeight="260">
+                        <p:columnGroup type="header">
+                        </p:columnGroup>
+                        <p:column headerText="" style="padding-left: #{attr.colInt2}px;text-align: right">                            
+                            <h:outputText value="#{attr.colStr1}"/>
+                            <p:spacer width="10"/>
+                        </p:column>
+                        <p:column headerText="" style="padding-left:0px;width:320px">
+                            <p:inputText style="width:90%" value="#{attr.colStr3}" onfocus="this.select();" readonly="#{s_ReportResultBean.m_disableButton}"
+                                         rendered="#{((attr.colInt4!=null and  attr.colInt4 &lt;=100) or attr.colInt4==null) and attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6!='BOOL' and attr.colStr6!='DATE' and attr.colStr6!='NUM'?true:false):false):false}"/>
+                            <p:inputTextarea style="width:90%" value="#{attr.colStr3}" onfocus="this.select();" readonly="#{s_ReportResultBean.m_disableButton}"
+                                             rendered="#{attr.colInt4!=null and  attr.colInt4 &gt;100 and attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6!='BOOL' and attr.colStr6!='DATE' and attr.colStr6!='NUM'?true:false):false):false}"/>
+                            <p:inputText style="width:90%" value="#{attr.colDou1}" onfocus="this.select();" readonly="#{s_ReportResultBean.m_disableButton}"
+                                         rendered="#{attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6!='BOOL' and attr.colStr6!='DATE' and attr.colStr6!='STR' and attr.colStr6!='GEO'?true:false):false):false}">
+                                <f:converter converterId="DoubleConverter"/>
+                            </p:inputText>
+                            <h:selectBooleanCheckbox value="#{attr.colBol1}" rendered="#{attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6=='BOOL'?true:false):false):false}" disabled="#{s_ReportResultBean.m_disableButton}"/>
+                            <p:calendar size="12" value="#{attr.colDate1}" locale="#{settingsBean.dateLocale}"
+                                        rendered="#{attr.colStr12=='INPUT'?(attr.colInt1==1?(attr.colStr6=='DATE'?true:false):false):false}"
+                                        pattern="#{settingsBean.dateMask}" disabled="#{s_ReportResultBean.m_disableButton}"/>
+                            <p:autoComplete scrollHeight="200" id="dd" 
+                                            tabindex="#{rowIndex+100}"
+                                            onfocus="this.select();"
+                                            rendered="#{attr.colStr12=='CBBOX' or attr.colStr12=='CBLST'?((attr.colInt1==1) and (attr.colStr16==null or attr.colStr16=='' or attr.colStr16=='CBO')?true:false):false}" 
+                                            dropdown="true" value="#{attr.colStr4}"
+                                            itemLabel="#{item==null||!item.contains('-')?'':item.substring(item.split('-')[0].length()+1).trim()}"                                                
+                                            itemValue="#{item}"
+                                            var="item" completeMethod="#{s_ReportResultBean.complete}">
+                                <p:column>
+                                    <p:outputLabel value="#{item==null||!item.contains('-')?'':item.substring(item.split('-')[0].length()+1).trim()}" />
+                                </p:column>
+                                <p:ajax event="itemSelect" process="dtAttGroup"/>
+                                <f:attribute name="AttrID" value="#{attr.colStr7}"/>
+                            </p:autoComplete>
+                            <p:selectOneRadio id="ddRadio" value="#{attr.colStr4}"  
+                                              layout="grid" columns="5"
+                                              rendered="#{attr.colStr12=='CBBOX' or attr.colStr12=='CBLST'?((attr.colInt1==1) and (attr.colStr16!=null and attr.colStr16!='' and attr.colStr16=='RADIO')?true:false):false}">
+                                <f:selectItems value="#{s_ReportResultBean.getLstQuery(attr.colStr7)}" 
+                                               var="c" itemLabel="#{c.colStr2}" itemValue="#{c.colStr1} - #{c.colStr2}"/>
+                            </p:selectOneRadio>
+                            <p:selectManyCheckbox id="ddManyCombo" columns="5"
+                                                  value="#{attr.colStr3s}"
+                                                  rendered="#{attr.colStr12=='CBLSTS'?(attr.colInt1==1?true:false):false}">
+                                <f:selectItems value="#{s_ReportResultBean.getLstQuery(attr.colStr7)}" 
+                                               var="c" itemLabel="#{c.colStr2}" itemValue="#{c.colStr1}"/>
+                            </p:selectManyCheckbox>
+                            <h:panelGroup id="pgCB" rendered="#{attr.colStr12=='CBBOX' or attr.colStr12=='CBLST'?(attr.colInt1==1?true:false):false}">
+
+
+                            </h:panelGroup>
+                            <h:outputText value="#{attr.colDou1}" style="width:100%" rendered="#{attr.colStr12=='COUNT'?(attr.colInt1==1?true:false):false}">
+                                <f:converter converterId="DoubleConverter"/>
+                            </h:outputText>
+                        </p:column>                        
+                    </p:dataTable>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+
+                </td>
+            </tr>
+        </table>
+    </h:panelGroup>
+    <script type="text/javascript">
+        function handleCmdComplete(xhr, status, args) {
+            if (args.Method)
+            {
+                switch (args.Method)
+                {
+                    case 'LoadListQuery':
+                        PF('dlgListQuery').show();
+                        break;
+                }
+            }
+        }
+    </script>
+
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgListQuery" widgetVar="dlgListQuery"
+              width="480" height="350"
+              closable="true" header="Chọn dữ liệu" position="top top">
+        
+        <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtListQuery" paginator="true"
+                     value="#{s_ReportResultBean.listFromQuery}"
+                     rows="200"  selection="#{s_ReportResultBean.selectionOneListQuery}"
+                     scrollable="true"                     
+                     selectionMode="single"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="100,200,500" widgetVar="dtListQuery" paginatorPosition="bottom">            
+            <p:column width="100" headerText="#{commonTMSProp.ColID}"
+                      filterBy="#{s.colStr1}" filterMatchMode="contains" filterStyle="width:90%">
+                <h:outputText value="#{s.colStr1}"/>
+            </p:column>
+            <p:column headerText="#{commonTMSProp.ColDesc}"
+                      filterBy="#{s.colStr2}" filterMatchMode="contains" filterStyle="width:90%">
+                <h:outputText value="#{s.colStr2}"/>
+            </p:column>
+        </p:dataTable>                
+        <center>
+            <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{s_ReportResultBean.onChooseListQuery}" oncomplete="PF('dlgListQuery').hide();"
+                             update="dtAttGroup"/>
+            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgListQuery').hide();
+                    return false;"  />            
+        </center>
+    </p:dialog>
+</ui:composition>
+<!--<p:autoComplete id="dd" rendered="{attr.colStr12=='CBBOX'}" dropdown="true" value="{autoCompleteBean.txt6}"   
+                                                completeMethod="{autoCompleteBean.complete}" />-->

@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            
+            <f:loadBundle var="msgs" basename="main.web.shared.system.prop.S_AttributeProp"/>
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="form1">                
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">                   
+                    <table>
+                        <tr style="height: 25px">
+                            <td width="120px" align="right">
+                                <h:outputText value="#{msgs.main_group_Title}"/>
+                            </td>
+                            <td >
+                                <h:inputText style="width: 180px;" onkeydown="return KeyEnter(event);"
+                                             readonly="true" value="#{s_AttributesGroupAssObjBean.attributeGroup.attrgroupid}"/>
+                            </td>                            
+                            <td >
+                                <h:inputText style="width: 400px;" onkeydown="return KeyEnter(event);"  readonly="true"
+                                             value="#{s_AttributesGroupAssObjBean.attributeGroup.attrgroupdesc}"/>
+                            </td>                            
+                        </tr>                        
+                    </table>
+                    <table>
+                        <tr>
+                            <td valign="top" style="width: 310px;">
+                                <p:dataTable emptyMessage="Không có dữ liệu" id="dtTypeObj" widgetVar="dtTypeObj" var="s" paginator="true" rows="5" 
+                                             style="margin-top: 5px;margin-right: 5px;width: 300px;overflow: auto;"
+                                             value="#{s_AttributesGroupAssObjBean.dsLstGroupAssObj}"
+                                             selectionMode="single" selection="#{s_AttributesGroupAssObjBean.rowSelected}"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15,20" paginatorPosition="bottom">
+                                    <p:column headerText="#{msgs.dlg_assobj_ColTypeObj}">
+                                        <h:outputText value="#{s.colStr2}"/>
+                                    </p:column>
+                                    <p:column headerText="#{msgs.dlg_assobj_ColCount}" style="text-align: center;width: 60px;">
+                                        <h:outputText value="#{s.colInt1}"/>
+                                    </p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{msgs.dlg_assobj_HeaderType}"/>
+                                     </f:facet>
+                                </p:dataTable>
+                            </td>
+                            <td align="center" valign="middle">
+                                <p:commandButton value="#{commonMessages.btnView}" update="msgPop dtObj"
+                                                 actionListener="#{s_AttributesGroupAssObjBean.onViewAssObj}"/>
+                            </td>
+                            <td align="center">
+                                <p:dataTable emptyMessage="Không có dữ liệu" id="dtObj" widgetVar="dtObj" var="s" paginator="true" rows="5" 
+                                             style="margin-top: 5px;margin-left: 5px;width: 480px;overflow: auto;"
+                                             value="#{s_AttributesGroupAssObjBean.dsLstObjs}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15,20" paginatorPosition="bottom">
+                                    <p:column headerText="#{commonTMSProp.ColID}" style="width: 140px;"
+                                              filterBy="#{s[0]}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s[0]}"/>
+                                    </p:column>
+                                    <p:column headerText="#{commonTMSProp.ColDesc}"
+                                              filterBy="#{s[1]}" filterMatchMode="contains" filterStyle="width:90%">
+                                        <h:outputText value="#{s[1]}"/>
+                                    </p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{msgs.dlg_assobj_HeaderObj}"/>
+                                     </f:facet>
+                                </p:dataTable>
+                            </td>
+                        </tr>
+                    </table>
+                </p:outputPanel>
+                <!-- Dialog-->              
+
+                <script type="text/javascript">                   
+                    function KeyEnter(event){
+                        if (event.keyCode == 13){
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

@@ -1,0 +1,4 @@
+2015-03-06 16:21:42 - Starting C:/glassfishv4.1/glassfish/lib/nadmin.bat  start-domain --watchdog --domaindir C:\\glassfishv4.1\\glassfish\\domains domain1 
+2015-03-06 16:21:42 - Started 3708
+2015-03-16 09:12:38 - Starting C:/glassfishv4.1/glassfish/lib/nadmin.bat  start-domain --watchdog --domaindir C:\\glassfishv4.1\\glassfish\\domains domain1 
+2015-03-16 09:12:38 - Started 1440

@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+            <h:outputStylesheet name="css/primeicons.css" library="rain-layout" />
+            <h:outputStylesheet name="css/primeflex.min.css" library="rain-layout" />
+            <f:loadBundle var="msgs" basename="diemdo.web.prop.DiemDo"/>
+        </h:head>
+        <h:body styleClass="#{templateGNDN.inputStyleClass}" style="background-color: #f4f7f9; margin: 15px;">
+            <h:form onsubmit="return false" id="BDDDForm">
+                <div class="p-grid p-dir-col">
+                    <p:toolbar id="tlBarNhom" style="border: none; padding-top: 0;">                    
+                        <f:facet name="left">
+                            <p:commandButton value="Thêm mới" 
+                                             styleClass="success-button" 
+                                             style="margin-right: .5rem"
+                                             update="BDDDForm:loai BDDDForm:hsn BDDDForm:ngay BDDDForm:b1g BDDDForm:b2g BDDDForm:b3g BDDDForm:b1n BDDDForm:b2n BDDDForm:b3n BDDDForm:vcg BDDDForm:sgg BDDDForm:vcn BDDDForm:sgn BDDDForm:note BDDDForm:slKddB1g BDDDForm:slKddB2g BDDDForm:slKddB3g BDDDForm:slKddB1n BDDDForm:slKddB2n BDDDForm:slKddB3n BDDDForm:slKddVcg BDDDForm:slKddSgg BDDDForm:slKddVcn BDDDForm:slKddSgn "
+                                             actionListener="#{quanLyBDDDThangDetailBean.onAdd}"/>
+                            <p:commandButton value="Lưu" 
+                                             styleClass="primary-button"
+                                             style="margin-right: .5rem"                                             
+                                             actionListener="#{quanLyBDDDThangDetailBean.onSave}">
+                            </p:commandButton>
+                        </f:facet>
+                    </p:toolbar>
+                </div>                    
+
+                <div class="p-grid p-dir-col">
+                    <p:growl id="messages" showDetail="true" /> 
+                    <div class="p-col grid-demo" style="padding-bottom: 0">
+                        <div class="card" style="padding-bottom: 0">
+                            <div class="p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="maNhomDD" value="Nhà máy điện/ Trạm biến áp" style="padding-top: 0px;"/>
+                                    <p:inputText id="maNhomDD" value="#{quanLyBDDDThangDetailBean.nhomDD.tenNhomDd}" 
+                                                 disabled="true" style="width: 100%"/>
+                                </div>
+                                <div class="p-col">
+                                    <p:outputLabel for="maDiemdo" value="Mã điểm đo" style="padding-top: 0px;"/>
+                                    <p:inputText id="maDiemdo" value="#{quanLyBDDDThangDetailBean.diemdo.maDiemdo}" 
+                                                 disabled="true" style="width: 100%"/>
+                                </div>
+                                <div class="p-col">
+                                    <p:outputLabel for="tenDiemdo" value="Tên điểm đo" style="padding-top: 0px;"/>
+                                    <p:inputText id="tenDiemdo" value="#{quanLyBDDDThangDetailBean.diemdo.tenDiemdo}"
+                                                 style="width: 100%" disabled="true"/>                                                           
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-col" style="padding-bottom: 0" >
+                        <div class="card" style="padding-bottom: 0">
+                            <h5>Thông tin nhập chỉ số chốt</h5>
+                            <div class="p-grid p-dir-col">
+
+                                <div class="p-col" style="padding-bottom: 0">
+                                    <div class="p-grid">
+
+                                        <div class="p-col-fixed" style="width: 100px; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style=" padding: 7px 0 7px 0;">
+                                                <p:outputLabel value="Loại nhập" style="margin: 0"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col-fixed" style="width: 17.66%; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style="width: 100%; margin-bottom: 0">
+                                                <p:selectOneMenu id="loai" style="width: 100%" filterMatchMode="contains"  disabled="#{quanLyBDDDThangDetailBean.disableLoai}"
+                                                                 filter="true" value="#{quanLyBDDDThangDetailBean.bddd.MHistoryBdddPK.loai}">
+                                                    <f:selectItems value="#{quanLyBDDDThangDetailBean.listLoaiCso}"
+                                                                   var="a" itemLabel="#{a.tenLoaiCso}" itemValue="#{a.maLoaiCso}"/>
+                                                </p:selectOneMenu>  
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col-fixed" style="width: 17.66%; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field " style="margin-bottom: 0">
+                                                <p:outputLabel for="hsn" style="width: 40%; margin: 0; padding-top: 4px;" value="Hệ số"/>
+                                                <p:inputNumber id="hsn" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.hsn}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col-fixed" style="width: 40.32%; margin-bottom: 0;padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style="margin-bottom: 0">
+                                                <p:outputLabel  style="width: 16.66%; margin: 0; padding-top: 4px;" value="Thời gian"/>
+                                                <p:datePicker id="ngay" value="#{quanLyBDDDThangDetailBean.bddd.ngay}" 
+                                                              disabled="#{quanLyBDDDThangDetailBean.disableNgay}" showIcon="true" showTime="true"
+                                                            locale="#{settingsBean.dateLocale}" pattern="#{settingsBean.dateTimeFullMask}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-col" style="padding-top: 0; padding-bottom: 0;">
+                                    <div class="p-grid">
+
+                                        <div class="p-col-fixed" style="width: 100px; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style=" padding: 7px 0 7px 0;">
+                                                <p:outputLabel value="Kênh giao" style="margin: 0"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="b1g" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 1"/>
+                                                <p:inputNumber id="b1g" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.b1g}"/>
+                                            </div>
+                                        </div>                                        
+
+                                        <div class="p-col" style="padding-right: 0;">                                            
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="b2g" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 2"/>
+                                                <p:inputNumber id="b2g" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.b2g}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="b3g" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 3"/>
+                                                <p:inputNumber id="b3g" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.b3g}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="vcg" style="width: 40%; margin: 0; padding-top: 7px;" value="Vô công"/>
+                                                <p:inputNumber id="vcg" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.vcg}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="sgg" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu tổng"/>
+                                                <p:inputNumber id="sgg" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.sgg}"/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="p-col" style="padding-top: 0; padding-bottom: 0;">
+                                    <div class="p-grid">
+
+                                        <div class="p-col-fixed" style="width: 100px; margin-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style=" padding: 7px 0 7px 0;">
+                                                <p:outputLabel value="Kênh nhận" style="margin: 0"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="b1n" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 1"/>
+                                                <p:inputNumber id="b1n" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.b1n}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="b2n" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 2"/>
+                                                <p:inputNumber id="b2n" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.b2n}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="b3n" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 3"/>
+                                                <p:inputNumber id="b3n" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.b3n}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="vcn" style="width: 40%; margin: 0; padding-top: 7px;" value="Vô công"/>
+                                                <p:inputNumber id="vcn" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.vcn}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="sgn" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu tổng"/>
+                                                <p:inputNumber id="sgn" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.sgn}"/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-col" style="padding-bottom: 0" >
+                        <div class="card" style="padding-bottom: 0">
+                            <h5>Thông tin sản lượng không qua đo đếm</h5>
+                            <div class="p-grid p-dir-col">
+
+                                <div class="p-col" style="padding-bottom: 0">
+                                    <div class="p-grid">
+
+                                        <div class="p-col-fixed" style="width: 100px; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style=" padding: 7px 0 7px 0;">
+                                                <p:outputLabel value="Đơn vị tính" style="margin: 0"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col-fixed" style="width: 17.66%; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style="margin-bottom: 0">
+                                                <p:outputLabel for="dvd" style="width: 40%; margin: 0; padding-top: 4px;" value="ĐVĐ"/>
+                                                <p:inputText id="dvd" style="width: 60%" value="kWh" disabled="true"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-bottom: 0">
+                                            <div class="p-field " style="margin-bottom: 0">
+                                                <p:outputLabel for="note" style="width: 10%; margin: 0; padding-top: 4px;" value="Ghi chú"/>
+                                                <p:inputText id="note" style="width: 90%"
+                                                             value="#{quanLyBDDDThangDetailBean.bddd.note}" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="p-col" style="padding-top: 0; padding-bottom: 0;">
+                                    <div class="p-grid">
+
+                                        <div class="p-col-fixed" style="width: 100px; padding-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style="max-width: max-content; padding: 7px 0 7px 0;">
+                                                <p:outputLabel value="Kênh giao" style="margin: 0"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddB1g" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 1"/>
+                                                <p:inputNumber id="slKddB1g" inputStyle="width: 60%"  value="#{quanLyBDDDThangDetailBean.bddd.slKddB1g}"/>
+                                            </div>
+                                        </div>                                        
+
+                                        <div class="p-col" style="padding-right: 0;">                                            
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddB2g" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 2"/>
+                                                <p:inputNumber id="slKddB2g" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddB2g}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field" style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddB3g" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 3"/>
+                                                <p:inputNumber id="slKddB3g" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddB3g}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddVcg" style="width: 40%; margin: 0; padding-top: 7px;" value="Vô công"/>
+                                                <p:inputNumber id="slKddVcg" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddVcg}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col">
+                                            <div class="p-field " style=" margin-bottom: 0">
+                                                <p:outputLabel for="slKddSgg" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu tổng"/>
+                                                <p:inputNumber id="slKddSgg" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddSgg}"/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="p-col" style="padding-top: 0; padding-bottom: 0;">
+                                    <div class="p-grid">
+
+                                        <div class="p-col-fixed" style="width: 100px; margin-bottom: 0; padding-right: 0;">
+                                            <div class="p-field" style="max-width: max-content; padding: 7px 0 7px 0;">
+                                                <p:outputLabel value="Kênh nhập" style="margin: 0"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddB1n" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 1"/>
+                                                <p:inputNumber id="slKddB1n" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddB1n}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field" style=" padding-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddB2n" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 2"/>
+                                                <p:inputNumber id="slKddB2n" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddB2n}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddB3n" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu 3"/>
+                                                <p:inputNumber id="slKddB3n" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddB3n}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col" style="padding-right: 0;">
+                                            <div class="p-field " style=" margin-bottom: 0; padding-right: 0;">
+                                                <p:outputLabel for="slKddVcn" style="width: 40%; margin: 0; padding-top: 7px;" value="Vô công"/>
+                                                <p:inputNumber id="slKddVcn" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddVcn}"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-col">
+                                            <div class="p-field " style=" margin-bottom: 0">
+                                                <p:outputLabel for="slKddSgn" style="width: 40%; margin: 0; padding-top: 4px;" value="Biểu tổng"/>
+                                                <p:inputNumber id="slKddSgn" inputStyle="width: 60%" value="#{quanLyBDDDThangDetailBean.bddd.slKddSgn}"/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+            <style type="text/css">
+
+
+            </style>
+        </h:body>
+    </f:view>
+</html>

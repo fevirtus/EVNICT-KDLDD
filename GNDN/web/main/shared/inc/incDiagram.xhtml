@@ -1,0 +1,297 @@
+<!--Dùng cho nhiều mục đích: tích hợp thành một tab của form, gọi thông qua Dialog -->
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <h:panelGroup id="panelAG">
+        <f:loadBundle basename="main.web.shared.system.prop.AttGroupProp" var="attProp" />
+        <table width="100%">
+            <tr valign="middle">
+                <td>
+                    <h:inputText id="txtObjName" readonly="true" disabled="#{diagramObjectPortBean.is_disableName}"
+                                 style="border-color: #A6C9E2 !important;margin-top: 3px !important"
+                                 size="25" title="Tên đối tượng liên kết" value='#{diagramObjectPortBean.objEntity.objName}'>
+                    </h:inputText>
+                    <p:commandButton id ="cmdObjName"
+                                     icon="fa fa-search-plus"
+                                     disabled="#{diagramObjectPortBean.is_disableName}"
+                                     onclick="OpenSelectObjectName('#{diagramObjectPortBean.p_UlevelIn}', '#{diagramObjectPortBean.p_Name}', '#{diagramObjectPortBean.p_Name}', '#{diagramObjectPortBean.p_AssetId}', '')"
+                                     update=":#{p:component('txtObjName')}"/>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" style="height: 260px">
+                    <style type="text/css">
+                        .attrGroup {
+                            font-weight: bold;
+                            background-color: #eeeeee;
+                            background-image: none !important;                             
+                        }
+                        .scroll_box{
+                            width: 100%;
+                            overflow:auto;
+                        }
+                        .historyVal {
+                            background-image: url(../../images/History.png) !important;
+                            /*width: 20px;height:20px;*/
+                        }
+                        .ui-editor-toolbar
+                        {
+                            display: none;
+                        }
+                        .ui-editor
+                        {
+                            border: none;
+                            padding: 5px;
+                            margin: 0;
+                        }
+                        .ui-expanded-row-content td:empty
+                        {
+                            display: none;
+                        }
+                        .ui-autocomplete-panel
+                        {
+                            border: 1px solid #A6C9E2!important;
+                            width: 255px !important;                            
+                        }
+                        .ui-autocomplete-panel table td
+                        {
+                            border: none !important;
+                        }
+                        .ui-autocomplete-panel table tr
+                        {
+                            border: none !important;
+                        }
+                        .ui-autocomplete-panel table
+                        {
+                            width: 99% !important;
+                        }
+                        .cke_top
+                        {
+                            display: none !important;
+                        }
+                        .cke_bottom
+                        {
+                            display: none !important;
+                        }
+                        .cke
+                        {                            
+                            border: none !important;
+                        }
+                        .ui-datatable-scrollable-header
+                        {
+                            border: 0px white solid !important;
+                        }
+                    </style>                    
+                    <p:dataTable emptyMessage=""
+                                 rowIndexVar="rowIndex"                                 
+                                 var="attr" id="dtPortDiagram"
+                                 value="#{diagramObjectPortBean.lstObjentitys}"
+                                 rendered="#{diagramObjectPortBean.is_disableDiagram}">
+                        <p:column width="55" headerText="1" rendered="false">
+                            <h:outputText value="#{attr.objConn1}" />
+                        </p:column>
+                        <p:column width="55" headerText="2" rendered="false">
+                            <h:outputText value="#{attr.objConn2}" />
+                        </p:column>
+                        <p:column width="55" headerText="3" rendered="false">
+                            <h:outputText value="#{attr.objConn3}" />
+                        </p:column>
+                        <p:column width="55" headerText="Sơ đồ 1">
+                            <h:outputText value="#{attr.objId}" />
+                        </p:column>
+                        
+                        <p:column headerText="Sơ đồ 2">
+                            <p:autoComplete id="dd" dropdown="true" value="#{attr.objName}" style="width:100%;"
+                                            var="item" itemLabel="#{item}" itemValue="#{item}"
+                                            completeMethod="#{diagramObjectPortBean.getPortConnect}">
+                                <p:ajax event="itemSelect" process="dtPortDiagram"/>
+                                <f:attribute name="AttrID" value="#{diagramObjectPortBean.objEntity.objId}"/>
+                                <f:attribute name="TypeID" value="#{attr.bChecked}"/>
+                            </p:autoComplete>
+                        </p:column>
+                        
+                        <!--
+                        <p:column>
+                            <h:selectOneMenu value="#{attr.objName}" style="width:70%">
+                                <f:selectItems value="#{diagramObjectPortBean.portConnect}" var="man" itemLabel="#{man}" itemValue="#{man}" />                               
+                            </h:selectOneMenu>
+                        </p:column>
+                        -->
+                    </p:dataTable>                    
+                </td>                
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h:panelGrid columns="1">
+                        <h:panelGroup>
+                            <h:panelGrid columns="4">
+                                <p:commandButton id="btnNew" value="Xóa liên kết" style="width: 110px;"
+                                                 disabled="#{diagramObjectPortBean.is_disableName}"
+                                                 onclick="OpenSelectAttrGroup();"/>
+                                <p:commandButton id="btnUpdate" value="Cập nhật" style="width: 100px;"
+                                                 disabled="#{diagramObjectPortBean.is_disableName}" update="panelAG,:#{p:component('msgInfo')}"
+                                                 actionListener="#{diagramObjectPortBean.onSaveForObject}"/>                                
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </table>
+    </h:panelGroup>
+    <script type="text/javascript">
+        function OpenSelectAttrGroup() {
+            var f = document.getElementById('browserContent_att_SelectAttGroup');
+            var objtype = document.getElementById('formDlg:tabView0:hfObjTypeId');
+            if (!objtype)
+                objtype = document.getElementById('formDlg:hfObjTypeId');
+            if (!objtype)
+                objtype = document.getElementById('formDlg:tabView0:hfObjTypeId');
+            if (!objtype)
+                objtype = document.getElementById('formDlg:hfObjTypeId');
+
+            if (f) {
+                var url = "./../../shared/dialog/dlgAttrGroup.jsf?display=many&amp;objtype=" + objtype.value;
+                f.src = url;
+                PF('dlgAtt_ChoonseAttr_Group').show();
+            }
+        }//////
+        function handleCmdCompleteCut(xhr, status, args) {
+            if (args.Method)
+            {
+                switch (args.Method)
+                {
+                    case 'LoadListQuery':
+                        PF('dlgListQuery').show();
+                        break;
+                    case 'LoadAttrHisVal':
+                        OpenHistoryValueDialog(args.AttrDataID, args.AttrID);
+                        break;
+                }
+            }
+        }
+        function OpenHistoryValueDialog(attrdataid, attrid) {
+            var f = document.getElementById('ifrOpenHistoryValueDialog');
+            if (attrdataid)
+                f.src = "#{settingsBean.webRootPath}/shared/dialog/dlgAttributeHis.jsf?attrdataid=" + attrdataid + "&amp;attrid=" + attrid;
+            else
+                f.src = "#{settingsBean.webRootPath}/shareddialog/dlgAttributeHis.jsf";
+            PF('dlgOpenHistoryValueDialog').show();
+        }
+
+        function OpenSelectObjectName(ulevelid, typeid, assortype, assetIdParent, mOrgId) {
+            var f = document.getElementById('browserContent_att_SelectObj');
+            var objid;
+            if (f) {
+                var url = "./../../eam/dialog/dlgNameObj.jsf";
+                var temp = "?";
+                url = url + temp + "ulevelid=" + ulevelid;
+                temp = '&amp;';
+                url = url + temp + "typeid=" + typeid;
+                if (assortype == 'DZ' || assortype == 'TBA')
+                {
+                    objid = 'DIAGRAM';
+                } else {
+                    objid = 'ASSET';
+                }
+                url = url + '&amp;' + "assortype=" + objid;
+                url = url + '&amp;' + "assetIdParent=" + assetIdParent;
+                url = url + '&amp;' + "mOrgId=" + mOrgId;
+                f.src = url;
+                PF('dlgAtt_ChoonseAttr_Obj').show();
+            }
+        }
+    </script>
+
+    <!--Diag choice ObjectName-->
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAtt_ChoonseAttr_Obj" widgetVar="dlgAtt_ChoonseAttr_Obj"
+              width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}"
+              header="Chọn tên đối tượng" position="center center">
+        <!--<p:ajax event="close" update=":#{p:component('txtObjName')}" listener="#{asset_DetailsBean_Final.onCancelSelectCMIS}"/> -->
+        <iframe id="browserContent_att_SelectObj" scrolling="auto"
+                frameborder="true" width="100%" height="#{settingsProp.NormalDlgIFrameHeight}" style="border: none">
+        </iframe>
+        <center>
+            <h:panelGroup>
+                <!--<h:inputHidden id="txtAtt_ChoonseAttr_ObjID" /> -->
+                <h:inputHidden id="name" value="#{diagramObjectPortBean.p_Name}"/>
+                <h:inputHidden id="ulevelIn" value="#{diagramObjectPortBean.p_UlevelIn}"/>
+                <h:inputHidden id="ulevelOut1" value="#{diagramObjectPortBean.p_UlevelOut}"/>
+                <h:inputHidden id="assetId" value="#{diagramObjectPortBean.p_AssetId}"/>
+                <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{diagramObjectPortBean.onAcceptSelectObjNameClick}"
+                                 update=":#{p:component('txtObjName')},:#{p:component('dtPortDiagram')}"
+                                 oncomplete="PF('dlgAtt_ChoonseAttr_Obj').hide();"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgAtt_ChoonseAttr_Obj').hide();
+                        return false;"  />
+            </h:panelGroup>
+        </center>
+    </p:dialog>
+
+
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgOpenHistoryValueDialog" widgetVar="dlgOpenHistoryValueDialog" header="#{attProp.lblTitle_AttrHis}"
+              width="700" height="430" closable="true"
+              resizable="true"  position="top top">
+        <p:ajax event="close" update="panelAG" listener="#{attGroupBean.onCloseAttrGroupHisDiaglog}"/>
+        <iframe id="ifrOpenHistoryValueDialog" scrolling="auto"
+                frameborder="0" width="100%" height="380">
+        </iframe>
+        <center>
+            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgOpenHistoryValueDialog').hide();
+                    return false;"  />
+        </center>
+    </p:dialog>
+
+
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgAtt_ChoonseAttr_Group" widgetVar="dlgAtt_ChoonseAttr_Group"
+              width="700" height="430" closable="true"
+              header="#{commonMessages.headerDlgSelectAttributeGroup}" position="top top">
+        <p:ajax event="close" listener="#{attGroupBean.onCancelSelectAttr_Group}"/>
+        <iframe id="browserContent_att_SelectAttGroup" scrolling="auto"
+                frameborder="0" width="100%" height="390">
+        </iframe>
+        <div align="center">
+            <h:panelGroup>
+                <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{attGroupBean.onChooseAttr_Group}" oncomplete="PF('dlgAtt_ChoonseAttr_Group').hide();"
+                                 update="panelAG btnNew btnUpdate"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgAtt_ChoonseAttr_Group').hide();
+                        return false;"  />
+            </h:panelGroup>
+        </div>
+    </p:dialog>
+    <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgListQuery" widgetVar="dlgListQuery"
+              width="750" height="408"
+              closable="true" header="Chọn dữ liệu" position="center center">
+        <p:dataTable emptyMessage="Không có dữ liệu" var="s" id="dtListQuery" paginator="true"
+                     value="#{attGroupBean.listFromQuery}"
+                     rows="200"  selection="#{attGroupBean.selectionOneListQuery}"
+                     scrollable="true"
+                     scrollHeight="250"
+                     selectionMode="single"
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="100,200,500" widgetVar="dtListQuery" paginatorPosition="bottom">
+            <p:column width="25" selectionMode="single" style="text-align: center;"/>
+            <p:column width="100" headerText="#{commonTMSProp.ColID}"
+                      filterBy="#{s.colStr1}" filterMatchMode="contains" filterStyle="width:90%">
+                <h:outputText value="#{s.colStr1}"/>
+            </p:column>
+            <p:column width="210" headerText="#{commonTMSProp.ColDesc}"
+                      filterBy="#{s.colStr2}" filterMatchMode="contains" filterStyle="width:90%">
+                <h:outputText value="#{s.colStr2}"/>
+            </p:column>
+        </p:dataTable>
+        <br/>
+        <center>
+            <h:panelGroup >
+                <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}" actionListener="#{attGroupBean.onChooseListQuery}" oncomplete="PF('dlgListQuery').hide();"
+                                 update=":#{p:component('dtPortDiagram')}"/>
+                <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgListQuery').hide();
+                        return false;"  />
+            </h:panelGroup>
+        </center>
+    </p:dialog>
+</ui:composition>
+<!--<p:autoComplete id="dd" rendered="{attr.colStr12=='CBBOX'}" dropdown="true" value="{autoCompleteBean.txt6}"   
+                                                completeMethod="{autoCompleteBean.complete}" />-->

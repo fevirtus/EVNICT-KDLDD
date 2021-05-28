@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            #{reportDataListBean.assertFuncRight('04.01.03')}
+        </h:head>
+        <h:body>
+            <h:form onsubmit="return false" id="formDlg">
+                <!--Lồng phím tắt -->
+                <ui:include src="/shared/inc/incHotKeyJs.xhtml"/>                
+                <p:toolbar id="tbrHeader">
+                    <p:toolbarGroup align="left" rendered="#{reportDataListBean.renderedFuncEdit('04.01.03')}">
+                        <p:commandButton id="btnNew" disabled="#{reportDataListBean.m_bAddNew}" styleClass="btnHeight"
+                                         icon="addnew" title="#{commonMessages.btnAddNew}"
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{reportDataListBean.onAddNewDetail}"
+                                         oncomplete="document.getElementById('formDlg:txtID').focus();"/>
+                        <p:commandButton id="btnUpdate" disabled="#{reportDataListBean.disabledSaveData}" styleClass="btnHeight"
+                                         icon="save" title="#{commonMessages.btnSave}" 
+                                         update="msgInfo pnlContent tbrHeader"
+                                         actionListener="#{reportDataListBean.onSaveDetail}" />
+                        <p:commandButton id="btnDel" disabled="#{reportDataListBean.disabledDeleteData}" styleClass="btnHeight"
+                                         icon="delete" title="#{commonMessages.btnDelete}"
+                                         onclick="return window.confirm('#{assetProp.msgComfirmDeleteMeter}');"
+                                         actionListener="#{reportDataListBean.onDeleteDetail}"/>
+
+                    </p:toolbarGroup>
+                    <p:toolbarGroup align="right">
+                        <h:panelGrid columns="5">
+                            <!--<ui:include src="/shared/inc/incAjaxStatusDlg.xhtml"/>-->
+                            <p:commandButton id="btnFirst" styleClass="btnHeight"
+                                             disabled="#{reportDataListBean.m_bFirst}"
+                                             icon="resultset_first" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnFirst}"
+                                             actionListener="#{reportDataListBeann.onNavigatorFirst}"/>
+                            <p:commandButton id="btnPrevious" styleClass="btnHeight"
+                                             disabled="#{reportDataListBean.m_bPrevious}"
+                                             icon="resultset_previous" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnPrevious}"
+                                             actionListener="#{reportDataListBean.onNavigatorPrevious}"/>
+                            <p:commandButton id="btnNext" styleClass="btnHeight"
+                                             disabled="#{reportDataListBean.m_bNext}"
+                                             icon="resultset_next" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnNext}"
+                                             actionListener="#{reportDataListBean.onNavigatorNext}"/>
+                            <p:commandButton id="btnLast" styleClass="btnHeight"
+                                             disabled="#{reportDataListBean.m_bLast}"
+                                             icon="resultset_last" update="msgInfo pnlContent tbrHeader" title="#{commonMessages.btnLast}"
+                                             actionListener="#{reportDataListBean.onNavigatorLast}"/>
+                        </h:panelGrid>
+                    </p:toolbarGroup>
+                </p:toolbar> 
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+
+                <p:layout id="pnlContent" style="height:400px;" >   
+                    <p:layoutUnit rendered="true"  gutter="1" position="north" size="50" resizable="true" collapsible="true">
+                        <table>
+                            <tr style="height: 25px">
+                                <td align="right">
+                            <h:outputText value="Mã"/>
+                            </td>
+                            <td>
+                            <h:inputText                                         
+                                value="#{reportDataListBean.m_S_Report_Datalist.datalistid}"/>
+                            </td>
+                            <td align="right">
+                            <h:outputText value="Tên"/>
+                            </td>
+                            <td>
+                            <h:inputText                                         
+                                value="#{reportDataListBean.m_S_Report_Datalist.datalistdesc}"/>
+                            </td>
+                            <td align="right">
+                            <h:outputText value="Loại"/>
+                            </td>
+                            <td>
+                            <p:selectOneMenu id="cboCommand" value="#{reportDataListBean.m_S_Report_Datalist.commandtypeid}"                                          
+                                             >
+                                <f:selectItems value="#{reportDataListBean.lstS_Report_Commandtype}"
+                                               var="o" itemLabel="#{o.commandtypedesc}"
+                                               itemValue="#{o.commandtypeid}"/>                                        
+                            </p:selectOneMenu>
+                            </td>
+                            <td align="right">
+                            <h:outputText value="Sử dụng"/>
+                            </td>
+                            <td>
+                            <h:selectBooleanCheckbox id="chbActive" value="#{reportDataListBean.m_S_Report_Datalist.enable}"/>
+                            </td>
+
+                            <td align="right">
+                            <h:outputText value="Kiểu load"/>
+                            </td>
+                            <td>
+                            <h:selectBooleanCheckbox id="chbDefault" value="#{reportDataListBean.m_S_Report_Datalist.loadtype}"/>
+                            </td>
+
+                            </tr>
+                        </table>
+
+                    </p:layoutUnit>
+                    <p:layoutUnit rendered="true"  gutter="1" position="center" resizable="true" collapsible="true">
+                        <table>
+                            <tr style="height: 25px">
+                                <td width="110px" align="right">
+                            <h:outputText value="Query"/>
+                            </td>
+                            <td colspan="10">
+                            <p:inputTextarea rows="25" cols="170" 
+                                             autoResize="false"
+                                             scrollHeight="50"
+                                             value="#{reportDataListBean.m_S_Report_Datalist.query}"/> 
+                            </td>
+                            </tr>                    
+                            <tr style="height: 25px">
+                                <td colspan="10" width="110px" align="middle" style="color: red">
+                            <h:outputText value="Cách truyền tham số: ?Tên cột(lấy trong tab Tham số báo cáo). Ví dụ: ?MaDVQL.Các tham số hệ thống:MaDVQL,TenMaDVQL,TenDVQLCapTren,UserName,UserDesc,Sysdate"/>
+                            </td>
+                            </tr>
+                        </table>
+                    </p:layoutUnit>
+                </p:layout>
+
+                <!-- Vùng người thay đổi-->
+                <p:outputPanel id="pnlUser">
+                    <table width="98%" style="margin-top: 5px;">
+                        <tr>
+                            <td align="left">
+                        <h:graphicImage url="./../../images/user/user_add.png"/>
+                        <h:outputText value=" #{commonMessages.lblUserCreate}: "/>
+                        <h:outputText id="lblUserCreate" value="#{reportDataListBean.m_S_Report_Datalist.userCrId}"/>
+                        <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                        <h:outputText id="lblDateCreate" value="#{reportDataListBean.m_S_Report_Datalist.userCrDtime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                        </td>
+                        <td align="right">
+                        <h:graphicImage url="./../../images/user/user_edit.png"/>
+                        <h:outputText value=" #{commonMessages.lblUserUpdate}: "/>
+                        <h:outputText id="lblUserUpdate" value="#{reportDataListBean.m_S_Report_Datalist.userMdfId}"/>
+                        <h:outputText value=" , #{commonMessages.lblDate}: "/>
+                        <h:outputText id="lblDateUpdate" value="#{reportDataListBean.m_S_Report_Datalist.userMdfDtime}">
+                            <f:convertDateTime pattern="#{settingsBean.dateTimeMask}" timeZone="#{settingsBean.timeZone}"/>
+                        </h:outputText>
+                        </td>
+                        </tr>
+                    </table>
+                </p:outputPanel>
+                
+                <script type="text/javascript">
+
+
+
+                    function KeyEnterSelectReportGroup(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectReportGroup(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    function OpenSelectReportGroup(filterValue) {
+                        var f = document.getElementById('ifrSelectReportGroup');
+                        if (f) {
+                            var url = "./../dialog/dlgReportGroup.jsf";
+                            var temp = '?';
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgSelectReportGroup').show();
+                        }
+                        return false;
+                    }
+
+                    function KeyEnterSelectUom(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectUom(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

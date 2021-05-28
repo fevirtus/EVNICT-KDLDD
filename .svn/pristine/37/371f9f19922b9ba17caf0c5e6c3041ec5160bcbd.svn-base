@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/panelButton.css" />
+
+            <f:loadBundle var="msgs" basename="evnit.tms.web.eam.operation.prop.Oper_MeterTabProp"/>
+            #{reportGroupBean.assertFuncRight('04.02.02')}
+        </h:head>
+        <h:body>
+            <h:form id="form1">
+                <p:outputPanel id="msgInfo">
+                    <p:growl id="msgPop" showDetail="true" life="#{settingsProp.MsgLifetime}"/>
+                </p:outputPanel>
+                <p:outputPanel id="pnlContent">
+                    <table style="margin-top: 10px;">                        
+                        <tr style="height: 25px">
+                            <td align="right">
+                        <h:outputText value="#{msgs.detail_Grp_LblParent}"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtTabGroupParent" style="width: 180px;"
+                                     value="#{reportGroupBean.tabGroup.rptgroupid_parent}"
+                                     onkeydown="return KeyEnterSelectParent(event, this);"/>
+                        </td>
+                        <td >
+                        <p:commandButton icon="ui-icon-search" title="#{commonMessages.btnOpenDialog}"
+                                         disabled="#{reportGroupBean.disabledSaveData}"
+                                         onclick="OpenSelectParent('');" style="height: 23px;"/>
+                        </td>
+                        <td >
+                        <h:inputText id="txtTabGroupParentDesc" style="width: 350px;" readonly="true"
+                                     value="#{reportGroupBean.tabGroupParentDesc}"
+                                     onkeydown="return KeyEnter(event);"/>
+                        </td>
+                        </tr>                                            
+                    </table>
+                    <center>
+                        <h:panelGrid columns="2">
+                            <p:commandButton id="btnUpdate" value="#{commonMessages.btnSave}" actionListener="#{reportGroupBean.copyReport}"
+                                             update="msgInfo" icon="save"/>
+                        </h:panelGrid>
+                    </center>
+                    <p:separator />
+                    
+                </p:outputPanel>
+                <!-- Dialog-->
+                <p:dialog appendTo="@(body)" closeOnEscape="true" id="dlgSelectParent" widgetVar="dlgSelectParent"
+                          width="#{settingsProp.NormalDlgWidth}" height="#{settingsProp.NormalDlgHeight}" closable="true"
+                          header="#{commonMessages.headerDlgOpMeterTabGroup}">
+                    <p:ajax event="close" listener="#{reportGroupBean.onCancelChooseParent}"/>
+                    <iframe id="ifrSelectParent" scrolling="auto"
+                            frameborder="0" width="100%" height="#{settingsProp.NormalDlgIFrameHeight}">
+                    </iframe>
+                    <div align="left">
+                        <h:panelGroup>
+                            <p:commandButton icon="accept" value="#{commonMessages.btnChoonse}"
+                                             actionListener="#{reportGroupBean.onAcceptChooseTabGroupParent}"
+                                             update="txtTabGroupParent txtTabGroupParentDesc" oncomplete="PF('dlgSelectParent').hide();"/>
+                            <p:commandButton icon="cancel" value="#{commonMessages.btnClose}" onclick="PF('dlgSelectParent').hide();" />
+                        </h:panelGroup>
+                    </div>
+                </p:dialog>                
+                <script type="text/javascript">
+                    function KeyEnterSelectParent(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectParent(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    function OpenSelectParent(filterValue) {
+                        var f = document.getElementById('ifrSelectParent');
+                        if (f) {
+                            var url = "../dialog/dlgReportGroup.jsf";
+                            var temp = '?';
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgSelectParent').show();
+                        }
+                        return false;
+                    }
+
+                    function KeyEnterSelectSite(event, control) {
+                        if (event.keyCode == 13) {
+                            OpenSelectSite(control.value);
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    function OpenSelectSite(filterValue) {
+                        var f = document.getElementById('ifrSelectSite');
+                        if (f) {
+                            var url = "./../../shared/dialog/dlgSite.jsf";
+                            var temp = '?';
+                            url = url + temp + "display=one";
+                            temp = '&amp;';
+                            if (filterValue)
+                                url = url + temp + "id=" + filterValue;
+                            f.src = url;
+                            PF('dlgSelectSite').show();
+                        }
+                        return false;
+                    }
+
+                    function KeyEnter(event) {
+                        if (event.keyCode == 13) {
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
